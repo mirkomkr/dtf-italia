@@ -18,7 +18,10 @@ export default function Header() {
         {/* Navigation Section - Centered */}
         <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-300" aria-label="Navigazione Principale">
           <Link href="#how-it-works" className="hover:text-white transition-colors">Come Funziona</Link>
-          <Link href="#" className="hover:text-white transition-colors">Prezzi</Link>
+          <Link href="/serigrafia" className="hover:text-white transition-colors">Serigrafia</Link>
+          <Link href="/sublimazione" className="hover:text-white transition-colors">Sublimazione</Link>
+          <Link href="/calendari" className="hover:text-white transition-colors">Calendari</Link>
+          <Link href="/pellicole-serigrafia" className="hover:text-white transition-colors">Pellicole Serigrafia</Link>
           <Link href="#" className="hover:text-white transition-colors">FAQ</Link>
         </nav>
 

@@ -11,7 +11,7 @@ export default function Header() {
             className="inline-block text-2xl font-black text-white tracking-tighter cursor-pointer hover:opacity-80 transition-opacity"
             aria-label="Torna alla Home"
           >
-            DTF<span className="text-indigo-400">PRO</span>
+            DTF_<span className="text-green-600">IT</span><span className="text-white">AL</span><span className="text-red-600">IA</span>
           </Link>
         </div>
 

@@ -4,7 +4,7 @@ export default function ProductCard({ product }) {
       <img
         src={product.images?.[0]?.src || "/placeholder.png"}
         alt={product.name}
-        className="w-full h-48 object-cover rounded mb-4"
+        className="w-64 h-64 object-cover rounded mb-4"
       />
       <h3 className="text-lg font-bold mb-2">{product.name}</h3>
       {product.price_html ? (

@@ -92,7 +92,7 @@ export default async function ProductPage({ params }) {
 
       {/* Descrizione */}
       {/* Descrizione */}
-      <section className="mt-12 bg-white rounded-2xl shadow-sm p-8 md:p-12 border border-gray-100">
+      <section className="mt-12 bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-gray-100">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
           <span className="w-1.5 h-8 bg-red-600 rounded-full" aria-hidden="true"></span>
           Descrizione prodotto:

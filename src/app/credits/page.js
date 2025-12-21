@@ -53,6 +53,15 @@ export default function CreditsPage() {
             <li>
               Foto di  <a href="https://pixabay.com/users/pedroml-1724523/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8557635" className="text-indigo-300 hover:underline">Pedroml</a> su <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8557635" className="text-indigo-300 hover:underline">Pixabay</a>
             </li>
+              <li>
+              Foto di <a href="https://pixabay.com/users/johnnylfc11-41536200/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=9915226" className="text-indigo-300 hover:underline">H S</a> su <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=9915226" className="text-indigo-300 hover:underline">Pixabay</a>
+            </li>
+            <li>
+              Foto di <a href="https://unsplash.com/it/@mediamodifier?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Mediamodifier</a> su <a href="https://unsplash.com/it/foto/giacca-bianca-con-zip-appesa-su-appendiabiti-in-legno-marrone-kJXGTOY1wLQ?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Unsplash</a>
+            </li>
+            <li>  
+              <a href="https://it.freepik.com/foto-gratuito/donna-che-indossa-un-modello-di-berretto-bianco_16434138.htm#fromView=search&page=1&position=0&uuid=b5306eac-cf05-48a8-96ed-a7a2085ce6ec&query=cap+mockup" className="text-indigo-300 hover:underline">Immagine di rawpixel.com su Freepik</a>
+            </li>
               {/* aggiungi altri credits qui */}
           </ul>
         </div>

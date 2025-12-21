@@ -8,11 +8,13 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
-            <Link href="/" className="inline-block mb-4 hover:opacity-80 transition-opacity" aria-label="Torna alla Home">
-              <div className="text-2xl font-black text-white tracking-tighter">
-                DTF<span className="text-indigo-400">PRO</span>
-              </div>
-            </Link>
+          <Link 
+            href="/" 
+            className="inline-block text-2xl font-black text-white tracking-tighter cursor-pointer hover:opacity-80 transition-opacity"
+            aria-label="Torna alla Home"
+          >
+            DTF_<span className="text-green-600">IT</span><span className="text-white">AL</span><span className="text-red-600">IA</span>
+          </Link>
             <p className="text-sm">
               Il servizio di stampa DTF professionale per creativi e aziende.
             </p>
@@ -41,11 +43,12 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Termini e Condizioni</Link></li>
+              <li><Link href="/credits" className="hover:text-white transition-colors">Credits Immagini</Link></li>
             </ul>
           </nav>
         </div>
         <div className="text-center text-xs pt-8 border-t border-gray-800">
-          © {currentYear} DTF PRO. Tutti i diritti riservati.
+          © {currentYear} DTF Italia. Tutti i diritti riservati.
         </div>
       </div>
     </footer>

@@ -1,45 +1,77 @@
-// components/ProductCard.jsx
 import Link from "next/link";
 import Image from "next/image";
 
 export default function ProductCard({ product }) {
   const image = product.images?.[0];
 
+  const imageSrc = image?.src || "/placeholder.webp";
+  const imageAlt =
+    image?.alt ||
+    `${product.name} personalizzata con serigrafia a Roma – DTF Italia`;
+
   return (
-    <article className="group relative bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition focus-within:ring-2 focus-within:ring-indigo-600">
-      
+    <article
+      className="group relative bg-white rounded-xl border border-gray-200 shadow-sm
+                 hover:shadow-lg transition focus-within:ring-2 focus-within:ring-indigo-600"
+      itemScope
+      itemType="https://schema.org/Product"
+    >
+      {/* Link overlay accessibile */}
       <Link
         href={`/serigrafia/${product.slug}`}
-        className="absolute inset-0 z-10"
         aria-label={`Configura ${product.name}`}
+        className="absolute inset-0 z-10"
       />
 
-      <div className="relative aspect-square overflow-hidden rounded-t-xl bg-gray-50">
+      {/* Immagine prodotto */}
+      <div className="relative overflow-hidden rounded-t-xl bg-gray-100">
         <Image
-          src={image?.src || "/placeholder.png"}
-          alt={image?.alt || product.name}
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          src={imageSrc}
+          alt={imageAlt}
+          width={1200}
+          height={1200}
+          quality={80}
+          placeholder="blur"
+          blurDataURL="/placeholder-blur.webp"
+          sizes="(max-width: 640px) 100vw,
+                 (max-width: 1024px) 50vw,
+                 33vw"
+          className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+          itemProp="image"
         />
       </div>
 
-      <div className="p-5">
-        <h3 className="text-lg font-bold text-gray-900 mb-2">
+      {/* Contenuto */}
+      <div className="p-5 flex flex-col gap-2">
+        <h3
+          className="text-lg font-bold text-gray-900 leading-snug"
+          itemProp="name"
+        >
           {product.name}
         </h3>
 
+        {/* Prezzo */}
         {product.price_html ? (
           <p
-            className="text-gray-600"
+            className="text-gray-700 text-sm"
+            itemProp="offers"
+            itemScope
+            itemType="https://schema.org/Offer"
             dangerouslySetInnerHTML={{ __html: product.price_html }}
           />
         ) : (
-          <p className="text-gray-500">Prezzo su richiesta</p>
+          <p className="text-gray-500 text-sm">
+            Prezzo su richiesta
+          </p>
         )}
 
-        <span className="mt-4 inline-block text-sm font-semibold text-indigo-600">
-          Configura →
+        {/* CTA */}
+        <span
+          className="mt-3 inline-flex items-center text-sm font-semibold text-indigo-600"
+          aria-hidden="true"
+        >
+          Configura
+          <span className="ml-1">→</span>
         </span>
       </div>
     </article>

@@ -4,11 +4,10 @@ import GalleriaProdotto from "./galleriaProdotto";
 import Configurator from "../components/ConfiguratoreSerigrafia";
 
 /* ===============================
-   FETCH SERVER (una sola fonte)
+   FETCH SERVER (URL assoluto)
 ================================ */
 async function getProduct(slug) {
-  const headersList = headers();
-  const host = headersList.get("host");
+  const host = process.env.NODE_ENV === "development" ? "localhost:3000" : "www.dtfitalia.it";
   const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
 
   const res = await fetch(
@@ -56,6 +55,27 @@ export default async function ProductPage({ params }) {
   const product = await getProduct(params.slug);
   if (!product) notFound();
 
+  // JSON-LD Schema per SEO
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.images?.map(img => img.src) || ["https://www.dtfitalia.it/placeholder.png"],
+    "description": product.description || "",
+    "sku": product.sku || "",
+    "brand": {
+      "@type": "Brand",
+      "name": "DTF Italia"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://www.dtfitalia.it/serigrafia/${product.slug}`,
+      "priceCurrency": "EUR",
+      "price": product.price || "0",
+      "availability": "https://schema.org/InStock"
+    }
+  };
+
   return (
     <main className="container mx-auto px-4 py-12">
       {/* Breadcrumb */}
@@ -73,10 +93,7 @@ export default async function ProductPage({ params }) {
 
       {/* Layout */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* SX: immagini prodotto */}
         <GalleriaProdotto images={product.images} name={product.name} />
-
-        {/* DX: configuratore */}
         <Configurator product={product} />
       </section>
 
@@ -85,6 +102,12 @@ export default async function ProductPage({ params }) {
         <h2>Descrizione prodotto</h2>
         <div dangerouslySetInnerHTML={{ __html: product.description }} />
       </section>
+
+      {/* JSON-LD per SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
     </main>
   );
 }

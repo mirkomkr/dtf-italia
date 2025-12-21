@@ -79,4 +79,3 @@ export default function Home() {
     </>
   );
 }
-artella del progetto

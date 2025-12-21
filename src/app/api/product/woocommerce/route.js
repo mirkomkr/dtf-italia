@@ -1,3 +1,4 @@
+// app/api/product/woocommerce/route.js
 import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
 import { NextResponse } from "next/server";
 
@@ -15,30 +16,24 @@ export async function GET(request) {
   const slug = searchParams.get("slug");
 
   if (!category && !slug) {
-  return NextResponse.json(
-    { success: false, error: "Missing filters" },
-    { status: 400 }
-  );
-}
+    return NextResponse.json(
+      { success: false, error: "Missing filters" },
+      { status: 400 }
+    );
+  }
 
   try {
     const { data } = await api.get("products", {
       per_page: perPage,
-      category: category,
-      slug: slug,
+      category,
+      slug,
     });
 
-    return NextResponse.json({
-      success: true,
-      products: data,
-    });
+    return NextResponse.json({ success: true, products: data });
   } catch (error) {
-    if (process.env.NODE_ENV !== "production") {
-      console.error("Error fetching products:", error);
-    }
-
+    console.error("Error fetching products:", error.message);
     return NextResponse.json(
-      { success: false, error: "WooCommerce fetch failed" },
+      { success: false, error: error.message },
       { status: 500 }
     );
   }

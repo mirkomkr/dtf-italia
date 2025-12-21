@@ -69,7 +69,7 @@ export default async function ProductPage({ params }) {
   };
 
   return (
-    <main className="container mx-auto px-4 py-12">
+    <main className="bg-gray-200 container mx-auto px-4 py-12">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-gray-500">
         <ol className="flex gap-1 flex-wrap">

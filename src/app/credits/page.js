@@ -51,11 +51,9 @@ export default function CreditsPage() {
               Foto di <a href="https://unsplash.com/it/@badun?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Anastasiya Badun</a> su <a href="https://unsplash.com/it/foto/a-t-maglietta-con-limmagine-di-un-uomo-HXFFRDzZLH8?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Unsplash</a>
             </li>
             <li>
-              Foto di  <a href="https://pixabay.com/users/pedroml-1724523/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8557635" className="text-indigo-300 hover:underline">Pedro ml</a> su <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8557635" className="text-indigo-300 hover:underline">Pixabay</a>
+              Foto di  <a href="https://pixabay.com/users/pedroml-1724523/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8557635" className="text-indigo-300 hover:underline">Pedroml</a> su <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=8557635" className="text-indigo-300 hover:underline">Pixabay</a>
             </li>
-            <li>
               {/* aggiungi altri credits qui */}
-            </li>
           </ul>
         </div>
       </section>

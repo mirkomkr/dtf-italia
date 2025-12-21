@@ -41,10 +41,13 @@ export default async function SerigrafiaPage() {
   let products = [];
 
   try {
-const res = await fetch(
-  `/api/product/woocommerce?category=${categorySlug}`,
-  { next: { revalidate: 60 } }
-);
+const host = process.env.NEXT_PUBLIC_SITE_URL || "localhost:3000";
+const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+
+const res = await fetch(`${protocol}://${host}/api/product/woocommerce?category=${categorySlug}`, {
+  next: { revalidate: 60 }
+});
+
 
 
     if (!res.ok) {
@@ -120,7 +123,7 @@ const res = await fetch(
 
       <HeroSerigrafia />
 
-      <main className="container mx-auto px-4 py-20">
+      <main className="bg-gray-200 container mx-auto px-4 py-20">
         <h1 className="text-4xl font-bold mb-8 text-gray-900">Stampa Serigrafica Professionale</h1>
 
         {products.length === 0 ? (

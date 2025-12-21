@@ -15,6 +15,12 @@ const nextConfig = {
         hostname: "dtfpro.it",
         pathname: "/wp-content/uploads/**",
       },
+      // 🔹 Sito Live DTF Italia
+      {
+        protocol: "https",
+        hostname: "dtfitalia.it",
+        pathname: "/wp-content/uploads/**",
+      },
     ],
   },
 };

@@ -23,11 +23,32 @@ export async function GET(request) {
   }
 
   try {
-    const { data } = await api.get("products", {
+    let categoryId = null;
+
+    // Se c'è un filtro categoria (che è uno slug lato client), dobbiamo trovare l'ID
+    if (category) {
+      const { data: categories } = await api.get("products/categories", {
+        slug: category,
+      });
+
+      if (categories && categories.length > 0) {
+        categoryId = categories[0].id;
+      } else {
+        // Se la categoria non esiste, ritorniamo array vuoto subito
+        return NextResponse.json({ success: true, products: [] });
+      }
+    }
+
+    const params = {
       per_page: perPage,
-      category,
       slug,
-    });
+    };
+
+    if (categoryId) {
+      params.category = categoryId;
+    }
+
+    const { data } = await api.get("products", params);
 
     return NextResponse.json({ success: true, products: data });
   } catch (error) {

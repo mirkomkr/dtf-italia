@@ -3,21 +3,13 @@ import { notFound } from "next/navigation";
 import GalleriaProdotto from "./galleriaProdotto";
 import Configurator from "../components/ConfiguratoreSerigrafia";
 
+import { getWooCommerceProducts } from "@/lib/woocommerce";
+
 /* ===============================
-   FETCH SERVER (URL assoluto)
+   FETCH SERVER (Direct Lib Call)
 ================================ */
 async function getProduct(slug) {
-  const host = process.env.NODE_ENV === "development" ? "localhost:3000" : "www.dtfitalia.it";
-  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-
-  const res = await fetch(
-    `${protocol}://${host}/api/product/woocommerce?perPage=1&slug=${slug}`,
-    { cache: "no-store" }
-  );
-
-  if (!res.ok) return null;
-
-  const { products } = await res.json();
+  const products = await getWooCommerceProducts({ slug, perPage: 1 });
   return products?.[0] ?? null;
 }
 

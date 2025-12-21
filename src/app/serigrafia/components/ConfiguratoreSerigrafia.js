@@ -32,6 +32,7 @@ export default function ConfiguratoreSerigrafia({ product }) {
   const [isInitialSetupComplete, setIsInitialSetupComplete] = useState(false);
   
   // Step 1 State
+  const [selectedGender, setSelectedGender] = useState('uomo'); // Default Uomo
   const [selectedColor, setSelectedColor] = useState(null);
   
   // Quantity Matrix State
@@ -189,6 +190,8 @@ export default function ConfiguratoreSerigrafia({ product }) {
       payload.append('zip', formData.zip);
       payload.append('shippingOption', shippingOption);
       
+      payload.append('gender', selectedGender); // Add Gender to payload
+
       const colorLabel = SHIRT_COLORS.find(c => c.id === selectedColor)?.label || selectedColor;
       payload.append('color', colorLabel);
       
@@ -295,6 +298,37 @@ export default function ConfiguratoreSerigrafia({ product }) {
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Serigrafia Premium</h2>
               <p className="text-sm text-gray-500">Configura le tue t-shirt personalizzate</p>
+            </div>
+
+            {/* Gender Selection */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">Modello</label>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => setSelectedGender('uomo')}
+                  className={cn(
+                    "p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2",
+                    selectedGender === 'uomo' 
+                      ? "border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-600" 
+                      : "border-gray-200 text-gray-600 hover:border-indigo-200 hover:bg-gray-50"
+                  )}
+                >
+                  <span className="font-bold text-lg">Uomo</span>
+                  <span className="text-xs text-gray-500">Taglio Classico</span>
+                </button>
+                <button
+                  onClick={() => setSelectedGender('donna')}
+                  className={cn(
+                    "p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2",
+                    selectedGender === 'donna' 
+                      ? "border-pink-600 bg-pink-50 text-pink-700 shadow-sm ring-1 ring-pink-600" 
+                      : "border-gray-200 text-gray-600 hover:border-pink-200 hover:bg-gray-50"
+                  )}
+                >
+                  <span className="font-bold text-lg">Donna</span>
+                  <span className="text-xs text-gray-500">Taglio Avvitato</span>
+                </button>
+              </div>
             </div>
 
             {/* Colors Selection */}
@@ -566,7 +600,10 @@ export default function ConfiguratoreSerigrafia({ product }) {
                            <p className="font-bold text-indigo-900">T-Shirt Serigrafia</p>
                            <span className="font-bold text-indigo-900">x{totalQuantity}</span>
                         </div>
-                        <p className="text-sm text-indigo-700 mt-1">Colore: <span className="capitalize font-semibold">{selectedColor.replace('_', ' ')}</span></p>
+                        <p className="text-sm text-indigo-700 mt-1">
+                          Modello: <span className="font-semibold capitalize">{selectedGender}</span> • 
+                          Colore: <span className="capitalize font-semibold">{selectedColor?.replace('_', ' ')}</span>
+                        </p>
                         
                         {/* Size Breakdown */}
                         <div className="flex flex-wrap gap-2 mt-2">

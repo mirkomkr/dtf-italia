@@ -1,13 +1,5 @@
-// app/api/product/woocommerce/route.js
-import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
 import { NextResponse } from "next/server";
-
-const api = new WooCommerceRestApi({
-  url: process.env.WORDPRESS_URL,
-  consumerKey: process.env.WC_CONSUMER_KEY,
-  consumerSecret: process.env.WC_CONSUMER_SECRET,
-  version: "wc/v3",
-});
+import { getWooCommerceProducts } from "@/lib/woocommerce";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -23,38 +15,12 @@ export async function GET(request) {
   }
 
   try {
-    let categoryId = null;
-
-    // Se c'è un filtro categoria (che è uno slug lato client), dobbiamo trovare l'ID
-    if (category) {
-      const { data: categories } = await api.get("products/categories", {
-        slug: category,
-      });
-
-      if (categories && categories.length > 0) {
-        categoryId = categories[0].id;
-      } else {
-        // Se la categoria non esiste, ritorniamo array vuoto subito
-        return NextResponse.json({ success: true, products: [] });
-      }
-    }
-
-    const params = {
-      per_page: perPage,
-      slug,
-    };
-
-    if (categoryId) {
-      params.category = categoryId;
-    }
-
-    const { data } = await api.get("products", params);
-
-    return NextResponse.json({ success: true, products: data });
+    const products = await getWooCommerceProducts({ perPage, category, slug });
+    return NextResponse.json({ success: true, products });
   } catch (error) {
-    console.error("Error fetching products:", error.message);
+    console.error("Error in API route:", error);
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: "Failed to fetch products" },
       { status: 500 }
     );
   }

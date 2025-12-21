@@ -31,35 +31,18 @@ export const metadata = {
 
 export const viewport = { width: "device-width", initialScale: 1 };
 
+import { getWooCommerceProducts } from "@/lib/woocommerce";
+
+// ... existing imports
+
 export default async function SerigrafiaPage() {
   const categorySlug = "stampa-abbigliamento-serigrafia";
   const pageSlug = "serigrafia";
 
-  const host = process.env.NEXT_PUBLIC_SITE_URL || "www.dtfitalia.it";
-  const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-
-  let products = [];
-
-  try {
-const host = process.env.NEXT_PUBLIC_SITE_URL || "localhost:3000";
-const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-
-const res = await fetch(`${protocol}://${host}/api/product/woocommerce?category=${categorySlug}`, {
-  next: { revalidate: 60 }
-});
-
-
-
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Errore fetch API:", text);
-    } else {
-      const data = await res.json();
-      products = data.products ?? [];
-    }
-  } catch (err) {
-    console.error("Errore fetch prodotti:", err);
-  }
+  let products = await getWooCommerceProducts({ 
+    category: categorySlug,
+    perPage: 50 // Limit high enough for this page
+  });
 
   // Schema JSON-LD derivato dai prodotti
   const schemaProducts = products.map(product => ({

@@ -303,7 +303,7 @@ export default function ConfiguratoreSerigrafia({ product }) {
             {/* Gender Selection */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">Modello</label>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={() => setSelectedGender('uomo')}
                   className={cn(
@@ -313,8 +313,8 @@ export default function ConfiguratoreSerigrafia({ product }) {
                       : "border-gray-200 text-gray-600 hover:border-indigo-200 hover:bg-gray-50"
                   )}
                 >
-                  <span className="font-bold text-lg">Uomo</span>
-                  <span className="text-xs text-gray-500">Taglio Classico</span>
+                  <span className="font-bold text-base sm:text-lg">Uomo</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500">Taglio Classico</span>
                 </button>
                 <button
                   onClick={() => setSelectedGender('donna')}
@@ -325,8 +325,20 @@ export default function ConfiguratoreSerigrafia({ product }) {
                       : "border-gray-200 text-gray-600 hover:border-pink-200 hover:bg-gray-50"
                   )}
                 >
-                  <span className="font-bold text-lg">Donna</span>
-                  <span className="text-xs text-gray-500">Taglio Avvitato</span>
+                  <span className="font-bold text-base sm:text-lg">Donna</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500">Taglio Avvitato</span>
+                </button>
+                <button
+                  onClick={() => setSelectedGender('bambino')}
+                  className={cn(
+                    "p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2",
+                    selectedGender === 'bambino' 
+                      ? "border-teal-600 bg-teal-50 text-teal-700 shadow-sm ring-1 ring-teal-600" 
+                      : "border-gray-200 text-gray-600 hover:border-teal-200 hover:bg-gray-50"
+                  )}
+                >
+                  <span className="font-bold text-base sm:text-lg">Bambino/a</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500">Taglio Classico</span>
                 </button>
               </div>
             </div>

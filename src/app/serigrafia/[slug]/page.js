@@ -91,9 +91,21 @@ export default async function ProductPage({ params }) {
       </section>
 
       {/* Descrizione */}
-      <section className="mt-16 prose prose-indigo max-w-none">
-        <h2>Descrizione prodotto:</h2>
-        <div dangerouslySetInnerHTML={{ __html: product.description }} />
+      {/* Descrizione */}
+      <section className="mt-12 bg-white rounded-2xl shadow-sm p-8 md:p-12 border border-gray-100">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+          <span className="w-1.5 h-8 bg-red-600 rounded-full" aria-hidden="true"></span>
+          Descrizione prodotto:
+        </h2>
+        
+        <div 
+          className="prose prose-lg prose-gray max-w-none
+            prose-headings:font-bold prose-headings:text-gray-900 
+            prose-p:text-gray-700 prose-p:leading-relaxed 
+            prose-a:text-red-600 prose-a:no-underline hover:prose-a:underline
+            prose-li:text-gray-700 prose-strong:text-gray-900 prose-strong:font-bold"
+          dangerouslySetInnerHTML={{ __html: product.description }} 
+        />
       </section>
 
       {/* JSON-LD per SEO */}

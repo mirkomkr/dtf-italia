@@ -92,7 +92,7 @@ export default async function ProductPage({ params }) {
 
       {/* Descrizione */}
       <section className="mt-16 prose prose-indigo max-w-none">
-        <h2>Descrizione prodotto</h2>
+        <h2>Descrizione prodotto:</h2>
         <div dangerouslySetInnerHTML={{ __html: product.description }} />
       </section>
 

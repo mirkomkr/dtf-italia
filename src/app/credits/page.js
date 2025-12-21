@@ -60,7 +60,7 @@ export default function CreditsPage() {
               Foto di <a href="https://unsplash.com/it/@mediamodifier?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Mediamodifier</a> su <a href="https://unsplash.com/it/foto/giacca-bianca-con-zip-appesa-su-appendiabiti-in-legno-marrone-kJXGTOY1wLQ?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Unsplash</a>
             </li>
             <li>  
-              <a href="https://it.freepik.com/foto-gratuito/donna-che-indossa-un-modello-di-berretto-bianco_16434138.htm#fromView=search&page=1&position=0&uuid=b5306eac-cf05-48a8-96ed-a7a2085ce6ec&query=cap+mockup" className="text-indigo-300 hover:underline">Immagine di rawpixel.com su Freepik</a>
+              Foto di <a href="https://it.freepik.com/foto-gratuito/donna-che-indossa-un-modello-di-berretto-bianco_16434138.htm#fromView=search&page=1&position=0&uuid=b5306eac-cf05-48a8-96ed-a7a2085ce6ec&query=cap+mockup" className="text-indigo-300 hover:underline">Immagine di rawpixel.com su Freepik</a>
             </li>
               {/* aggiungi altri credits qui */}
           </ul>

@@ -1,4 +1,4 @@
-import Configurator from './Configurator';
+import Configurator from './ConfiguratoreDTF';
 import { Check } from 'lucide-react';
 
 export default function Hero() {

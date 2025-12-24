@@ -1,8 +1,7 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import GalleriaProdotto from "./galleriaProdotto";
-import Configurator from "../components/ConfiguratoreSerigrafia";
-
+import SerigrafiaContainer from "@/components/configurator/serigrafia/SerigrafiaContainer";
 import { getWooCommerceProducts } from "@/lib/woocommerce";
 
 /* ===============================
@@ -87,7 +86,10 @@ export default async function ProductPage({ params }) {
       {/* Layout */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <GalleriaProdotto images={product.images} name={product.name} />
-        <Configurator product={product} />
+        <SerigrafiaContainer 
+          product={product} 
+          enableVariants={!['cappello-con-visiera', 'borsa', 'shopper', 'gadget'].some(keyword => product.slug.includes(keyword))} 
+        />
       </section>
 
       {/* Descrizione */}

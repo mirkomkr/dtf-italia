@@ -5,7 +5,11 @@ import dynamic from 'next/dynamic';
 
 const Footer = dynamic(() => import('@/components/Footer'), { ssr: true });
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: 'swap',
+  preload: true
+});
 
 export default function RootLayout({ children }) {
   return (
@@ -17,11 +21,11 @@ export default function RootLayout({ children }) {
         >
           Salta al contenuto principale
         </a>
-        {/* <Header /> */}
+        <Header />
         <main id="main-content" className="min-h-screen pt-20">
           {children}
         </main>
-        {/* <Footer /> */}
+        <Footer />
       </body>
     </html>
   );

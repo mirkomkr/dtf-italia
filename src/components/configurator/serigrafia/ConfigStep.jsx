@@ -142,7 +142,8 @@ export default function ConfigStep({
             </div>
         </div>
 
-        {/* Quantity Input */}
+
+        {/* Quantity Input - COMMENTED FOR PERF TEST
         {enableVariants ? (
             <SizeMatrix 
                 sizes={SHIRT_SIZES}
@@ -158,16 +159,18 @@ export default function ConfigStep({
                 visible={!!selectedColor}
             />
         )}
+        */}
 
-        {/* Print Options */}
+        {/* Print Options - COMMENTED FOR PERF TEST
         <PrintOptionSelector 
             frontValue={frontPrint}
             backValue={backPrint}
             onFrontChange={setFrontPrint}
             onBackChange={setBackPrint}
         />
+        */}
 
-        {/* Extras */}
+        {/* Extras - COMMENTED FOR PERF TEST
         <div className="mb-4 p-4 bg-indigo-50 border border-indigo-100 rounded-lg">
             <label htmlFor="file-check" className="flex items-start gap-3 cursor-pointer">
             <input 
@@ -183,12 +186,13 @@ export default function ConfigStep({
             </div>
             </label>
         </div>
+        */}
 
         <div className="mt-auto pt-6">
+             {/* Price Display - COMMENTED FOR PERF TEST
              <div className="flex justify-between items-center mb-6">
                  <div>
                    <p className="text-sm text-gray-500">Totale stimato</p>
-                   {/* Prevent Hydration Mismatch with Client Only rendering for price */}
                    <p className="text-3xl font-bold text-indigo-600">{formatCurrency(price.totalPrice)}</p>
                  </div>
                  <div className="text-right">
@@ -196,6 +200,7 @@ export default function ConfigStep({
                     <p className="font-semibold text-gray-700">{formatCurrency(price.unitPrice)}</p>
                  </div>
               </div>
+              */}
 
               <button 
                 onClick={onNext}

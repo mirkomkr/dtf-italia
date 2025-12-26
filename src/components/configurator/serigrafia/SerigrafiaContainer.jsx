@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { calculatePrice } from '@/lib/pricing-engine';
 import StepNavigation from '../shared/StepNavigation';
 import ConfigStep from './ConfigStep';
@@ -16,20 +16,6 @@ const UploadStep = dynamic(() => import('./UploadStep'), {
   loading: () => <p className="p-10 text-center text-gray-500">Caricamento Upload...</p>,
   ssr: false
 });
-
-// Debounce hook
-function useDebounce(value, delay) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-  return debouncedValue;
-}
 
 export default function SerigrafiaContainer({ product, enableVariants = true }) {
   // Steps: 1=Config, 2=Checkout, 3=Upload (Success)
@@ -66,32 +52,56 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   const [price, setPrice] = useState({ unitPrice: 0, totalPrice: 0 });
 
   // --- Derived State with Memoization ---
-  const totalQuantity = useMemo(() => {
-    return enableVariants 
-      ? Object.values(quantities).reduce((accColor, colorQty) => 
+  // Helper to get total qty from current state
+  const getTotalQty = useCallback((currentQuantities, currentSingle) => {
+      return enableVariants 
+      ? Object.values(currentQuantities).reduce((accColor, colorQty) => 
           accColor + Object.values(colorQty).reduce((accGender, genderQty) => 
                accGender + Object.values(genderQty).reduce((a, b) => a + (parseInt(b) || 0), 0)
           , 0)
         , 0)
-      : parseInt(singleQuantity) || 0;
-  }, [enableVariants, quantities, singleQuantity]);
+      : parseInt(currentSingle) || 0;
+  }, [enableVariants]);
 
-  // Debounce pricing calculation inputs to avoid rapid re-calcs during typing
-  const debouncedTotalQuantity = useDebounce(totalQuantity, 300);
-  const debouncedFrontPrint = useDebounce(frontPrint, 300);
-  const debouncedBackPrint = useDebounce(backPrint, 300);
-  const debouncedFileCheck = useDebounce(fileCheck, 300);
+  // Current Total
+  const totalQuantity = useMemo(() => getTotalQty(quantities, singleQuantity), [quantities, singleQuantity, getTotalQty]);
+
+
+  /**
+   * ON-DEMAND Price Recalculation
+   * Replaces useEffect to avoid initial render blocking and unnecessary runs.
+   */
+  const recalculatePrice = useCallback((newQuantities, newSingle, newFront, newBack, newFileCheck) => {
+      const qty = getTotalQty(newQuantities, newSingle);
+      
+      // Optimization: if qty is 0, reset price immediately
+      if (qty === 0) {
+          setPrice({ unitPrice: 0, totalPrice: 0 });
+          return;
+      }
+
+      const result = calculatePrice('serigrafia', {
+          quantity: qty,
+          frontPrint: newFront,
+          backPrint: newBack,
+          fileCheck: newFileCheck
+      });
+      setPrice(result);
+  }, [getTotalQty]);
+
 
   // --- Handlers ---
   const handleQuantityChange = useCallback((size, value) => {
     if (!selectedColor) return;
     const newVal = Math.max(0, parseInt(value) || 0);
     
+    // We must update state AND recalculate price
+    // Since state update is async, we pass the *future* state to the calculator
     setQuantities(prev => {
         const colorData = prev[selectedColor] || {};
         const genderData = colorData[activeGender] || {};
         
-        return {
+        const newQuantities = {
             ...prev,
             [selectedColor]: {
                 ...colorData,
@@ -101,8 +111,37 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                 }
             }
         };
+        
+        // Trigger price recalc with NEW quantities
+        recalculatePrice(newQuantities, singleQuantity, frontPrint, backPrint, fileCheck);
+        
+        return newQuantities;
     });
-  }, [selectedColor, activeGender]);
+  }, [selectedColor, activeGender, singleQuantity, frontPrint, backPrint, fileCheck, recalculatePrice]);
+
+  // Wrapper for Single Quantity change (for non-variant products)
+  const handleSingleQuantityChange = useCallback((val) => {
+      const newVal = parseInt(val) || 0;
+      setSingleQuantity(newVal);
+      recalculatePrice(quantities, newVal, frontPrint, backPrint, fileCheck);
+  }, [quantities, frontPrint, backPrint, fileCheck, recalculatePrice]);
+
+  // Wrappers for Option Changes
+  const handleFrontPrintChange = useCallback((val) => {
+      setFrontPrint(val);
+      recalculatePrice(quantities, singleQuantity, val, backPrint, fileCheck);
+  }, [quantities, singleQuantity, backPrint, fileCheck, recalculatePrice]);
+
+  const handleBackPrintChange = useCallback((val) => {
+      setBackPrint(val);
+      recalculatePrice(quantities, singleQuantity, frontPrint, val, fileCheck);
+  }, [quantities, singleQuantity, frontPrint, fileCheck, recalculatePrice]);
+
+  const handleFileCheckChange = useCallback((val) => {
+      setFileCheck(val);
+      recalculatePrice(quantities, singleQuantity, frontPrint, backPrint, val);
+  }, [quantities, singleQuantity, frontPrint, backPrint, recalculatePrice]);
+
 
   const handleStepClick = useCallback((step) => {
     if(step === 3 && !orderId) return;
@@ -127,20 +166,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   };
 
   // --- Effects ---
-  useEffect(() => {
-    // SKIP CALCULATION if quantity is 0 (optimization for initial load)
-    if (debouncedTotalQuantity === 0 && price.totalPrice === 0) return;
-
-    const result = calculatePrice('serigrafia', {
-        quantity: debouncedTotalQuantity,
-        frontPrint: debouncedFrontPrint,
-        backPrint: debouncedBackPrint,
-        fileCheck: debouncedFileCheck
-    });
-    setPrice(result);
-  }, [debouncedTotalQuantity, debouncedFrontPrint, debouncedBackPrint, debouncedFileCheck, price.totalPrice]);
-
-  useEffect(() => {
+  // Replaced by direct calls in handlers.
+  // Shipping cost effect is light enough to stay or can be moved to shipping selector on change.
+  // For strictness, let's keep it but it's very cheap.
+  React.useEffect(() => {
     setShippingCost(shippingOption === 'pickup' ? 0 : 7.50);
   }, [shippingOption]);
 
@@ -255,13 +284,13 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                 quantities={quantities}
                 onQuantityChange={handleQuantityChange}
                 singleQuantity={singleQuantity}
-                setSingleQuantity={setSingleQuantity}
+                setSingleQuantity={handleSingleQuantityChange}
                 frontPrint={frontPrint}
-                setFrontPrint={setFrontPrint}
+                setFrontPrint={handleFrontPrintChange}
                 backPrint={backPrint}
-                setBackPrint={setBackPrint}
+                setBackPrint={handleBackPrintChange}
                 fileCheck={fileCheck}
-                setFileCheck={setFileCheck}
+                setFileCheck={handleFileCheckChange}
                 price={price}
                 totalQuantity={totalQuantity}
                 onNext={() => setCurrentStep(2)}

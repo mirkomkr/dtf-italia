@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Check } from 'lucide-react';
+import Check from 'lucide-react/dist/esm/icons/check';
 
 export default function StepNavigation({ currentStep, steps, onStepClick, isStepCompleted }) {
   // steps: array of objects { id: 1, label: 'Configura' }

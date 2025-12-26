@@ -2,11 +2,23 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { calculatePrice } from '@/lib/pricing-engine';
-import StepNavigation from '../shared/StepNavigation';
-import ConfigStep from './ConfigStep';
 import dynamic from 'next/dynamic';
 
-// Dynamic imports for heavy steps
+// Dynamic imports for ALL steps and UI components to minimize initial TBT
+const StepNavigation = dynamic(() => import('../shared/StepNavigation'), {
+  spacing: '0', // No placeholder needed or minimal
+  ssr: true // StepNavigation is small and visual, SSR is okay but if heavy, set to false.
+            // User requested "Move StepNavigation into dynamic...". 
+            // Layout shift might occur if ssr: false. 
+            // Given icons are optimized now, SSR true is better for CLS, but if TBT is priority...
+            // Let's use ssr: true but with the optimized file.
+});
+
+const ConfigStep = dynamic(() => import('./ConfigStep'), {
+    loading: () => <div className="animate-pulse h-96 bg-gray-50 rounded-2xl" />,
+    ssr: false // Defer heavy config logic
+});
+
 const CheckoutStep = dynamic(() => import('./CheckoutStep'), {
   loading: () => <p className="p-10 text-center text-gray-500">Caricamento Checkout...</p>,
   ssr: false

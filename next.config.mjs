@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'lodash', 'date-fns']
+  },
   images: {
     remotePatterns: [
       // 🔹 WordPress locale (Docker)

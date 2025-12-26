@@ -2,11 +2,25 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import Check from 'lucide-react/dist/esm/icons/check';
-import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
+// import Check from 'lucide-react/dist/esm/icons/check'; // REMOVED
+// import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right'; // REMOVED
 import { formatCurrency } from '@/lib/pricing-engine';
 import { SHIRT_COLORS, SHIRT_SIZES } from './constants';
 import dynamic from 'next/dynamic';
+
+const CheckIcon = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+);
+
+const ArrowRightIcon = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <polyline points="12 5 19 12 12 19" />
+    </svg>
+);
+
 
 // Dynamic imports for heavy UI components
 const SizeMatrix = dynamic(() => import('../shared/SizeMatrix'), {
@@ -115,7 +129,7 @@ export default function ConfigStep({
                     title={color.label}
                 >
                     {isSelected && (
-                        <Check className={cn("w-5 h-5", color.id === 'bianco' ? "text-black" : "text-white")} />
+                        <CheckIcon className={cn("w-5 h-5", color.id === 'bianco' ? "text-black" : "text-white")} />
                     )}
                     {itemsInColor > 0 && !isSelected && (
                         <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-green-500 text-[10px] text-white ring-2 ring-white">
@@ -189,7 +203,7 @@ export default function ConfigStep({
                 className="w-full py-4 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Procedi all'Ordine
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRightIcon className="w-5 h-5" />
               </button>
         </div>
     </div>

@@ -28,11 +28,9 @@ export default function ProductCard({ product }) {
         <Image
           src={imageSrc}
           alt={imageAlt}
-          width={1200}
-          height={1200}
+          width={400}
+          height={400}
           quality={80}
-          placeholder="blur"
-          blurDataURL="/placeholder-blur.webp"
           sizes="(max-width: 640px) 100vw,
                  (max-width: 1024px) 50vw,
                  33vw"

@@ -1,15 +1,21 @@
 // components/HeroSerigrafia.jsx
-import { Check } from "lucide-react";
+// import { Check } from "lucide-react"; // REMOVED
+
+const CheckIcon = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+);
 
 export default function HeroSerigrafia() {
   return (
     <section className="relative bg-gradient-to-br from-orange-700 via-red-700 to-pink-700 min-h-screen flex items-center py-20 overflow-hidden">
       
-      {/* Background Elements (stesso pattern DTF) */}
+      {/* Background Elements (Static for Perf) */}
       <div className="absolute inset-0 opacity-20" aria-hidden="true">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-red-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-red-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
+        <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -49,7 +55,7 @@ export default function HeroSerigrafia() {
                   key={i}
                   className="flex items-center gap-2 text-gray-200 bg-white/5 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10"
                 >
-                  <Check className="w-5 h-5 text-green-400" aria-hidden="true" />
+                  <CheckIcon className="w-5 h-5 text-green-400" aria-hidden="true" />
                   <span>{item}</span>
                 </li>
               ))}

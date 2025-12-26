@@ -1,4 +1,4 @@
-import Configurator from './ConfiguratoreDTF';
+{/* import Configurator from './ConfiguratoreDTF'; */}
 import { Check } from 'lucide-react';
 
 export default function Hero() {
@@ -42,7 +42,7 @@ export default function Hero() {
 
           {/* Configurator */}
           <div className="flex-1 w-full max-w-md lg:max-w-lg">
-            <Configurator />
+            {/* <Configurator /> */}
           </div>
           
         </div>

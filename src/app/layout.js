@@ -17,11 +17,11 @@ export default function RootLayout({ children }) {
         >
           Salta al contenuto principale
         </a>
-        <Header />
+        {/* <Header /> */}
         <main id="main-content" className="min-h-screen pt-20">
           {children}
         </main>
-        <Footer />
+        {/* <Footer /> */}
       </body>
     </html>
   );

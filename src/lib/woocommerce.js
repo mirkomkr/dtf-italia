@@ -1,31 +1,68 @@
-import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
+import { cache } from 'react';
 
-const api = new WooCommerceRestApi({
-  url: process.env.WORDPRESS_URL,
-  consumerKey: process.env.WC_CONSUMER_KEY,
-  consumerSecret: process.env.WC_CONSUMER_SECRET,
-  version: "wc/v3",
-});
+const baseUrl = process.env.WORDPRESS_URL;
+const consumerKey = process.env.WC_CONSUMER_KEY;
+const consumerSecret = process.env.WC_CONSUMER_SECRET;
+
+// 1. In-memory cache for Category Slug -> ID resolution
+const CATEGORY_ID_CACHE = new Map();
+
+/**
+ * Helper to perform authenticated WooCommerce fetch with Next.js caching options.
+ */
+async function fetchWooCommerce(endpoint, params = {}) {
+  const url = new URL(`${baseUrl}/wp-json/wc/v3/${endpoint}`);
+  
+  Object.keys(params).forEach(key => {
+    if (params[key] !== undefined && params[key] !== null) {
+      url.searchParams.append(key, params[key]);
+    }
+  });
+
+  const authHeader = `Basic ${btoa(`${consumerKey}:${consumerSecret}`)}`;
+  
+  // Dev mode: reduce revalidation time to see changes faster, or use 0 to disable.
+  // Prod mode: use 3600 (1 hour) as requested.
+  const isDev = process.env.NODE_ENV === 'development';
+  const revalidateTime = isDev ? 60 : 3600; 
+
+  const res = await fetch(url.toString(), {
+    headers: {
+      Authorization: authHeader,
+    },
+    next: { revalidate: revalidateTime },
+  });
+
+  if (!res.ok) {
+    throw new Error(`WooCommerce API Error: ${res.status} ${res.statusText}`);
+  }
+
+  return res.json();
+}
 
 /**
  * Fetch products from WooCommerce API.
- * Supports resolving category slug to ID first.
+ * Optimized with React cache (Request Memoization), Data Cache, and In-Memory Category Cache.
  */
-export async function getWooCommerceProducts({ perPage = 50, category, slug } = {}) {
+export const getWooCommerceProducts = cache(async ({ perPage = 50, category, slug } = {}) => {
   try {
     let categoryId = null;
 
     // Resolve category filter (slug) to ID
     if (category) {
-      const { data: categories } = await api.get("products/categories", {
-        slug: category,
-      });
-
-      if (categories && categories.length > 0) {
-        categoryId = categories[0].id;
+      if (CATEGORY_ID_CACHE.has(category)) {
+        categoryId = CATEGORY_ID_CACHE.get(category);
       } else {
-        // Category not found, return empty array immediately
-        return [];
+        // Fetch category ID if not in memory
+        const categories = await fetchWooCommerce("products/categories", { slug: category });
+        
+        if (categories && categories.length > 0) {
+          categoryId = categories[0].id;
+          CATEGORY_ID_CACHE.set(category, categoryId);
+        } else {
+          // Category not found
+          return [];
+        }
       }
     }
 
@@ -38,11 +75,24 @@ export async function getWooCommerceProducts({ perPage = 50, category, slug } = 
       params.category = categoryId;
     }
 
-    const { data } = await api.get("products", params);
-    return data;
+    const data = await fetchWooCommerce("products", params);
+    
+    // Map data to reduce payload size and improve TBT
+    return data.map(product => ({
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      price: product.price,
+      description: product.description,
+      short_description: product.short_description,
+      sku: product.sku,
+      images: product.images?.map(img => ({
+        src: img.src,
+        alt: img.alt || product.name
+      })) || []
+    }));
   } catch (error) {
     console.error("Error fetching WooCommerce products:", error.message);
-    // Return empty array on error to safely handle UI 
     return [];
   }
-}
+});

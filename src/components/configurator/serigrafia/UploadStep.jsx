@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Check } from 'lucide-react';
+import Check from 'lucide-react/dist/esm/icons/check';
 import FileUploader from '../shared/FileUploader';
 
 export default function UploadStep({

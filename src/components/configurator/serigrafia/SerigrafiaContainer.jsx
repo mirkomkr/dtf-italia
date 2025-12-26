@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { calculatePrice } from '@/lib/pricing-engine';
 import StepNavigation from '../shared/StepNavigation';
 import ConfigStep from './ConfigStep';
-import { SHIRT_COLORS, SHIRT_SIZES } from './constants';
 import dynamic from 'next/dynamic';
 
 // Dynamic imports for heavy steps
@@ -129,6 +128,9 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
   // --- Effects ---
   useEffect(() => {
+    // SKIP CALCULATION if quantity is 0 (optimization for initial load)
+    if (debouncedTotalQuantity === 0 && price.totalPrice === 0) return;
+
     const result = calculatePrice('serigrafia', {
         quantity: debouncedTotalQuantity,
         frontPrint: debouncedFrontPrint,
@@ -136,7 +138,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
         fileCheck: debouncedFileCheck
     });
     setPrice(result);
-  }, [debouncedTotalQuantity, debouncedFrontPrint, debouncedBackPrint, debouncedFileCheck]);
+  }, [debouncedTotalQuantity, debouncedFrontPrint, debouncedBackPrint, debouncedFileCheck, price.totalPrice]);
 
   useEffect(() => {
     setShippingCost(shippingOption === 'pickup' ? 0 : 7.50);

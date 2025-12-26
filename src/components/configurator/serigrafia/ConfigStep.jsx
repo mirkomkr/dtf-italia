@@ -2,12 +2,27 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Check, ArrowRight } from 'lucide-react';
+import Check from 'lucide-react/dist/esm/icons/check';
+import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right';
 import { formatCurrency } from '@/lib/pricing-engine';
-import SizeMatrix from '../shared/SizeMatrix';
-import SingleSizeSelector from '../shared/SingleSizeSelector';
-import PrintOptionSelector from '../shared/PrintOptionSelector';
 import { SHIRT_COLORS, SHIRT_SIZES } from './constants';
+import dynamic from 'next/dynamic';
+
+// Dynamic imports for heavy UI components
+const SizeMatrix = dynamic(() => import('../shared/SizeMatrix'), {
+  loading: () => <div className="h-40 bg-gray-50 rounded-xl animate-pulse" />,
+  ssr: false
+});
+
+const SingleSizeSelector = dynamic(() => import('../shared/SingleSizeSelector'), {
+    loading: () => <div className="h-20 bg-gray-50 rounded-xl animate-pulse" />,
+    ssr: false
+});
+
+const PrintOptionSelector = dynamic(() => import('../shared/PrintOptionSelector'), {
+    loading: () => <div className="h-32 bg-gray-50 rounded-xl animate-pulse" />,
+    ssr: false
+});
 
 export default function ConfigStep({
   enableVariants = true,
@@ -159,6 +174,7 @@ export default function ConfigStep({
              <div className="flex justify-between items-center mb-6">
                  <div>
                    <p className="text-sm text-gray-500">Totale stimato</p>
+                   {/* Prevent Hydration Mismatch with Client Only rendering for price */}
                    <p className="text-3xl font-bold text-indigo-600">{formatCurrency(price.totalPrice)}</p>
                  </div>
                  <div className="text-right">

@@ -1,28 +1,36 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { calculatePrice, formatCurrency } from '@/lib/pricing-engine';
-import { cn } from '@/lib/utils';
-import { Check, ArrowRight, Info, ShoppingBag, Trash2 } from 'lucide-react';
-
-// Shared Components
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { calculatePrice } from '@/lib/pricing-engine';
 import StepNavigation from '../shared/StepNavigation';
-import SizeMatrix from '../shared/SizeMatrix';
-import SingleSizeSelector from '../shared/SingleSizeSelector';
-import PrintOptionSelector from '../shared/PrintOptionSelector';
-import FileUploader from '../shared/FileUploader';
+import ConfigStep from './ConfigStep';
+import { SHIRT_COLORS, SHIRT_SIZES } from './constants';
+import dynamic from 'next/dynamic';
 
-const SHIRT_COLORS = [
-  { id: 'nero', label: 'Nero', hex: '#000000' },
-  { id: 'bianco', label: 'Bianco', hex: '#ffffff', border: true },
-  { id: 'blu_notte', label: 'Blu Notte', hex: '#1e3a8a' },
-  { id: 'blu_royal', label: 'Blu Royal', hex: '#2563eb' },
-  { id: 'giallo', label: 'Giallo', hex: '#eab308' },
-  { id: 'verde', label: 'Verde', hex: '#16a34a' },
-  { id: 'viola', label: 'Viola', hex: '#7c3aed' },
-];
+// Dynamic imports for heavy steps
+const CheckoutStep = dynamic(() => import('./CheckoutStep'), {
+  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Checkout...</p>,
+  ssr: false
+});
 
-const SHIRT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
+const UploadStep = dynamic(() => import('./UploadStep'), {
+  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Upload...</p>,
+  ssr: false
+});
+
+// Debounce hook
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  return debouncedValue;
+}
 
 export default function SerigrafiaContainer({ product, enableVariants = true }) {
   // Steps: 1=Config, 2=Checkout, 3=Upload (Success)
@@ -34,7 +42,6 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   const [selectedColor, setSelectedColor] = useState(null);
   
   // Multi-color & Multi-gender quantities
-  // Structure: { [colorId]: { [gender]: { [size]: qty } } }
   const [quantities, setQuantities] = useState({});
 
   // Single quantity for no-variant products
@@ -59,26 +66,32 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   // --- Pricing State ---
   const [price, setPrice] = useState({ unitPrice: 0, totalPrice: 0 });
 
-  // --- Derived State ---
-  // Calculate total across all colors, genders, and sizes
-  const totalQuantity = enableVariants 
+  // --- Derived State with Memoization ---
+  const totalQuantity = useMemo(() => {
+    return enableVariants 
       ? Object.values(quantities).reduce((accColor, colorQty) => 
           accColor + Object.values(colorQty).reduce((accGender, genderQty) => 
                accGender + Object.values(genderQty).reduce((a, b) => a + (parseInt(b) || 0), 0)
           , 0)
         , 0)
       : parseInt(singleQuantity) || 0;
+  }, [enableVariants, quantities, singleQuantity]);
+
+  // Debounce pricing calculation inputs to avoid rapid re-calcs during typing
+  const debouncedTotalQuantity = useDebounce(totalQuantity, 300);
+  const debouncedFrontPrint = useDebounce(frontPrint, 300);
+  const debouncedBackPrint = useDebounce(backPrint, 300);
+  const debouncedFileCheck = useDebounce(fileCheck, 300);
 
   // --- Handlers ---
-  const handleQuantityChange = (size, value) => {
+  const handleQuantityChange = useCallback((size, value) => {
     if (!selectedColor) return;
     const newVal = Math.max(0, parseInt(value) || 0);
     
     setQuantities(prev => {
-        const colorData = prev[selectedColor] || {}; // Data for this color
-        const genderData = colorData[activeGender] || {}; // Data for this gender
+        const colorData = prev[selectedColor] || {};
+        const genderData = colorData[activeGender] || {};
         
-        // Return updated deep state
         return {
             ...prev,
             [selectedColor]: {
@@ -90,14 +103,14 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             }
         };
     });
-  };
+  }, [selectedColor, activeGender]);
 
-  const handleStepClick = (step) => {
+  const handleStepClick = useCallback((step) => {
     if(step === 3 && !orderId) return;
     if (step < currentStep || orderId) {
       setCurrentStep(step);
     }
-  };
+  }, [currentStep, orderId]);
 
   const handleFileSelect = (file) => {
       setSelectedFile(file);
@@ -114,32 +127,16 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Helper to get quantities for current view (current color + gender)
-  const getCurrentViewQuantities = () => {
-      if(!selectedColor) return {};
-      return quantities[selectedColor]?.[activeGender] || {};
-  };
-
-  // Helper to count items per color (for badges)
-  const getColorTotal = (colorId) => {
-      const colorData = quantities[colorId];
-      if(!colorData) return 0;
-      // Sum all genders, all sizes
-      return Object.values(colorData).reduce((accG, gQty) => 
-          accG + Object.values(gQty).reduce((a, b) => a + (parseInt(b) || 0), 0) 
-      , 0);
-  };
-
   // --- Effects ---
   useEffect(() => {
     const result = calculatePrice('serigrafia', {
-        quantity: totalQuantity,
-        frontPrint,
-        backPrint,
-        fileCheck
+        quantity: debouncedTotalQuantity,
+        frontPrint: debouncedFrontPrint,
+        backPrint: debouncedBackPrint,
+        fileCheck: debouncedFileCheck
     });
     setPrice(result);
-  }, [quantities, singleQuantity, totalQuantity, frontPrint, backPrint, fileCheck]);
+  }, [debouncedTotalQuantity, debouncedFrontPrint, debouncedBackPrint, debouncedFileCheck]);
 
   useEffect(() => {
     setShippingCost(shippingOption === 'pickup' ? 0 : 7.50);
@@ -161,8 +158,6 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
          payload.append('zip', formData.zip);
       }
       payload.append('shippingOption', shippingOption);
-      
-      // Removed single 'gender'/'color' field. Now sending detailed breakdown.
       
       if (enableVariants) {
           payload.append('detailedQuantities', JSON.stringify(quantities));
@@ -235,271 +230,6 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
       }
   };
 
-
-  // --- Render Steps ---
-  const renderStep1 = () => (
-    <div className="flex-grow flex flex-col space-y-6">
-        <div>
-            <h2 className="text-2xl font-bold text-gray-900">Configura Prodotto</h2>
-            <p className="text-sm text-gray-500">Scegli taglie e colori. Puoi abbinare più colori nello stesso ordine.</p>
-        </div>
-
-        {/* Gender Selection - ONLY if variants enabled */}
-        {enableVariants && (
-            <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">Modello</label>
-                <div className="grid grid-cols-3 gap-3">
-                    {['uomo', 'donna', 'bambino'].map(gender => (
-                        <button
-                            key={gender}
-                            onClick={() => setActiveGender(gender)}
-                            className={cn(
-                            "p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 capitalize",
-                            activeGender === gender 
-                                ? "border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-600" 
-                                : "border-gray-200 text-gray-600 hover:border-indigo-200 hover:bg-gray-50"
-                            )}
-                        >
-                            <span className="font-bold text-base sm:text-lg">{gender}</span>
-                        </button>
-                    ))}
-                </div>
-            </div>
-        )}
-
-        {/* Colors */}
-         <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Colore</label>
-            <div className="flex flex-wrap gap-3">
-            {SHIRT_COLORS.map((color) => {
-                const isSelected = selectedColor === color.id;
-                const isDimmed = selectedColor !== null && !isSelected;
-                const itemsInColor = getColorTotal(color.id);
-
-                return (
-                <button
-                    key={color.id}
-                    onClick={() => setSelectedColor(color.id)}
-                    className={cn(
-                    "w-10 h-10 rounded-full border-2 transition-all duration-300 shadow-sm flex items-center justify-center relative group",
-                    isSelected && "border-indigo-600 ring-4 ring-indigo-100 scale-125 z-10 opacity-100",
-                    isDimmed && "border-transparent opacity-30 grayscale hover:opacity-100 hover:grayscale-0 hover:scale-110",
-                    selectedColor === null && "border-transparent hover:scale-110 scale-100 opacity-100",
-                    color.border && !isSelected ? "border-gray-200" : ""
-                    )}
-                    style={{ backgroundColor: color.hex }}
-                    title={color.label}
-                >
-                    {isSelected && (
-                        <Check className={cn("w-5 h-5", color.id === 'bianco' ? "text-black" : "text-white")} />
-                    )}
-                    {itemsInColor > 0 && !isSelected && (
-                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-green-500 text-[10px] text-white ring-2 ring-white">
-                            {itemsInColor}
-                        </span>
-                    )}
-                </button>
-                );
-            })}
-            </div>
-        </div>
-
-        {/* Quantity Input */}
-        {enableVariants ? (
-            <SizeMatrix 
-                sizes={SHIRT_SIZES}
-                quantities={getCurrentViewQuantities()}
-                onQuantityChange={handleQuantityChange}
-                visible={!!selectedColor}
-                title={`Taglie ${activeGender} (${selectedColor ? SHIRT_COLORS.find(c => c.id === selectedColor)?.label : 'Seleziona colore'})`}
-            />
-        ) : (
-            <SingleSizeSelector 
-                quantity={singleQuantity}
-                onQuantityChange={setSingleQuantity}
-                visible={!!selectedColor}
-            />
-        )}
-
-        {/* Print Options */}
-        <PrintOptionSelector 
-            frontValue={frontPrint}
-            backValue={backPrint}
-            onFrontChange={setFrontPrint}
-            onBackChange={setBackPrint}
-        />
-
-        {/* Extras */}
-        <div className="mb-4 p-4 bg-indigo-50 border border-indigo-100 rounded-lg">
-            <label htmlFor="file-check" className="flex items-start gap-3 cursor-pointer">
-            <input 
-                id="file-check"
-                type="checkbox" 
-                checked={fileCheck}
-                onChange={(e) => setFileCheck(e.target.checked)}
-                className="mt-1 w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-            />
-            <div className="text-sm">
-                <span className="font-bold text-indigo-900 block">Verifica File Professionale (+€10.00)</span>
-                <span className="text-indigo-700">Controllo da esperto: risoluzione, tracciati e setup colori.</span>
-            </div>
-            </label>
-        </div>
-
-        <div className="mt-auto pt-6">
-             <div className="flex justify-between items-center mb-6">
-                 <div>
-                   <p className="text-sm text-gray-500">Totale stimato</p>
-                   <p className="text-3xl font-bold text-indigo-600">{formatCurrency(price.totalPrice)}</p>
-                 </div>
-                 <div className="text-right">
-                    <p className="text-sm text-gray-500">Cad.</p>
-                    <p className="font-semibold text-gray-700">{formatCurrency(price.unitPrice)}</p>
-                 </div>
-              </div>
-
-              <button 
-                onClick={() => setCurrentStep(2)}
-                disabled={totalQuantity === 0}
-                className="w-full py-4 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Procedi all'Ordine
-                <ArrowRight className="w-5 h-5" />
-              </button>
-        </div>
-    </div>
-  );
-
-  const renderStep2 = () => (
-      <div className="flex-grow flex flex-col">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Riepilogo & Dati</h2>
-            
-            {/* Detailed Summary */}
-            <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100 mb-6 overflow-hidden">
-                 <div className="flex justify-between items-center mb-4 border-b border-indigo-200 pb-2">
-                     <span className="font-bold text-indigo-900">Totale Ordine ({totalQuantity} pz)</span>
-                     <span className="font-bold text-indigo-600 text-lg">{formatCurrency(price.totalPrice + shippingCost)}</span>
-                 </div>
-                 
-                 {enableVariants && (
-                     <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
-                        {Object.entries(quantities).map(([colorId, genderData]) => {
-                             const colorLabel = SHIRT_COLORS.find(c => c.id === colorId)?.label || colorId;
-                             // Check if color has any items
-                             const colorTotal = Object.values(genderData).reduce((ga, gv) => ga + Object.values(gv).reduce((sa, sv) => sa + (parseInt(sv)||0), 0), 0);
-                             if(colorTotal === 0) return null;
-
-                             return (
-                                 <div key={colorId} className="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm text-sm">
-                                     <div className="font-bold text-gray-800 mb-1 flex items-center gap-2">
-                                         <span className="w-3 h-3 rounded-full border border-gray-300" style={{background: SHIRT_COLORS.find(c=>c.id===colorId)?.hex}}></span>
-                                         {colorLabel} ({colorTotal} pz)
-                                     </div>
-                                     <div className="pl-5 space-y-1">
-                                        {Object.entries(genderData).map(([gender, sizes]) => {
-                                             const sizeStr = Object.entries(sizes)
-                                                .filter(([_, q]) => q > 0)
-                                                .map(([s, q]) => `${q} ${s}`)
-                                                .join(', ');
-                                             if(!sizeStr) return null;
-                                             return (
-                                                 <div key={gender} className="text-gray-600 text-xs">
-                                                     <span className="capitalize font-semibold">{gender}:</span> {sizeStr}
-                                                 </div>
-                                             )
-                                        })}
-                                     </div>
-                                 </div>
-                             );
-                        })}
-                     </div>
-                 )}
-            </div>
-
-            {/* Shipping + Form inputs */}
-             <div className="grid grid-cols-2 gap-3 mb-4">
-                <label className={cn(
-                  "border rounded-xl p-3 cursor-pointer transition-all flex flex-col items-center justify-center text-center gap-2 hover:border-indigo-300",
-                  shippingOption === 'shipping' ? "border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600" : "border-gray-200"
-                )}>
-                  <input type="radio" name="shippingOption" value="shipping" checked={shippingOption === 'shipping'} onChange={(e) => setShippingOption(e.target.value)} className="hidden"/>
-                  <span className="font-bold text-gray-900">Spedizione</span>
-                </label>
-                <label className={cn(
-                  "border rounded-xl p-3 cursor-pointer transition-all flex flex-col items-center justify-center text-center gap-2 hover:border-indigo-300",
-                  shippingOption === 'pickup' ? "border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600" : "border-gray-200"
-                )}>
-                   <input type="radio" name="shippingOption" value="pickup" checked={shippingOption === 'pickup'} onChange={(e) => setShippingOption(e.target.value)} className="hidden"/>
-                  <span className="font-bold text-gray-900">Ritiro</span>
-                </label>
-              </div>
-
-               <div className="space-y-3 mb-6">
-                  <div className="grid grid-cols-2 gap-3">
-                    <input type="text" name="firstName" placeholder="Nome" value={formData.firstName} onChange={handleInputChange} className="w-full p-3 border border-gray-300 rounded-lg text-sm"/>
-                    <input type="text" name="lastName" placeholder="Cognome" value={formData.lastName} onChange={handleInputChange} className="w-full p-3 border border-gray-300 rounded-lg text-sm"/>
-                  </div>
-                  <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleInputChange} className="w-full p-3 border border-gray-300 rounded-lg text-sm"/>
-                  {shippingOption === 'shipping' && (
-                    <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
-                        <input type="text" name="address" placeholder="Indirizzo" value={formData.address} onChange={handleInputChange} className="w-full p-3 border border-gray-300 rounded-lg text-sm"/>
-                        <div className="grid grid-cols-3 gap-3">
-                            <input type="text" name="city" placeholder="Città" value={formData.city} onChange={handleInputChange} className="col-span-2 w-full p-3 border border-gray-300 rounded-lg text-sm"/>
-                            <input type="text" name="zip" placeholder="CAP" value={formData.zip} onChange={handleInputChange} className="w-full p-3 border border-gray-300 rounded-lg text-sm"/>
-                        </div>
-                    </div>
-                  )}
-               </div>
-
-            {/* Actions */}
-            <div className="mt-auto pt-4 border-t border-gray-100">
-                <div className="grid grid-cols-2 gap-3">
-                    <button 
-                        onClick={() => handleCheckout('stripe')}
-                        disabled={isProcessing}
-                        className="py-3 px-4 bg-[#635BFF] hover:bg-[#544de6] text-white font-bold rounded-lg shadow-md transition-all flex items-center justify-center disabled:opacity-70"
-                    >
-                        {isProcessing ? '...' : 'Paga con Carta'}
-                    </button>
-                    <button 
-                        onClick={() => handleCheckout('paypal')}
-                        disabled={isProcessing}
-                        className="py-3 px-4 bg-[#0070BA] hover:bg-[#005ea6] text-white font-bold rounded-lg shadow-md transition-all flex items-center justify-center disabled:opacity-70"
-                    >
-                        PayPal
-                    </button>
-                </div>
-                <button onClick={() => setCurrentStep(1)} className="w-full mt-3 text-sm text-gray-400 hover:text-gray-600">Indietro</button>
-            </div>
-      </div>
-  );
-
-  const renderStep3 = () => (
-      <div className="flex-grow flex flex-col text-center animate-in zoom-in duration-300">
-            <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check className="w-8 h-8"/>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Ordine Confermato!</h2>
-            <p className="text-gray-500 mb-8">Ordine #{orderId} creato con successo.<br/>Ora carica il tuo file.</p>
-            
-            <FileUploader 
-                file={selectedFile}
-                onFileSelect={handleFileSelect}
-                onFileRemove={handleFileRemove}
-            />
-
-            <div className="mt-auto space-y-3">
-              <button 
-                onClick={handleUploadSubmit}
-                disabled={!fileUploaded || isProcessing}
-                className="w-full py-4 px-6 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isProcessing ? 'Caricamento...' : 'Invia File e Concludi'}
-              </button>
-            </div>
-      </div>
-  );
-
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100 max-w-lg w-full mx-auto flex flex-col min-h-[600px]">
         <StepNavigation 
@@ -513,9 +243,57 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             isStepCompleted={!!orderId}
         />
         
-        {currentStep === 1 && renderStep1()}
-        {currentStep === 2 && renderStep2()}
-        {currentStep === 3 && renderStep3()}
+        {currentStep === 1 && (
+            <ConfigStep 
+                enableVariants={enableVariants}
+                activeGender={activeGender}
+                setActiveGender={setActiveGender}
+                selectedColor={selectedColor}
+                setSelectedColor={setSelectedColor}
+                quantities={quantities}
+                onQuantityChange={handleQuantityChange}
+                singleQuantity={singleQuantity}
+                setSingleQuantity={setSingleQuantity}
+                frontPrint={frontPrint}
+                setFrontPrint={setFrontPrint}
+                backPrint={backPrint}
+                setBackPrint={setBackPrint}
+                fileCheck={fileCheck}
+                setFileCheck={setFileCheck}
+                price={price}
+                totalQuantity={totalQuantity}
+                onNext={() => setCurrentStep(2)}
+            />
+        )}
+        
+        {currentStep === 2 && (
+            <CheckoutStep 
+                totalQuantity={totalQuantity}
+                price={price}
+                shippingCost={shippingCost}
+                quantities={quantities}
+                enableVariants={enableVariants}
+                shippingOption={shippingOption}
+                setShippingOption={setShippingOption}
+                formData={formData}
+                handleInputChange={handleInputChange}
+                handleCheckout={handleCheckout}
+                isProcessing={isProcessing}
+                onBack={() => setCurrentStep(1)}
+            />
+        )}
+
+        {currentStep === 3 && (
+            <UploadStep 
+                orderId={orderId}
+                selectedFile={selectedFile}
+                handleFileSelect={handleFileSelect}
+                handleFileRemove={handleFileRemove}
+                handleUploadSubmit={handleUploadSubmit}
+                isProcessing={isProcessing}
+                fileUploaded={fileUploaded}
+            />
+        )}
     </div>
   );
 }

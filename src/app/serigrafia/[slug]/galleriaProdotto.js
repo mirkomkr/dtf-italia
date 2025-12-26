@@ -21,6 +21,7 @@ export default function ProductGallery({ images = [], name }) {
           fill
           className="object-cover"
           sizes="(min-width: 1024px) 50vw, 100vw"
+          priority={current === 0}
         />
 
         {gallery.length > 1 && (

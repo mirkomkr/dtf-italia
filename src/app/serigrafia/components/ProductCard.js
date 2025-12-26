@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { memo } from 'react';
 
-const ProductCard = memo(function ProductCard({ product }) {
+const ProductCard = memo(function ProductCard({ product, priority = false }) {
   const image = product.images?.[0];
 
   const imageSrc = image?.src || "/placeholder.webp";
@@ -17,25 +17,31 @@ const ProductCard = memo(function ProductCard({ product }) {
       itemScope
       itemType="https://schema.org/Product"
     >
-      {/* Link overlay accessibile */}
+      {/* Link overlay accessibile - No Prefetch to save main thread */}
       <Link
         href={`/serigrafia/${product.slug}`}
         aria-label={`Configura ${product.name}`}
         className="absolute inset-0 z-10"
+        prefetch={false}
       />
 
       {/* Immagine prodotto */}
-      <div className="relative overflow-hidden rounded-t-xl bg-gray-100">
+      <div 
+        className="relative overflow-hidden rounded-t-xl"
+        style={{ backgroundColor: '#f3f4f6' }} 
+      >
         <Image
           src={imageSrc}
           alt={imageAlt}
           width={400}
           height={400}
           quality={80}
+          priority={priority}
+          loading={priority ? "eager" : "lazy"}
           sizes="(max-width: 640px) 100vw,
                  (max-width: 1024px) 50vw,
                  33vw"
-          className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-auto object-cover" 
           itemProp="image"
         />
       </div>

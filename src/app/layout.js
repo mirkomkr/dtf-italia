@@ -14,6 +14,9 @@ const inter = Inter({
 export default function RootLayout({ children }) {
   return (
     <html lang="it" className="scroll-smooth" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://wp.dtfitalia.it" />
+      </head>
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased`}>
         <a
           href="#main-content"

@@ -1,7 +1,13 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import GalleriaProdotto from "./galleriaProdotto";
-import SerigrafiaContainer from "@/components/configurator/serigrafia/SerigrafiaContainer";
+// import SerigrafiaContainer from "@/components/configurator/serigrafia/SerigrafiaContainer"; // REMOVED
+import dynamic from 'next/dynamic';
+
+const SerigrafiaContainer = dynamic(() => import('@/components/configurator/serigrafia/SerigrafiaContainer'), { 
+  ssr: false,
+  loading: () => <div className="h-96 bg-gray-100 rounded-2xl animate-pulse" />
+});
 import { getWooCommerceProducts } from "@/lib/woocommerce";
 
 /* ===============================

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { cn } from '@/lib/utils';
 
 const DEFAULT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 
-export default function SizeMatrix({ sizes = DEFAULT_SIZES, quantities, onQuantityChange, visible = true, title = "Seleziona Taglie e Quantità" }) {
+const SizeMatrix = memo(function SizeMatrix({ sizes = DEFAULT_SIZES, quantities, onQuantityChange, visible = true, title = "Seleziona Taglie e Quantità" }) {
   if (!visible) return null;
 
   return (
@@ -26,7 +26,21 @@ export default function SizeMatrix({ sizes = DEFAULT_SIZES, quantities, onQuanti
       </p>
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+    // Custom comparison for performance: 
+    // re-render only if title, visible, or relevant quantity CHANGED.
+    // Deep comparison of quantities object is expensive, but it's shallow here (object reference from parent).
+    // If parent creates new object every render, memo is useless unless we check deeper or rely on parent memoization.
+    // Assuming parent (SerigrafiaContainer) handles state updates correctly.
+    // Simple prop check:
+    return (
+        prevProps.visible === nextProps.visible &&
+        prevProps.title === nextProps.title &&
+        prevProps.quantities === nextProps.quantities // Relies on immutability
+    );
+});
+
+export default SizeMatrix;
 
 function SizeInput({ size, parentValue, onCommit }) {
     const [localValue, setLocalValue] = React.useState(parentValue > 0 ? parentValue : '');

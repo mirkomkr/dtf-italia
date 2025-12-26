@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
+import { memo } from 'react';
 
-export default function ProductCard({ product }) {
+const ProductCard = memo(function ProductCard({ product }) {
   const image = product.images?.[0];
 
   const imageSrc = image?.src || "/placeholder.webp";
@@ -74,4 +75,6 @@ export default function ProductCard({ product }) {
       </div>
     </article>
   );
-}
+});
+
+export default ProductCard;

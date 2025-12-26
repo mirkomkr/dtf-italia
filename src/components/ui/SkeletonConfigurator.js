@@ -1,7 +1,10 @@
 
 export default function SkeletonConfigurator() {
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100 max-w-lg w-full mx-auto flex flex-col min-h-[600px] animate-pulse">
+    <div 
+      className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100 max-w-lg w-full mx-auto flex flex-col min-h-[600px] animate-pulse"
+      aria-busy="true"
+    >
       {/* Step Navigation Skeleton */}
       <div className="flex justify-between items-center mb-8 relative">
           {[1, 2, 3].map((step) => (

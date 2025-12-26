@@ -13,7 +13,7 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
   return (
     <article
       className="group relative bg-white rounded-xl border border-gray-200 shadow-sm
-                 hover:shadow-lg transition focus-within:ring-2 focus-within:ring-indigo-600"
+                 hover:shadow-lg transition focus-within:ring-2 focus-within:ring-[var(--brand-color)]"
       itemScope
       itemType="https://schema.org/Product"
     >
@@ -72,7 +72,7 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
 
         {/* CTA */}
         <span
-          className="mt-3 inline-flex items-center text-sm font-semibold text-indigo-600"
+          className="mt-3 inline-flex items-center text-sm font-semibold text-[var(--brand-color)]"
           aria-hidden="true"
         >
           Configura

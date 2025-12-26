@@ -91,7 +91,10 @@ export default async function ProductPage({ params }) {
   };
 
   return (
-    <main className="bg-gray-200">
+    <main 
+      className="bg-gray-200"
+      style={{ '--brand-color': '#dc2626' }}
+    >
       <div className=" container mx-auto px-4 py-12">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="mb-6 text-sm text-gray-500">
@@ -105,6 +108,11 @@ export default async function ProductPage({ params }) {
           </li>
         </ol>
       </nav>
+
+      {/* Titolo Principale H1 */}
+      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+        {product.name}
+      </h1>
 
       {/* Layout */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12">

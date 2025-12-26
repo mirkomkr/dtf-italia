@@ -9,13 +9,19 @@ const nextConfig = {
         port: "8080",
         pathname: "/wp-content/uploads/**",
       },
-      // 🔹 WordPress produzione
+      // 🔹 NUOVO: Backend DTF Italia (Fondamentale!)
+      {
+        protocol: "https",
+        hostname: "wp.dtfitalia.it",
+        pathname: "/wp-content/uploads/**",
+      },
+      // 🔹 WordPress produzione (Mantieni se ti serve dtfpro)
       {
         protocol: "https",
         hostname: "dtfpro.it",
         pathname: "/wp-content/uploads/**",
       },
-      // 🔹 Sito Live DTF Italia
+      // 🔹 Sito Live (Puoi lasciarlo per sicurezza durante la transizione)
       {
         protocol: "https",
         hostname: "dtfitalia.it",

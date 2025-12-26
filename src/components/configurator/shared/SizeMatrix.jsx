@@ -12,21 +12,14 @@ export default function SizeMatrix({ sizes = DEFAULT_SIZES, quantities, onQuanti
         {title}
       </label>
       <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
-        {sizes.map((size) => {
-            // Local state is technically handled by uncontrolled inputs via defaultValue + key reuse, 
-            // OR fully controlled local state. Given the requirement to only update on blur,
-            // we will use an internal component or just a controlled input that only calls onQuantityChange on Blur.
-            // Using uncontrolled input with defaultValue approach is simplest for performance but sync issues can occur if parent changes props.
-            // Let's use a simple controlled input wrapper to keep code clean.
-            return (
-              <SizeInput 
-                key={size} 
-                size={size} 
-                parentValue={quantities[size]} 
-                onCommit={onQuantityChange} 
-              />
-            );
-        })}
+        {sizes.map((size) => (
+           <SizeInput 
+             key={size} 
+             size={size} 
+             parentValue={quantities[size]} 
+             onCommit={onQuantityChange} 
+           />
+        ))}
       </div>
       <p className="text-right text-xs text-gray-500 mt-2">
         Totale Capi: <strong className="text-indigo-600">{Object.values(quantities).reduce((a, b) => a + (parseInt(b) || 0), 0)}</strong>
@@ -35,19 +28,15 @@ export default function SizeMatrix({ sizes = DEFAULT_SIZES, quantities, onQuanti
   );
 }
 
-// Inner component for individual input performance
 function SizeInput({ size, parentValue, onCommit }) {
     const [localValue, setLocalValue] = React.useState(parentValue > 0 ? parentValue : '');
 
-    // Sync if parent updates externally (e.g. reset)
     React.useEffect(() => {
         setLocalValue(parentValue > 0 ? parentValue : '');
     }, [parentValue]);
 
     const handleBlur = () => {
         const val = parseInt(localValue) || 0;
-        // Only trigger update if different from parent (conceptually)
-        // Check performed by parent usually, but we call commit here.
         if (val !== (parseInt(parentValue) || 0)) {
            onCommit(size, val);
         }
@@ -60,7 +49,6 @@ function SizeInput({ size, parentValue, onCommit }) {
               id={`qty-${size}`}
               type="number"
               min="0"
-              // Input Mode for mobile
               inputMode="numeric"
               pattern="[0-9]*"
               value={localValue}
@@ -74,11 +62,4 @@ function SizeInput({ size, parentValue, onCommit }) {
             />
           </div>
     );
-}
-      </div>
-      <p className="text-right text-xs text-gray-500 mt-2">
-        Totale Capi: <strong className="text-indigo-600">{Object.values(quantities).reduce((a, b) => a + (parseInt(b) || 0), 0)}</strong>
-      </p>
-    </div>
-  );
 }

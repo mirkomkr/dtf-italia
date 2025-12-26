@@ -2,8 +2,23 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import Menu from 'lucide-react/dist/esm/icons/menu';
-import X from 'lucide-react/dist/esm/icons/x';
+// import Menu from 'lucide-react/dist/esm/icons/menu'; // REMOVED
+// import X from 'lucide-react/dist/esm/icons/x'; // REMOVED
+
+const MenuIcon = ({ size = 24, className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="4" y1="12" x2="20" y2="12" />
+    <line x1="4" y1="6" x2="20" y2="6" />
+    <line x1="4" y1="18" x2="20" y2="18" />
+  </svg>
+);
+
+const XIcon = ({ size = 24, className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M18 6 6 18" />
+    <path d="m6 6 18 18" />
+  </svg>
+);
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -82,7 +97,7 @@ export default function Header() {
           aria-expanded={isMobileMenuOpen}
           aria-label="Toggle menu"
         >
-          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          {isMobileMenuOpen ? <XIcon size={28} /> : <MenuIcon size={28} />}
         </button>
 
         {/* Mobile Navigation Overlay */}

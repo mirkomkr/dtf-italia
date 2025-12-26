@@ -10,7 +10,10 @@ const CATEGORY_ID_CACHE = new Map();
 /**
  * Helper to perform authenticated WooCommerce fetch with Next.js caching options.
  */
-async function fetchWooCommerce(endpoint, params = {}) {
+/**
+ * Helper to perform authenticated WooCommerce fetch with Next.js caching options.
+ */
+async function fetchWooCommerce(endpoint, params = {}, options = {}) {
   const url = new URL(`${baseUrl}/wp-json/wc/v3/${endpoint}`);
   
   Object.keys(params).forEach(key => {
@@ -22,9 +25,10 @@ async function fetchWooCommerce(endpoint, params = {}) {
   const authHeader = `Basic ${btoa(`${consumerKey}:${consumerSecret}`)}`;
   
   // Dev mode: reduce revalidation time to see changes faster, or use 0 to disable.
-  // Prod mode: use 3600 (1 hour) as requested.
+  // Prod mode: default 3600 (1 hour). Can be overridden via options.revalidate.
   const isDev = process.env.NODE_ENV === 'development';
-  const revalidateTime = isDev ? 60 : 3600; 
+  const defaultRevalidate = isDev ? 60 : 3600;
+  const revalidateTime = options.revalidate !== undefined ? options.revalidate : defaultRevalidate;
 
   const res = await fetch(url.toString(), {
     headers: {
@@ -44,7 +48,7 @@ async function fetchWooCommerce(endpoint, params = {}) {
  * Fetch products from WooCommerce API.
  * Optimized with React cache (Request Memoization), Data Cache, and In-Memory Category Cache.
  */
-export const getWooCommerceProducts = cache(async ({ perPage = 50, category, slug } = {}) => {
+export const getWooCommerceProducts = cache(async ({ perPage = 50, category, slug, revalidate } = {}) => {
   try {
     let categoryId = null;
 
@@ -54,7 +58,7 @@ export const getWooCommerceProducts = cache(async ({ perPage = 50, category, slu
         categoryId = CATEGORY_ID_CACHE.get(category);
       } else {
         // Fetch category ID if not in memory
-        const categories = await fetchWooCommerce("products/categories", { slug: category });
+        const categories = await fetchWooCommerce("products/categories", { slug: category }, { revalidate });
         
         if (categories && categories.length > 0) {
           categoryId = categories[0].id;
@@ -75,7 +79,7 @@ export const getWooCommerceProducts = cache(async ({ perPage = 50, category, slu
       params.category = categoryId;
     }
 
-    const data = await fetchWooCommerce("products", params);
+    const data = await fetchWooCommerce("products", params, { revalidate });
     
     // Map data to reduce payload size and improve TBT
     return data.map(product => ({

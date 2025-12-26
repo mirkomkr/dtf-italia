@@ -42,7 +42,8 @@ export default async function SerigrafiaPage() {
 
   let products = await getWooCommerceProducts({ 
     category: categorySlug,
-    perPage: 50 // Limit high enough for this page
+    perPage: 50, // Limit high enough for this page
+    revalidate: 600 // ISR: Vercel caches for 10m, avoids hitting Hostinger constantly
   });
 
   // Schema JSON-LD derivato dai prodotti

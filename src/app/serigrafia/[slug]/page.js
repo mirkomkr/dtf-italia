@@ -3,10 +3,12 @@ import { notFound } from "next/navigation";
 import GalleriaProdotto from "./galleriaProdotto";
 // import SerigrafiaContainer from "@/components/configurator/serigrafia/SerigrafiaContainer"; // REMOVED
 import dynamic from 'next/dynamic';
+import SkeletonConfigurator from "@/components/ui/SkeletonConfigurator";
+import LazyLoader from "@/components/common/LazyLoader";
 
 const SerigrafiaContainer = dynamic(() => import('@/components/configurator/serigrafia/SerigrafiaContainer'), { 
   ssr: false,
-  loading: () => <div className="h-96 bg-gray-100 rounded-2xl animate-pulse" />
+  loading: () => <SkeletonConfigurator />
 });
 import { getWooCommerceProducts } from "@/lib/woocommerce";
 
@@ -16,6 +18,21 @@ import { getWooCommerceProducts } from "@/lib/woocommerce";
 async function getProduct(slug) {
   const products = await getWooCommerceProducts({ slug, perPage: 1 });
   return products?.[0] ?? null;
+}
+
+/* ===============================
+   STATIC PARAMS GENERATION (SSG)
+================================ */
+export async function generateStaticParams() {
+  // Fetch all products for this category to pre-render paths at build time
+  const products = await getWooCommerceProducts({ 
+    category: "stampa-abbigliamento-serigrafia", 
+    perPage: 100 
+  });
+ 
+  return products.map((product) => ({
+    slug: product.slug,
+  }));
 }
 
 /* ===============================
@@ -92,10 +109,14 @@ export default async function ProductPage({ params }) {
       {/* Layout */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <GalleriaProdotto images={product.images} name={product.name} />
-        <SerigrafiaContainer 
-          product={product} 
-          enableVariants={!['cappello-con-visiera', 'borsa', 'shopper', 'gadget'].some(keyword => product.slug.includes(keyword))} 
-        />
+        
+        {/* Lazy Loaded Configurator with Intersection Observer */}
+        <LazyLoader placeholder={<SkeletonConfigurator />}>
+          <SerigrafiaContainer 
+            product={product} 
+            enableVariants={!['cappello-con-visiera', 'borsa', 'shopper', 'gadget'].some(keyword => product.slug.includes(keyword))} 
+          />
+        </LazyLoader>
       </section>
 
       {/* Descrizione */}

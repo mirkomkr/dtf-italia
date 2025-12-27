@@ -1,5 +1,12 @@
-{/* import Configurator from './ConfiguratoreDTF'; */}
-import { Check } from 'lucide-react';
+// import { Check } from 'lucide-react'; // REMOVED
+import LazyLoader from "@/components/common/LazyLoader";
+import SkeletonConfigurator from "@/components/ui/SkeletonConfigurator";
+
+const CheckIcon = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+);
 
 export default function Hero() {
   return (
@@ -33,16 +40,20 @@ export default function Hero() {
             <ul className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
               {['Nessun minimo d\'ordine', 'Spedizione Rapida', 'Qualità HD'].map((item, i) => (
                 <li key={i} className="flex items-center gap-2 text-gray-300 bg-white/5 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10">
-                  <Check className="w-5 h-5 text-green-400" aria-hidden="true" />
+                  <CheckIcon className="w-5 h-5 text-green-400" aria-hidden="true" />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Configurator */}
+          {/* Configurator Placeholder - Lazy Loaded for Perf */}
           <div className="flex-1 w-full max-w-md lg:max-w-lg">
-            {/* <Configurator /> */}
+             <LazyLoader placeholder={<SkeletonConfigurator />}>
+                {/* Future DTF Configurator will go here */}
+                {/* For now, keep the Skeleton visible to simulate the layout occupying space */}
+                <SkeletonConfigurator />
+             </LazyLoader>
           </div>
           
         </div>

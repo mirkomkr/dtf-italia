@@ -1,6 +1,11 @@
 // app/page.js (Home)
 import Hero from "@/app/dtf/components/HeroDTF";
-import { HowItWorks, Benefits, FAQ } from "@/components/Sections";
+// import { HowItWorks, Benefits, FAQ } from "@/components/Sections";
+import dynamic from 'next/dynamic';
+
+const HowItWorks = dynamic(() => import('@/components/Sections').then(mod => mod.HowItWorks), { ssr: true });
+const Benefits = dynamic(() => import('@/components/Sections').then(mod => mod.Benefits), { ssr: true });
+const FAQ = dynamic(() => import('@/components/Sections').then(mod => mod.FAQ), { ssr: true });
 
 // Base URL pubblico
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
@@ -70,7 +75,10 @@ export default function Home() {
       {/* Canonical */}
       <link rel="canonical" href={BASE_URL} />
 
-      <div className="min-h-screen bg-white">
+      <div 
+        className="min-h-screen bg-white"
+        style={{ '--brand-color': '#4f46e5' }}
+      >
         <Hero />
         <HowItWorks />
         <Benefits />

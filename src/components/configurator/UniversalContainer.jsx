@@ -23,7 +23,7 @@ const FixedItemForm = dynamic(() => import('./forms/FixedItemForm'), {
 const PriceSummary = dynamic(() => import('./ui/PriceSummary'), { ssr: false });
 const FileUpload = dynamic(() => import('./ui/FileUpload'), { ssr: false });
 
-export default function UniversalContainer({ product, categorySlug }) {
+export default function UniversalContainer({ product, categorySlug, variant = 'default' }) {
     // 1. State Management
     const [config, setConfig] = useState({
         quantity: 1,
@@ -98,21 +98,24 @@ export default function UniversalContainer({ product, categorySlug }) {
         return <div className="p-4 text-red-500">Form categoria non trovato.</div>;
     };
 
+    // Layout Logic based on variant
+    const isHero = variant === 'hero';
+
     return (
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 relative">
-            {/* Left Column: Form & Inputs */}
+        <div className={`flex flex-col ${isHero ? 'gap-6' : 'lg:flex-row gap-8 lg:gap-12'} relative`}>
+            {/* Left Column (or Full Width in Hero): Form & Inputs */}
             <div className="flex-1 space-y-8">
                 
                 {/* Product/Category Header (Optional, if not handled by parent page) */}
                 {/* <div><h1 className="text-3xl font-bold">{product?.name || 'Configura Prodotto'}</h1></div> */}
 
                 {/* Specific Category Form */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className={`${isHero ? '' : 'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8'}`}>
                    {renderForm()}
                 </div>
 
                 {/* File Upload Section (Universal) */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div className={`${isHero ? '' : 'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8'}`}>
                     <FileUpload 
                         fileCheck={config.options.fileCheck} 
                         onChange={handleConfigChange} 
@@ -120,9 +123,9 @@ export default function UniversalContainer({ product, categorySlug }) {
                 </div>
             </div>
 
-            {/* Right Column: Sticky Summary */}
-            <div className="w-full lg:w-[400px] xl:w-[450px]">
-                <div className="sticky top-24">
+            {/* Right Column: Sticky Summary (Default) OR Bottom Block (Hero) */}
+            <div className={isHero ? 'w-full mt-4' : 'w-full lg:w-[400px] xl:w-[450px]'}>
+                <div className={isHero ? '' : 'sticky top-24'}>
                     <PriceSummary 
                         quote={quote} 
                         config={config} 

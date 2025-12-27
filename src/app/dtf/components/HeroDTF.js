@@ -1,10 +1,16 @@
+'use client';
+
 // import { Check } from 'lucide-react'; // REMOVED
 import LazyLoader from "@/components/common/LazyLoader";
 import SkeletonConfigurator from "@/components/ui/SkeletonConfigurator";
-import { useEffect, useState, Suspense } from 'react';
+import { Suspense } from 'react'; // removed unused useEffect, useState
 import Link from 'next/link';
-import UniversalContainer from '@/components/configurator/UniversalContainer';
-import { getWooCommerceProducts } from '@/lib/woocommerce';
+import dynamic from 'next/dynamic';
+
+const UniversalContainer = dynamic(() => import('@/components/configurator/UniversalContainer'), {
+  ssr: false,
+  loading: () => <SkeletonConfigurator height="600px" />
+});
 
 const CheckIcon = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -12,24 +18,8 @@ const CheckIcon = ({ className }) => (
     </svg>
 );
 
-export default function Hero() {
-    const [dtfProduct, setDtfProduct] = useState(null);
-
-    // Fetch DTF Product for Configurator
-    useEffect(() => {
-        const fetchProduct = async () => {
-            try {
-                // Correct Product Slug as per User Request
-                const products = await getWooCommerceProducts({ slug: 'stampa-dtf-service-professionale' });
-                if (products && products.length > 0) {
-                    setDtfProduct(products[0]);
-                }
-            } catch (error) {
-                console.error("Errore fetch DTF:", error);
-            }
-        };
-        fetchProduct();
-    }, []);
+export default function Hero({ product }) {
+    // product is now passed from Server Component (app/page.js)
 
     const scrollToConfig = () => {
         document.getElementById('configurator-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -101,9 +91,9 @@ export default function Hero() {
                     <div id="configurator-section" className="bg-gray-50 rounded-3xl p-2 border border-gray-200 shadow-2xl shadow-indigo-100/50">
                        <LazyLoader>
                            <Suspense fallback={<SkeletonConfigurator height="600px" />}>
-                                {dtfProduct ? (
+                                {product ? (
                                     <UniversalContainer 
-                                        product={dtfProduct} 
+                                        product={product} 
                                         categorySlug="service-stampa-dtf-roma" // Forced Slug for SEO
                                     />
                                 ) : (

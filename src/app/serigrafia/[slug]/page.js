@@ -9,7 +9,6 @@ const UniversalContainer = dynamic(() => import('@/components/configurator/Unive
   ssr: false,
   loading: () => <SkeletonConfigurator />
 });
-import { getWooCommerceProducts } from "@/lib/woocommerce";
 
 /* ===============================
    FETCH SERVER (Direct Lib Call)

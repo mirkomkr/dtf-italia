@@ -2,6 +2,7 @@
 import Hero from "@/app/dtf/components/HeroDTF";
 // import { HowItWorks, Benefits, FAQ } from "@/components/Sections";
 import dynamic from 'next/dynamic';
+import { getWooCommerceProducts } from "@/lib/woocommerce"; // Import for server fetching
 
 const HowItWorks = dynamic(() => import('@/components/Sections').then(mod => mod.HowItWorks), { ssr: true });
 const Benefits = dynamic(() => import('@/components/Sections').then(mod => mod.Benefits), { ssr: true });
@@ -49,7 +50,18 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
+  // Fetch DTF product for Hero Configurator (Server Side)
+  let dtfProduct = null;
+  try {
+    const products = await getWooCommerceProducts({ slug: 'stampa-dtf-service-professionale' });
+    if (products && products.length > 0) {
+      dtfProduct = products[0];
+    }
+  } catch (error) {
+    console.error("Error fetching DTF product for Home:", error);
+  }
+
   // Schema WebSite (SEO base)
   const websiteSchema = {
     "@context": "https://schema.org",
@@ -79,7 +91,7 @@ export default function Home() {
         className="min-h-screen bg-white"
         style={{ '--brand-color': '#4f46e5' }}
       >
-        <Hero />
+        <Hero product={dtfProduct} /> 
         <HowItWorks />
         <Benefits />
         <FAQ />

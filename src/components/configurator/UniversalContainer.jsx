@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { getPricingLogicByCategory } from '@/lib/pricing-engine';
 
-// Dynamic Imports for Sub-Forms to keep bundle size low
+// Dynamic Imports for Sub-Forms
 const ClothingForm = dynamic(() => import('./forms/ClothingForm'), {
     loading: () => <div className="h-64 bg-gray-50 animate-pulse rounded-xl" />,
     ssr: false
@@ -98,10 +98,6 @@ export default function UniversalContainer({ product, categorySlug, variant = 'd
         return <div className="p-4 text-red-500">Form categoria non trovato.</div>;
     };
 
-    // Layout Logic based on variant
-    const isHero = variant === 'hero';
-
-    return (
     // Theme Logic
     const isDTF = categorySlug.includes('dtf') || categorySlug.includes('service');
     const themeColor = isDTF ? '#6366f1' : '#ea580c'; // Indigo vs Orange
@@ -116,9 +112,6 @@ export default function UniversalContainer({ product, categorySlug, variant = 'd
             }}
         >
             {/* 1. CONFIGURATION FORM */}
-            {/* Uses white background only if NOT in Hero mode (Hero has its own container styling or is transparent) */}
-            {/* Actually user said "layout 'verticale' anche alle pagine prodotto". Usually pages have gray backgrounds. */}
-            {/* Let's make it consistent: Clean distinct blocks. */}
             <div className={`
                 transition-all duration-300
                 ${variant === 'hero' 
@@ -133,7 +126,7 @@ export default function UniversalContainer({ product, categorySlug, variant = 'd
             <div className={`
                  transition-all duration-300
                  ${variant === 'hero' 
-                     ? 'bg-white/50 backdrop-blur-sm rounded-2xl border border-indigo-100 p-6' // Hero style
+                     ? 'bg-white/50 backdrop-blur-sm rounded-2xl border border-indigo-100 p-6' 
                      : 'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8'
                  }
             `}>

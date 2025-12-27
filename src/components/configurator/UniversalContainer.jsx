@@ -102,38 +102,54 @@ export default function UniversalContainer({ product, categorySlug, variant = 'd
     const isHero = variant === 'hero';
 
     return (
-        <div className={`flex flex-col ${isHero ? 'gap-6' : 'lg:flex-row gap-8 lg:gap-12'} relative`}>
-            {/* Left Column (or Full Width in Hero): Form & Inputs */}
-            <div className="flex-1 space-y-8">
-                
-                {/* Product/Category Header (Optional, if not handled by parent page) */}
-                {/* <div><h1 className="text-3xl font-bold">{product?.name || 'Configura Prodotto'}</h1></div> */}
+    // Theme Logic
+    const isDTF = categorySlug.includes('dtf') || categorySlug.includes('service');
+    const themeColor = isDTF ? '#6366f1' : '#ea580c'; // Indigo vs Orange
+    const themeShadow = isDTF ? 'rgba(99, 102, 241, 0.4)' : 'rgba(234, 88, 12, 0.4)';
 
-                {/* Specific Category Form */}
-                <div className={`${isHero ? '' : 'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8'}`}>
-                   {renderForm()}
-                </div>
-
-                {/* File Upload Section (Universal) */}
-                <div className={`${isHero ? '' : 'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8'}`}>
-                    <FileUpload 
-                        fileCheck={config.options.fileCheck} 
-                        onChange={handleConfigChange} 
-                    />
-                </div>
+    return (
+        <div 
+            className="w-full max-w-4xl mx-auto flex flex-col gap-6"
+            style={{ 
+                '--brand-color': themeColor,
+                '--brand-shadow': themeShadow 
+            }}
+        >
+            {/* 1. CONFIGURATION FORM */}
+            {/* Uses white background only if NOT in Hero mode (Hero has its own container styling or is transparent) */}
+            {/* Actually user said "layout 'verticale' anche alle pagine prodotto". Usually pages have gray backgrounds. */}
+            {/* Let's make it consistent: Clean distinct blocks. */}
+            <div className={`
+                transition-all duration-300
+                ${variant === 'hero' 
+                    ? 'bg-transparent text-left' 
+                    : 'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8'
+                }
+            `}>
+                {renderForm()}
             </div>
 
-            {/* Right Column: Sticky Summary (Default) OR Bottom Block (Hero) */}
-            <div className={isHero ? 'w-full mt-4' : 'w-full lg:w-[400px] xl:w-[450px]'}>
-                <div className={isHero ? '' : 'sticky top-24'}>
-                    <PriceSummary 
-                        quote={quote} 
-                        config={config} 
-                        product={product}
-                        onCheckout={() => console.log('Proceed to Checkout', quote)}
-                    />
-                </div>
+            {/* 2. FILE UPLOAD */}
+            <div className={`
+                 transition-all duration-300
+                 ${variant === 'hero' 
+                     ? 'bg-white/50 backdrop-blur-sm rounded-2xl border border-indigo-100 p-6' // Hero style
+                     : 'bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8'
+                 }
+            `}>
+                <FileUpload 
+                    fileCheck={config.options.fileCheck} 
+                    onChange={handleConfigChange} 
+                />
             </div>
+
+            {/* 3. PRICE SUMMARY & ACTION (Horizontal Box at Bottom) */}
+            <PriceSummary 
+                quote={quote} 
+                config={config} 
+                product={product}
+                onCheckout={() => console.log('Proceed to Checkout', quote)}
+            />
         </div>
     );
 }

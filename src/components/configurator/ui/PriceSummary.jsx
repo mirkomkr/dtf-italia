@@ -49,135 +49,103 @@ export default function PriceSummary({ quote, config, product, onCheckout }) {
     };
 
     return (
-        <>
-            {/* ================= DESKTOP VIEW (Sticky Card) ================= */}
-            <div className="hidden lg:block bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-                {/* Header */}
-                <div className="bg-gray-50 p-6 border-b border-gray-100">
-                    <h3 className="text-lg font-bold text-gray-900">Riepilogo Ordine</h3>
-                    <p className="text-sm text-gray-500 mt-1">{product?.name}</p>
-                </div>
+        <div className="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header / Title */}
+            <div className="flex items-center gap-3 mb-6">
+                 <div className="h-8 w-1 bg-current rounded-full opacity-50" />
+                 <h3 className="text-xl font-bold text-gray-900">Riepilogo Ordine</h3>
+            </div>
 
-                {/* Body: Breakdown */}
-                <div className="p-6 space-y-4">
-                    
-                    {/* Unit Price */}
-                    <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-600">Prezzo Unitario</span>
-                        <span className="font-medium text-gray-900">{formatCurrency(quote.unitPrice)} /cad</span>
+            <div className="grid md:grid-cols-2 gap-8 items-end">
+                {/* Left: Detailed Breakdown */}
+                <div className="space-y-3 text-sm text-gray-600">
+                    <div className="flex justify-between items-center border-b border-gray-200 pb-2 border-dashed">
+                        <span>Prezzo Unitario</span>
+                        <span className="font-medium text-gray-900">{formatCurrency(quote.unitPrice)}</span>
                     </div>
-
-                    {/* Setup Costs (if any) */}
                     {quote.setupCost > 0 && (
-                        <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-600 flex items-center gap-1">
-                                Costi Impianto
-                                <span className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">Una Tantum</span>
-                            </span>
+                        <div className="flex justify-between items-center border-b border-gray-200 pb-2 border-dashed">
+                            <span>Costi Impianto (Una Tantum)</span>
                             <span className="font-medium text-gray-900">{formatCurrency(quote.setupCost)}</span>
                         </div>
                     )}
-
-                    {/* File Check (if any) */}
                     {quote.extraCosts > 0 && (
-                        <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-600 flex items-center gap-1">
+                        <div className="flex justify-between items-center border-b border-gray-200 pb-2 border-dashed">
+                            <span className="flex items-center gap-1">
+                                <Check className="w-3.5 h-3.5 text-emerald-500" />
                                 Controllo File
-                                <Check className="w-3 h-3 text-emerald-500" />
                             </span>
                             <span className="font-medium text-gray-900">{formatCurrency(quote.extraCosts)}</span>
                         </div>
                     )}
-
-                    <div className="h-px bg-gray-100 my-2" />
-
-                    {/* Total Net */}
-                    <div className="flex justify-between items-center">
-                        <span className="text-gray-600 font-medium">Totale Imponibile</span>
-                        <span className="text-lg font-bold text-gray-900">{formatCurrency(quote.totalPrice)}</span>
+                    <div className="flex justify-between items-center pt-1">
+                        <span>Imponibile</span>
+                        <span className="font-bold text-gray-900">{formatCurrency(quote.totalPrice)}</span>
                     </div>
-
-                    {/* VAT */}
-                    <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-500">IVA (22%)</span>
-                        <span className="font-medium text-gray-500">{formatCurrency(vatAmount)}</span>
+                    <div className="flex justify-between items-center text-xs opacity-75">
+                        <span>IVA 22%</span>
+                        <span>{formatCurrency(vatAmount)}</span>
                     </div>
-
                 </div>
 
-                {/* Footer: Total Gross & CTA */}
-                <div className="bg-gray-900 p-6 text-white">
-                    <div className="flex justify-between items-end mb-6">
-                        <span className="text-gray-300 font-medium">Totale Ordine</span>
-                        <span className="text-3xl font-black tracking-tight">{formatCurrency(totalGross)}</span>
+                {/* Right: Total & Action */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex justify-between items-end md:justify-end md:gap-4">
+                        <span className="text-gray-500 font-medium mb-1 md:mb-2">Totale Ordine</span>
+                        <span className="text-3xl md:text-4xl font-black tracking-tight text-gray-900 leading-none">
+                            {formatCurrency(totalGross)}
+                        </span>
                     </div>
 
                     <button
                         onClick={handleAddToCart}
                         disabled={!isValid || isLoading}
-                        className={`w-full py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all ${
+                        className={`w-full py-4 px-8 rounded-xl font-black text-lg uppercase tracking-wide flex items-center justify-center gap-3 transition-all transform active:scale-[0.98] ${
                             isValid 
-                            ? 'bg-brand text-white hover:brightness-110 shadow-lg shadow-brand/25' 
-                            : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                            ? 'text-white shadow-xl hover:shadow-2xl hover:-translate-y-1' 
+                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                         }`}
-                        // Use CSS variable for brand color or fallback
-                        style={{ backgroundColor: isValid ? 'var(--brand-color, #4f46e5)' : undefined }}
+                        // Use CSS variable/prop for brand color. We will set this in parent containers.
+                        style={{ 
+                            backgroundColor: isValid ? 'var(--brand-color, #4f46e5)' : undefined,
+                            boxShadow: isValid ? '0 10px 25px -5px var(--brand-shadow, rgba(79, 70, 229, 0.4))' : 'none'
+                        }}
                     >
                         {isLoading ? (
                             <Loader2 className="w-6 h-6 animate-spin" />
                         ) : (
                             <>
-                                <ShoppingCart className="w-6 h-6" />
+                                <ShoppingCart className="w-6 h-6" strokeWidth={2.5} />
                                 Aggiungi al Carrello
                             </>
                         )}
                     </button>
                     {!isValid && (
-                        <p className="text-center text-xs text-red-400 mt-3 flex items-center justify-center gap-1">
-                            <AlertCircle className="w-3 h-3" />
-                            Verifica la configurazione per procedere
-                        </p>
+                         <div className="flex items-center justify-center gap-2 text-red-500 text-sm font-medium bg-red-50 py-2 rounded-lg border border-red-100">
+                            <AlertCircle className="w-4 h-4" />
+                            <span>Completa la configurazione per procedere</span>
+                         </div>
                     )}
                 </div>
             </div>
-
-
-            {/* ================= MOBILE BOTTOM BAR ================= */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] p-4 z-50 safe-area-bottom">
-                <div className="flex items-center gap-4 max-w-7xl mx-auto">
-                    {/* Left: Price Info */}
+            
+            {/* Mobile Sticky Bar - Only visible on small screens to ensure conversion */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 p-4 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] safe-area-bottom">
+                 <div className="flex items-center gap-4">
                     <div className="flex-1">
-                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Totale (Iva incl.)</p>
-                        <div className="flex items-baseline gap-2">
-                             <span className="text-2xl font-black text-gray-900 leading-none">{formatCurrency(totalGross)}</span>
-                             <span className="text-xs text-gray-500 font-medium">({formatCurrency(quote.unitPrice)}/cad)</span>
-                        </div>
+                        <span className="block text-xs text-gray-500 uppercase font-bold">Totale</span>
+                        <span className="block text-xl font-black text-gray-900 leading-none">{formatCurrency(totalGross)}</span>
                     </div>
-
-                    {/* Right: CTA */}
                     <button
                         onClick={handleAddToCart}
                         disabled={!isValid || isLoading}
-                        className={`py-3 px-6 rounded-xl font-bold text-base flex items-center gap-2 transition-transform active:scale-95 ${
-                            isValid 
-                            ? 'bg-gray-900 text-white shadow-lg' 
-                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        }`}
-                        style={{ backgroundColor: isValid ? 'var(--brand-color, #4f46e5)' : undefined }}
+                        className={`px-6 py-3 rounded-lg font-bold text-sm uppercase tracking-wider text-white shadow-lg ${!isValid ? 'opacity-50 grayscale' : ''}`}
+                        style={{ backgroundColor: 'var(--brand-color, #4f46e5)' }}
                     >
-                        {isLoading ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                            <>
-                                <ShoppingCart className="w-5 h-5" />
-                                <span>Aggiungi</span>
-                            </>
-                        )}
+                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Aggiungi'}
                     </button>
-                </div>
+                 </div>
             </div>
-            {/* Spacer for mobile to prevent content being hidden behind bottom bar */}
-            <div className="lg:hidden h-24" />
-        </>
+        </div>
     );
 }

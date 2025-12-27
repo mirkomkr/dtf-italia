@@ -2,7 +2,8 @@
 export default function SkeletonConfigurator() {
   return (
     <div 
-      className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100 max-w-lg w-full mx-auto flex flex-col min-h-[600px] animate-pulse"
+      className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100 max-w-lg w-full mx-auto flex flex-col animate-pulse"
+      style={{ minHeight: '600px', height: '600px', contentVisibility: 'auto' }}
       aria-busy="true"
     >
       {/* Step Navigation Skeleton */}

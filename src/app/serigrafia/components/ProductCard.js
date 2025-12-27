@@ -35,12 +35,12 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
           alt={imageAlt}
           width={400}
           height={400}
-          quality={80}
+          quality={60}
           priority={priority}
           loading={priority ? "eager" : "lazy"}
-          sizes="(max-width: 640px) 100vw,
-                 (max-width: 1024px) 50vw,
-                 33vw"
+          sizes="(max-width: 640px) 50vw,
+                 (max-width: 1024px) 33vw,
+                 25vw"
           className="w-full h-auto object-cover" 
           itemProp="image"
         />

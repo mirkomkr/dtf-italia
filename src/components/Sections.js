@@ -59,7 +59,7 @@ export function Benefits() {
   ];
 
   return (
-    <section className="py-20 bg-gray-900 text-white" aria-labelledby="benefits-title">
+    <section className="py-20 bg-gray-900 text-white" aria-labelledby="benefits-title" style={{ contentVisibility: 'auto' }}>
       <div className="container mx-auto px-4">
         <h2 id="benefits-title" className="text-3xl md:text-4xl font-bold text-center mb-16">Perché Scegliere Noi</h2>
         <ul className="grid md:grid-cols-3 gap-8">
@@ -95,7 +95,7 @@ export function FAQ() {
   ];
 
   return (
-    <section className="py-20 bg-gray-50" aria-labelledby="faq-title">
+    <section className="py-20 bg-gray-50" aria-labelledby="faq-title" style={{ contentVisibility: 'auto' }}>
       <div className="container mx-auto px-4 max-w-3xl">
         <h2 id="faq-title" className="text-3xl md:text-4xl font-bold text-center mb-16 text-gray-900">Domande Frequenti</h2>
         <ul className="space-y-4">

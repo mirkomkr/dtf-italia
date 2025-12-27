@@ -1,12 +1,11 @@
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import GalleriaProdotto from "./galleriaProdotto";
-// import SerigrafiaContainer from "@/components/configurator/serigrafia/SerigrafiaContainer"; // REMOVED
 import dynamic from 'next/dynamic';
 import SkeletonConfigurator from "@/components/ui/SkeletonConfigurator";
 import LazyLoader from "@/components/common/LazyLoader";
+import { getWooCommerceProducts } from "@/lib/woocommerce";
 
-const SerigrafiaContainer = dynamic(() => import('@/components/configurator/serigrafia/SerigrafiaContainer'), { 
+const UniversalContainer = dynamic(() => import('@/components/configurator/UniversalContainer'), { 
   ssr: false,
   loading: () => <SkeletonConfigurator />
 });
@@ -122,7 +121,7 @@ export default async function ProductPage({ params }) {
         <LazyLoader placeholder={<SkeletonConfigurator />}>
           <UniversalContainer 
             product={product} 
-            categorySlug={product.categories[0]?.slug || 'abbigliamento'} 
+            categorySlug={product.categories?.[0]?.slug || 'stampa-abbigliamento-serigrafia'} 
           />
         </LazyLoader>
       </section>

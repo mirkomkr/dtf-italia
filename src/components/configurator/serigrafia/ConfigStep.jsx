@@ -79,7 +79,7 @@ export default function ConfigStep({
     <div className="flex-grow flex flex-col space-y-6">
         <div>
             <h2 className="text-2xl font-bold text-gray-900">Configura Prodotto</h2>
-            <p className="text-sm text-gray-500">Scegli taglie e colori. Puoi abbinare più colori nello stesso ordine.</p>
+            <p className="text-sm text-gray-600">Scegli taglie e colori. Puoi abbinare più colori nello stesso ordine.</p>
         </div>
 
         {/* Gender Selection - ONLY if variants enabled */}
@@ -190,7 +190,7 @@ export default function ConfigStep({
              {/* Price Display */}
              <div className="flex justify-between items-center mb-6">
                  <div>
-                   <p className="text-sm text-gray-500">Totale stimato</p>
+                   <p className="text-sm text-gray-600">Totale stimato</p>
                    {/* Prevent Hydration Mismatch with Client Only rendering for price */}
                    <p className="text-3xl font-bold text-indigo-600">{formatCurrency(price.totalPrice)}</p>
                  </div>

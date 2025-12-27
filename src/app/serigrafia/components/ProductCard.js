@@ -58,14 +58,14 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
         {/* Prezzo */}
         {product.price_html ? (
           <p
-            className="text-gray-700 text-sm"
+            className="text-gray-800 text-sm"
             itemProp="offers"
             itemScope
             itemType="https://schema.org/Offer"
             dangerouslySetInnerHTML={{ __html: product.price_html }}
           />
         ) : (
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-700 text-sm">
             Prezzo su richiesta
           </p>
         )}

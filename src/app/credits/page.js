@@ -62,6 +62,9 @@ export default function CreditsPage() {
             <li>  
               Foto di <a href="https://it.freepik.com/foto-gratuito/donna-che-indossa-un-modello-di-berretto-bianco_16434138.htm#fromView=search&page=1&position=0&uuid=b5306eac-cf05-48a8-96ed-a7a2085ce6ec&query=cap+mockup" className="text-indigo-300 hover:underline">rawpixel.com</a> su <a href="https://freepik.com/" className="text-indigo-300 hover:underline">Freepik</a>
             </li>
+            <li>
+              Foto di <a href="https://unsplash.com/it/@msgr?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Geri Sakti</a> su <a href="https://unsplash.com/it/foto/un-primo-piano-di-un-nastro-trasportatore-con-una-macchina-sullo-sfondo-R_J3nOqe9Kw?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Unsplash</a>
+            </li>
               {/* aggiungi altri credits qui */}
           </ul>
         </div>

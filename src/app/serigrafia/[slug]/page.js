@@ -120,9 +120,9 @@ export default async function ProductPage({ params }) {
         
         {/* Lazy Loaded Configurator with Intersection Observer */}
         <LazyLoader placeholder={<SkeletonConfigurator />}>
-          <SerigrafiaContainer 
+          <UniversalContainer 
             product={product} 
-            enableVariants={!['cappello-con-visiera', 'borsa', 'shopper', 'gadget'].some(keyword => product.slug.includes(keyword))} 
+            categorySlug={product.categories[0]?.slug || 'abbigliamento'} 
           />
         </LazyLoader>
       </section>

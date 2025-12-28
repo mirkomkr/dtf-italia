@@ -49,6 +49,10 @@ export default function PriceSummary({ quote, config, product, onCheckout }) {
     };
 
     return (
+    // Default Label
+    const buttonLabel = props.actionLabel || "Aggiungi al Carrello";
+
+    return (
         <div className="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header / Title */}
             <div className="flex items-center gap-3 mb-6">
@@ -116,7 +120,7 @@ export default function PriceSummary({ quote, config, product, onCheckout }) {
                         ) : (
                             <>
                                 <ShoppingCart className="w-6 h-6" strokeWidth={2.5} />
-                                Aggiungi al Carrello
+                                {buttonLabel}
                             </>
                         )}
                     </button>
@@ -142,7 +146,7 @@ export default function PriceSummary({ quote, config, product, onCheckout }) {
                         className={`px-6 py-3 rounded-lg font-bold text-sm uppercase tracking-wider text-white shadow-lg ${!isValid ? 'opacity-50 grayscale' : ''}`}
                         style={{ backgroundColor: 'var(--brand-color, #4f46e5)' }}
                     >
-                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Aggiungi'}
+                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : buttonLabel}
                     </button>
                  </div>
             </div>

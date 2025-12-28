@@ -13,11 +13,13 @@ const PRINT_OPTIONS = [
 ];
 
 const FABRIC_COLORS = [
-    { id: 'white', label: 'Bianco', hex: '#FFFFFF', border: 'border-gray-200' },
-    { id: 'black', label: 'Nero', hex: '#111827', border: 'border-gray-800' },
-    { id: 'navy', label: 'Navy Blue', hex: '#1e3a8a', border: 'border-blue-900' },
-    { id: 'grey', label: 'Grigio Melange', hex: '#9ca3af', border: 'border-gray-400' },
-    { id: 'red', label: 'Rosso', hex: '#ef4444', border: 'border-red-500' },
+  { id: 'nero', label: 'Nero', hex: '#000000' },
+  { id: 'bianco', label: 'Bianco', hex: '#ffffff', border: true },
+  { id: 'blu_notte', label: 'Blu Notte', hex: '#1e3a8a' },
+  { id: 'blu_royal', label: 'Blu Royal', hex: '#2563eb' },
+  { id: 'giallo', label: 'Giallo', hex: '#eab308' },
+  { id: 'verde', label: 'Verde', hex: '#16a34a' },
+  { id: 'viola', label: 'Viola', hex: '#7c3aed' },
 ];
 
 export default function ClothingForm({ config, onChange, quote }) {

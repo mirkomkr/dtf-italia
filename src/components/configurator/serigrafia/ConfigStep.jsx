@@ -153,30 +153,30 @@ export default function ConfigStep({
 
 
 
-{/* Quantity Input - Dinamico in base al layout */}
-        {enableVariants && genderLayout === 'clothing' ? (
-            <SizeMatrix 
-                sizes={SHIRT_SIZES}
-                quantities={getCurrentViewQuantities()}
-                onQuantityChange={onQuantityChange}
-                visible={!!selectedColor}
-                title={`Taglie ${activeGender} (${selectedColor ? SHIRT_COLORS.find(c => c.id === selectedColor)?.label : 'Seleziona colore'})`}
-            />
-        ) : (
-            <div className="animate-in fade-in duration-500">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                   Quantità {genderLayout !== 'clothing' ? 'Taglia Unica' : ''}
-                </label>
-                <SingleSizeSelector 
-                    quantity={singleQuantity}
-                    onQuantityChange={setSingleQuantity}
-                    visible={!!selectedColor}
-                />
-                <p className="text-xs text-gray-500 mt-2">
-                    Inserisci il numero totale di pezzi per il colore selezionato.
-                </p>
-            </div>
-        )}
+{/* Quantity Input */}
+{enableVariants && genderLayout === 'clothing' ? (
+    <SizeMatrix 
+        sizes={SHIRT_SIZES}
+        quantities={getCurrentViewQuantities()}
+        onQuantityChange={onQuantityChange}
+        visible={!!selectedColor}
+        title={`Taglie ${activeGender} (${selectedColor ? SHIRT_COLORS.find(c => c.id === selectedColor)?.label : 'Seleziona colore'})`}
+    />
+) : (
+    /* Questo blocco ora gestisce sia SHOPPER (layout 'none') che CAPPELLI (layout 'caps') */
+    <div className="mt-4">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+            {genderLayout === 'caps' 
+                ? `Quantità per modello ${activeGender === 'adulto' ? 'ADULTO' : 'BAMBINO'}` 
+                : 'Quantità Totale'}
+        </label>
+        <SingleSizeSelector 
+            quantity={genderLayout === 'caps' ? (getCurrentViewQuantities()['UNICA'] || 0) : singleQuantity}
+            onQuantityChange={genderLayout === 'caps' ? (val) => onQuantityChange('UNICA', val) : setSingleQuantity}
+            visible={!!selectedColor}
+        />
+    </div>
+)}
 
         {/* Print Options */}
         <PrintOptionSelector 

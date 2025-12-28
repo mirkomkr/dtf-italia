@@ -5,7 +5,7 @@ import SkeletonConfigurator from "@/components/ui/SkeletonConfigurator";
 import LazyLoader from "@/components/common/LazyLoader";
 import { getWooCommerceProducts } from "@/lib/woocommerce";
 
-const UniversalContainer = dynamic(() => import('@/components/configurator/UniversalContainer'), { 
+const UniversalContainer = dynamic(() => import('@/app/serigrafia/components/ConfiguratoreSerigrafia'), { 
   ssr: false,
   loading: () => <SkeletonConfigurator />
 });

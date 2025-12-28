@@ -7,7 +7,7 @@ import { Suspense } from 'react'; // removed unused useEffect, useState
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-const UniversalContainer = dynamic(() => import(''), {
+const UniversalContainer = dynamic(() => import('@/app/serigrafia/components/ConfiguratoreSerigrafia'), {
   ssr: false,
   loading: () => <SkeletonConfigurator height="600px" />
 });

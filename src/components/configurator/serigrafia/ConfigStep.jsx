@@ -152,8 +152,9 @@ export default function ConfigStep({
 
 
 
-        {/* Quantity Input */}
-        {enableVariants ? (
+
+{/* Quantity Input - Dinamico in base al layout */}
+        {enableVariants && genderLayout === 'clothing' ? (
             <SizeMatrix 
                 sizes={SHIRT_SIZES}
                 quantities={getCurrentViewQuantities()}
@@ -162,11 +163,19 @@ export default function ConfigStep({
                 title={`Taglie ${activeGender} (${selectedColor ? SHIRT_COLORS.find(c => c.id === selectedColor)?.label : 'Seleziona colore'})`}
             />
         ) : (
-            <SingleSizeSelector 
-                quantity={singleQuantity}
-                onQuantityChange={setSingleQuantity}
-                visible={!!selectedColor}
-            />
+            <div className="animate-in fade-in duration-500">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                   Quantità {genderLayout !== 'clothing' ? 'Taglia Unica' : ''}
+                </label>
+                <SingleSizeSelector 
+                    quantity={singleQuantity}
+                    onQuantityChange={setSingleQuantity}
+                    visible={!!selectedColor}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                    Inserisci il numero totale di pezzi per il colore selezionato.
+                </p>
+            </div>
         )}
 
         {/* Print Options */}

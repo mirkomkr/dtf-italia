@@ -48,9 +48,8 @@ export default function PriceSummary({ quote, config, product, onCheckout }) {
         setIsLoading(false);
     };
 
-    return (
     // Default Label
-    const buttonLabel = props.actionLabel || "Aggiungi al Carrello";
+    const buttonLabel = onCheckout ? (props?.actionLabel || "Aggiungi al Carrello") : "Aggiungi al Carrello";
 
     return (
         <div className="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">

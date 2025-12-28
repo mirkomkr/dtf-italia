@@ -7,7 +7,7 @@ import { Suspense } from 'react'; // removed unused useEffect, useState
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-const UniversalContainer = dynamic(() => import('@/components/configurator/UniversalContainer'), {
+const UniversalContainer = dynamic(() => import(''), {
   ssr: false,
   loading: () => <SkeletonConfigurator height="600px" />
 });

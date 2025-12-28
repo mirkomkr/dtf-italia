@@ -66,8 +66,8 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   // --- Layout Logic ---
   const genderLayout = useMemo(() => {
     const slug = product?.slug?.toLowerCase() || '';
-    if (slug.includes('cappelli') || slug.includes('cappellino')) return 'caps';
-    if (slug.includes('shopper') || slug.includes('borse') || slug.includes('zaini')) return 'none';
+    if (slug.includes('cappello-con-visiera') || slug.includes('cappellino')) return 'caps';
+    if (slug.includes('shopper-in-cotone') || slug.includes('borse') || slug.includes('zaini')) return 'none';
     return 'clothing';
   }, [product]);
 

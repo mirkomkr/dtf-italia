@@ -63,6 +63,21 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   // --- Pricing State ---
   const [price, setPrice] = useState({ unitPrice: 0, totalPrice: 0 });
 
+  // --- Layout Logic ---
+  const genderLayout = useMemo(() => {
+    const slug = product?.slug?.toLowerCase() || '';
+    if (slug.includes('cappelli') || slug.includes('cappellino')) return 'caps';
+    if (slug.includes('shopper') || slug.includes('borse') || slug.includes('zaini')) return 'none';
+    return 'clothing';
+  }, [product]);
+
+  // Sync active gender with layout
+  React.useEffect(() => {
+    if (genderLayout === 'caps') setActiveGender('adulto');
+    if (genderLayout === 'none') setActiveGender('unico'); 
+  }, [genderLayout]);
+
+
   // --- Derived State with Memoization ---
   // Helper to get total qty from current state
   const getTotalQty = useCallback((currentQuantities, currentSingle) => {
@@ -288,6 +303,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
         
         {currentStep === 1 && (
             <ConfigStep 
+                genderLayout={genderLayout}
                 enableVariants={enableVariants}
                 activeGender={activeGender}
                 setActiveGender={setActiveGender}

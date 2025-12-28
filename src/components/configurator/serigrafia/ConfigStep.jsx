@@ -39,6 +39,7 @@ const PrintOptionSelector = dynamic(() => import('../shared/PrintOptionSelector'
 });
 
 export default function ConfigStep({
+  genderLayout = 'clothing',
   enableVariants = true,
   activeGender,
   setActiveGender,
@@ -75,6 +76,13 @@ export default function ConfigStep({
       return quantities[selectedColor]?.[activeGender] || {};
   };
 
+  // Determine which options to show
+  const genderOptions = genderLayout === 'caps' 
+    ? ['adulto', 'bambino'] 
+    : ['uomo', 'donna', 'bambino'];
+  
+  const showGenderSelector = enableVariants && genderLayout !== 'none';
+
   return (
     <div className="flex-grow flex flex-col space-y-6">
         <div>
@@ -82,12 +90,12 @@ export default function ConfigStep({
             <p className="text-sm text-gray-500">Scegli taglie e colori. Puoi abbinare più colori nello stesso ordine.</p>
         </div>
 
-        {/* Gender Selection - ONLY if variants enabled */}
-        {enableVariants && (
+        {/* Gender Selection - ONLY if variants enabled and layout is not 'none' */}
+        {showGenderSelector && (
             <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-3">Modello</label>
                 <div className="grid grid-cols-3 gap-3">
-                    {['uomo', 'donna', 'bambino'].map(gender => (
+                    {genderOptions.map(gender => (
                         <button
                             key={gender}
                             onClick={() => setActiveGender(gender)}

@@ -65,6 +65,9 @@ export default function CreditsPage() {
             <li>
               Foto di <a href="https://unsplash.com/it/@msgr?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Geri Sakti</a> su <a href="https://unsplash.com/it/foto/un-primo-piano-di-un-nastro-trasportatore-con-una-macchina-sullo-sfondo-R_J3nOqe9Kw?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Unsplash</a>
             </li>
+            <li> 
+              Foto di <a href="https://it.freepik.com/foto-gratuito/ragazza-vestita-in-giacca-di-jeans-che-tiene-eco-borsa_10921923.htm#fromView=search&page=1&position=4&uuid=4808df3e-785d-4389-af61-89fe1ee8517b&query=shopping+bag+cotton" className="text-indigo-300 hover:underline">pvproductions</a> su <a href="https://freepik.com/" className="text-indigo-300 hover:underline">Freepik</a>
+            </li>
               {/* aggiungi altri credits qui */}
           </ul>
         </div>

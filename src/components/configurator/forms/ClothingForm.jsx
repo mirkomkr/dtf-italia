@@ -90,7 +90,7 @@ export default function ClothingForm({ config, onChange, quote }) {
                             <button
                                 key={color.id}
                                 onClick={() => onChange('fabricColor', color.id)}
-                                className={`group relative w-12 h-12 rounded-full border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all ${
+                                className={`border-black group relative w-12 h-12 rounded-full border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all ${
                                     isSelected 
                                     ? `ring-2 ring-offset-2 ring-indigo-600 ${color.border} scale-110` 
                                     : 'border-transparent hover:scale-105'

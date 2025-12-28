@@ -199,8 +199,11 @@ export default function UniversalContainer({ product, categorySlug, variant = 'd
                                 
                                 <button
                                     onClick={() => console.log('Final Add to Cart', quote)} // Real logic here
-                                    className="py-4 px-8 rounded-xl font-black text-lg text-white shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all flex-1 ml-4"
-                                    style={{ backgroundColor: themeColor }}
+                                    disabled={!config.file}
+                                    className={`
+                                        py-4 px-6 rounded-xl font-bold text-lg text-white shadow-xl transition-all flex-1 ml-4
+                                        ${config.file ? 'bg-green-600 hover:bg-green-700 hover:-translate-y-1 shadow-green-200' : 'bg-gray-300 cursor-not-allowed opacity-70'}
+                                    `}
                                 >
                                     Aggiungi al Carrello
                                 </button>

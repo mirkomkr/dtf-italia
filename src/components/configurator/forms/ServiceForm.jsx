@@ -125,10 +125,10 @@ export default function ServiceForm({ config, onChange, mode = 'dimensions', quo
             {/* 3. Quantity Input */}
             <div>
                 {/* ... existing quantity input ... */}
-                <label htmlFor="quantity-input" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="quantity-input" className="block text-sm font-bold text-gray-700 mb-3">
                     Quantità {isCustom ? '(Pezzi)' : '(Copie)'}
                 </label>
-                <div className="flex items-center">
+                <div className="relative">
                     <input
                         id="quantity-input"
                         type="number"
@@ -137,8 +137,11 @@ export default function ServiceForm({ config, onChange, mode = 'dimensions', quo
                         pattern="[0-9]*"
                         value={config.quantity}
                         onChange={(e) => onChange('quantity', Math.max(1, parseInt(e.target.value) || 1))}
-                        className="w-full p-4 border-2 border-gray-200 rounded-xl text-xl font-bold text-gray-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all"
+                        className="w-full p-4 border-2 border-gray-100 rounded-xl text-xl font-bold text-gray-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all shadow-sm"
                     />
+                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium pointer-events-none">
+                        {isCustom ? 'Pz' : 'Copie'}
+                    </div>
                 </div>
             </div>
 

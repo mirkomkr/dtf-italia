@@ -7,7 +7,7 @@ import { Suspense } from 'react'; // removed unused useEffect, useState
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-const UniversalContainer = dynamic(() => import('@/app/serigrafia/components/ConfiguratoreSerigrafia'), {
+const UniversalContainer = dynamic(() => import('@/components/configurator/dtf/DTFContainer'), {
   ssr: false,
   loading: () => <SkeletonConfigurator height="600px" />
 });
@@ -48,15 +48,13 @@ export default function Hero({ product }) {
                         </div>
                         
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
-                            Stampa DTF <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">
-                                Professionale
-                            </span>
+                            Stampa <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Direct to Film</span> <br />
+                            Professionali
                         </h1>
                         
                         <p className="text-xl text-gray-300 max-w-lg leading-relaxed mx-auto lg:mx-0">
-                            Il service di stampa DTF (Direct to Film) preferito dalle aziende di Roma. 
-                            Qualità fotografica, colori vibranti e resistenza industriale. 
+                            Pellicole DTF professionali per aziende e professionisti. 
+                            Il Service Roma di fiducia per stampe nitide, colori vibranti e consegne rapide.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">

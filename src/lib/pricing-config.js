@@ -19,10 +19,28 @@ export const PRICING_CONFIG = {
     ]
   },
   dtf: {
-    price_per_sqm: 40.00, // Prezzo al metro quadro
-    min_order_price: 15.00, // Minimo d'ordine
+    BASE_PRICE_METER: 18.00,
+    MIN_ORDER_PRICE: 18.00,
+    DISCOUNT_STEP: 2.50, // Euro per 10mt
+    DISCOUNT_STEP_METERS: 10,
+    MIN_PRICE_METER: 10.50,
+    FULL_SERVICE_MARKUP: 0.10,
+    FLASH_ORDER_MARKUP: 0.10,
+    BOBINA_WIDTH: 58, // cm
     fixed_fees: {
        file_check: 10.00
+    },
+    formats: {
+      logo_cuore: { label: 'Logo Lato Cuore / Tascabile', w: 10, h: 10 },
+      manica_corta: { label: 'Manica Corta / Spalla', w: 7, h: 7 },
+      cappello_front: { label: 'Cappello (Frontale)', w: 12, h: 6 },
+      manica_lunga_striscia: { label: 'Manica Lunga (Striscia)', w: 6, h: 40 },
+      manica_lunga_polso: { label: 'Manica Lunga (Polso)', w: 4, h: 10 },
+      neck_tag: { label: 'Etichetta Collo (Tag)', w: 8, h: 8 },
+      a4: { label: 'Medio (A4)', w: 21, h: 29.7 },
+      a3: { label: 'Grande (A3)', w: 28, h: 40 },
+      meter: { label: 'Bobina al Metro Lineare', w: 58, h: 100 },
+      custom: { label: 'Personalizzato', isCustom: true }
     }
   },
   calendari: {

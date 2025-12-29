@@ -67,12 +67,99 @@ class SerigrafiaStrategy {
   }
 }
 
+
+
 class DTFStrategy {
   calculate(params) {
-    // Placeholder logic for DTF
-    // params: { quantity, width, height (cm) ?? }
     const config = PRICING_CONFIG.dtf;
-    return { unitPrice: 0, totalPrice: 0 };
+    const { quantity, format, width, height, isFullService, isFlashOrder } = params;
+
+    // 1. Resolve Dimensions (cm)
+    let itemW, itemH;
+    
+    if (format && config.formats[format] && !config.formats[format].isCustom) {
+      itemW = config.formats[format].w;
+      itemH = config.formats[format].h;
+    } else {
+      // Custom format or fallback
+      itemW = width || 0;
+      itemH = height || 0;
+    }
+
+    if (!quantity || quantity <= 0 || itemW <= 0 || itemH <= 0) {
+       return { unitPrice: 0, totalPrice: 0, totalMeters: 0, details: {} };
+    }
+
+    // 2. Nesting Calculation (Calcolo Ingombro)
+    // Quanti pezzi entrano in larghezza (BOBINA_WIDTH = 58cm)
+    const piecesPerRow = Math.floor(config.BOBINA_WIDTH / itemW);
+    const effectivePiecesPerRow = piecesPerRow < 1 ? 1 : piecesPerRow; // Safety check if width > 58 (e.g. oversize)
+    
+    // Quante "file" servono
+    const rowsNeeded = Math.ceil(quantity / effectivePiecesPerRow);
+    
+    // 3. Total Linear Meters
+    const totalMeters = (rowsNeeded * itemH) / 100; // cm -> meters
+
+    // 4. Dynamic Price Calculation
+    // Sconto: 2.50€ ogni 10mt completi
+    const discountSteps = Math.floor(totalMeters / config.DISCOUNT_STEP_METERS);
+    const discountAmount = discountSteps * config.DISCOUNT_STEP;
+    
+    let rawPricePerMeter = config.BASE_PRICE_METER - discountAmount;
+    
+    // Cap at MIN_PRICE_METER
+    if (rawPricePerMeter < config.MIN_PRICE_METER) {
+      rawPricePerMeter = config.MIN_PRICE_METER;
+    }
+
+    const effectiveMeterPrice = Number(rawPricePerMeter.toFixed(2));
+    
+    // Base Total
+    let baseTotal = totalMeters * effectiveMeterPrice;
+
+    // 5. Min Order Check
+    let isMinOrderApplied = false;
+    if (baseTotal < config.MIN_ORDER_PRICE) {
+      baseTotal = config.MIN_ORDER_PRICE;
+      isMinOrderApplied = true;
+    }
+
+    // 6. Extras (Markups)
+    let finalTotal = baseTotal;
+    
+    // Full Service (+10%)
+    if (isFullService) {
+      finalTotal += (baseTotal * config.FULL_SERVICE_MARKUP);
+    }
+    
+    // Flash Order (+10%)
+    if (isFlashOrder) {
+        finalTotal += (baseTotal * config.FLASH_ORDER_MARKUP);
+    }
+    
+    // 7. Results
+    // Unit price per piece = FinalTotal / Quantity
+    const unitPricePerPiece = finalTotal / quantity;
+    
+    // Metri mancanti al prossimo scaglione
+    // next tier is at (discountSteps + 1) * 10
+    const nextTierMeters = (discountSteps + 1) * config.DISCOUNT_STEP_METERS;
+    const savingsNextTier = Number((nextTierMeters - totalMeters).toFixed(2));
+
+    return {
+      totalPrice: Number(finalTotal.toFixed(2)),
+      unitPrice: Number(unitPricePerPiece.toFixed(2)), // Standard interface property
+      details: {
+         effectiveMeterPrice,
+         totalMeters: Number(totalMeters.toFixed(2)),
+         isMinOrderApplied,
+         savingsNextTier,
+         rowsNeeded,
+         piecesPerRow: effectivePiecesPerRow,
+         baseTotal: Number(baseTotal.toFixed(2))
+      }
+    };
   }
 }
 

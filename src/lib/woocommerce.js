@@ -71,6 +71,17 @@ export async function updateWooCommerceOrder(orderId, data) {
 }
 
 /**
+ * Create a WooCommerce Order
+ */
+export async function createWooCommerceOrder(data) {
+    return await fetchWooCommerce(`orders`, {}, {
+        method: 'POST',
+        body: data,
+        revalidate: 0
+    });
+}
+
+/**
  * Fetch products from WooCommerce API.
  * Optimized with React cache (Request Memoization), Data Cache, and In-Memory Category Cache.
  */

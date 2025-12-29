@@ -17,6 +17,11 @@ const FileUploader = dynamic(() => import('../shared/FileUploader'), {
   ssr: false
 });
 
+const SuccessStep = dynamic(() => import('../shared/SuccessStep'), {
+  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Successo...</p>,
+  ssr: false
+});
+
 const CheckIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="20 6 9 17 4 12" />
@@ -41,6 +46,7 @@ export default function DTFContainer({ product }) {
 
   // Files State
   const [files, setFiles] = useState([]);
+  const [isUploadComplete, setIsUploadComplete] = useState(false);
   
   // Processing State
   const [isProcessing, setIsProcessing] = useState(false);
@@ -159,23 +165,29 @@ export default function DTFContainer({ product }) {
             />
         )}
 
-        {currentStep === 3 && orderId && (
-            <div className="space-y-6 text-center animate-in fade-in zoom-in duration-300">
-                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckIcon />
+        {currentStep === 3 && orderId && isUploadComplete ? (
+            <SuccessStep orderId={orderId} brandColor="indigo" />
+        ) : (
+            currentStep === 3 && orderId && (
+                <div className="space-y-6 text-center animate-in fade-in zoom-in duration-300">
+                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <CheckIcon />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Ordine Confermato #{orderId}</h2>
+                    <p className="text-slate-600 mb-8">Ora carica i tuoi file di stampa per completare l'ordine.</p>
+                    
+                    <FileUploader 
+                        files={files}
+                        onFilesChange={handleFilesChange}
+                        maxSize={100 * 1024 * 1024}
+                        accept={{ 'image/png': ['.png'], 'application/pdf': ['.pdf'], 'image/tiff': ['.tif', '.tiff'], 'image/svg+xml': ['.svg'], 'application/postscript': ['.ai', '.eps'] }}
+                        uploadMode="s3"
+                        orderId={orderId}
+                        brandColor="indigo"
+                        onUploadComplete={() => setIsUploadComplete(true)}
+                    />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">Ordine Confermato #{orderId}</h2>
-                <p className="text-slate-600 mb-8">Ora carica i tuoi file di stampa per completare l'ordine.</p>
-                
-                <FileUploader 
-                    files={files}
-                    onFilesChange={handleFilesChange}
-                    maxSize={100 * 1024 * 1024}
-                    accept={{ 'image/png': ['.png'], 'application/pdf': ['.pdf'], 'image/tiff': ['.tif', '.tiff'], 'image/svg+xml': ['.svg'], 'application/postscript': ['.ai', '.eps'] }}
-                    uploadMode="s3"
-                    orderId={orderId}
-                />
-            </div>
+            )
         )}
       </div>
     </div>

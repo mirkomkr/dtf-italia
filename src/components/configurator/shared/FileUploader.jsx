@@ -15,7 +15,8 @@ export default function FileUploader({
     allowedExtensions = ALLOWED_EXTENSIONS,
     uploadMode = 'local', // 'local' | 's3'
     orderId = null,
-    brandColor = 'indigo' // 'indigo' | 'red'
+    brandColor = 'indigo', // 'indigo' | 'red'
+    onUploadComplete
 }) {
     const fileInputRef = useRef(null);
     const [uploadError, setUploadError] = useState(null);
@@ -76,6 +77,14 @@ export default function FileUploader({
              if (!uploadRes.ok) throw new Error("Errore S3 PUT");
 
              setUploadProgress(prev => ({ ...prev, [fileToUpload.name]: 100 }));
+
+             // 3. Sync with WooCommerce (Fire & Forget)
+             fetch('/api/order/update-s3-meta', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ orderId, s3Key: key })
+             }).catch(console.error);
+
              return key;
 
         } catch (error) {
@@ -121,6 +130,9 @@ export default function FileUploader({
         if (uploadMode === 's3' && orderId) {
             for(const f of validFiles) {
                 await handleS3Upload(f);
+            }
+            if (onUploadComplete) {
+                setTimeout(onUploadComplete, 1000); // Small delay for UX
             }
         }
     };

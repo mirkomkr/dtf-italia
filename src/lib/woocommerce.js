@@ -16,11 +16,17 @@ const CATEGORY_ID_CACHE = new Map();
 async function fetchWooCommerce(endpoint, params = {}, options = {}) {
   const url = new URL(`${baseUrl}/wp-json/wc/v3/${endpoint}`);
   
-  Object.keys(params).forEach(key => {
-    if (params[key] !== undefined && params[key] !== null) {
-      url.searchParams.append(key, params[key]);
-    }
-  });
+  // If GET, append params to URL. If POST/PUT, params might be body (handled below but usually separate args desirable)
+  // For compat with existing getWooCommerceProducts, we assume params are query params if method is GET (default).
+  const method = options.method || 'GET';
+
+  if (method === 'GET') {
+      Object.keys(params).forEach(key => {
+        if (params[key] !== undefined && params[key] !== null) {
+          url.searchParams.append(key, params[key]);
+        }
+      });
+  }
 
   const authHeader = `Basic ${btoa(`${consumerKey}:${consumerSecret}`)}`;
   
@@ -31,18 +37,37 @@ async function fetchWooCommerce(endpoint, params = {}, options = {}) {
   const defaultRevalidate = 0; // TEMPORARILY DISABLED CACHE
   const revalidateTime = options.revalidate !== undefined ? options.revalidate : defaultRevalidate;
 
-  const res = await fetch(url.toString(), {
+  const fetchOptions = {
+    method,
     headers: {
       Authorization: authHeader,
+      'Content-Type': 'application/json',
     },
     next: { revalidate: revalidateTime },
-  });
+  };
+
+  if (method !== 'GET' && options.body) {
+      fetchOptions.body = JSON.stringify(options.body);
+  }
+
+  const res = await fetch(url.toString(), fetchOptions);
 
   if (!res.ok) {
     throw new Error(`WooCommerce API Error: ${res.status} ${res.statusText}`);
   }
 
   return res.json();
+}
+
+/**
+ * Update a WooCommerce Order
+ */
+export async function updateWooCommerceOrder(orderId, data) {
+    return await fetchWooCommerce(`orders/${orderId}`, {}, {
+        method: 'PUT',
+        body: data,
+        revalidate: 0
+    });
 }
 
 /**

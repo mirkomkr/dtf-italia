@@ -10,6 +10,11 @@ const FileUploader = dynamic(() => import('../shared/FileUploader'), {
 });
 
 // Dynamic imports for ALL steps and UI components to minimize initial TBT
+const SuccessStep = dynamic(() => import('../shared/SuccessStep'), {
+  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Successo...</p>,
+  ssr: false
+});
+
 const StepNavigation = dynamic(() => import('../shared/StepNavigation'), {
   spacing: '0', // No placeholder needed or minimal
   ssr: true // StepNavigation is small and visual, SSR is okay but if heavy, set to false.
@@ -60,6 +65,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
   // Files State
   const [files, setFiles] = useState([]);
+  const [isUploadComplete, setIsUploadComplete] = useState(false);
   const handleFilesChange = (newFiles) => {
     setFiles(newFiles);
   };
@@ -258,32 +264,26 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             />
         )}
 
-        {currentStep === 3 && orderId && (
-            <div className="space-y-6 text-center animate-in fade-in zoom-in duration-300">
-                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+        {currentStep === 3 && orderId && isUploadComplete ? (
+            <SuccessStep orderId={orderId} brandColor="red" />
+        ) : (
+             currentStep === 3 && orderId && (
+                <div className="space-y-6 text-center animate-in fade-in zoom-in duration-300">
+                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Ordine Confermato #{orderId}</h2>
+                    <p className="text-slate-600 mb-8">Ora carica i tuoi file di stampa per completare l'ordine.</p>
+                    
+                    <FileUploader 
+                        orderId={orderId}
+                        uploadMode="s3"
+                        brandColor="red"
+                        files={[]} 
+                        onUploadComplete={() => setIsUploadComplete(true)}
+                    />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">Ordine Confermato #{orderId}</h2>
-                <p className="text-slate-600 mb-8">Ora carica i tuoi file di stampa per completare l'ordine.</p>
-                
-                <FileUploader 
-                    orderId={orderId}
-                    uploadMode="s3"
-                    brandColor="red"
-                    files={[]} // No local state needed for files list if we trust the component to handle itself or we can add local state if needed. DTFContainer has local state. SerigrafiaContainer deleted it.
-                    // If FileUploader needs onFilesChange to show list, I should keep state.
-                    // The user asked to "Remove old functions handled by shared component".
-                    // The `FileUploader` component I saw earlier uses `files` prop for `currentFiles` list.
-                    // If I don't pass `files` state, `FileUploader` assumes `files=[]`.
-                    // But `FileUploader` calls `onFilesChange`.
-                    // If I don't maintain state, `currentFiles` will be empty on re-render?
-                    // Let's check FileUploader logic.
-                    // `const currentFiles = files.length > 0 ? files : (file ? [file] : []);`
-                    // It relies on props.
-                    // So I SHOULD maintain `files` state in SerigrafiaContainer if I want the list to persist.
-                    // I will re-add `files` state, but simplified.
-                />
-            </div>
+             )
         )}
     </div>
   );

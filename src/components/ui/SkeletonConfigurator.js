@@ -2,40 +2,43 @@
 export default function SkeletonConfigurator() {
   return (
     <div 
-      className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100 max-w-lg w-full mx-auto flex flex-col animate-pulse"
-      style={{ minHeight: '600px', height: '600px', contentVisibility: 'auto' }}
+      className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-indigo-500/20 shadow-2xl min-h-[600px] max-w-4xl w-full mx-auto flex flex-col animate-pulse"
+      style={{ minHeight: '600px', contentVisibility: 'auto' }}
       aria-busy="true"
     >
       {/* Step Navigation Skeleton */}
-      <div className="flex justify-between items-center mb-8 relative">
+      <div className="flex justify-between items-center mb-12 px-12 relative">
           {[1, 2, 3].map((step) => (
-              <div key={step} className="flex flex-col items-center z-10">
-                  <div className="w-8 h-8 rounded-full bg-gray-200"></div>
-                  <div className="h-4 w-12 bg-gray-200 mt-2 rounded"></div>
+              <div key={step} className="flex flex-col items-center z-10 gap-2">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100"></div>
+                  <div className="h-3 w-16 bg-slate-100 rounded"></div>
               </div>
           ))}
-          <div className="absolute top-4 left-0 w-full h-0.5 bg-gray-100 -z-0"></div>
+          <div className="absolute top-5 left-12 right-12 h-1 bg-slate-50 -z-0"></div>
       </div>
 
       {/* Content Skeleton */}
-      <div className="space-y-6 flex-grow">
-          <div className="h-8 bg-gray-200 w-3/4 rounded"></div>
-          <div className="h-4 bg-gray-200 w-full rounded"></div>
+      <div className="space-y-8 flex-grow">
+          {/* Title Mock */}
+          <div className="h-6 bg-slate-200 w-1/3 rounded mb-6"></div>
           
-          <div className="grid grid-cols-3 gap-3 my-6">
-             <div className="h-24 bg-gray-200 rounded-xl"></div>
-             <div className="h-24 bg-gray-200 rounded-xl"></div>
-             <div className="h-24 bg-gray-200 rounded-xl"></div>
+          {/* Grid Mock (3 cols as per new design) */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+             {[1, 2, 3, 4, 5, 6].map(i => (
+                 <div key={i} className="h-24 bg-slate-100 rounded-xl border-2 border-slate-50"></div>
+             ))}
           </div>
 
-          <div className="flex flex-wrap gap-3">
-             {[1, 2, 3, 4, 5].map(i => <div key={i} className="w-10 h-10 rounded-full bg-gray-200"></div>)}
+          {/* Quantity Mock */}
+          <div className="flex justify-between items-center mt-8 p-4 bg-slate-50 rounded-xl">
+             <div className="h-10 w-32 bg-slate-200 rounded-lg"></div>
+             <div className="h-10 w-24 bg-indigo-100 rounded-lg"></div>
           </div>
       </div>
 
       {/* Footer Skeleton */}
-      <div className="mt-auto pt-6 border-t border-gray-100">
-          <div className="h-14 bg-gray-200 rounded-xl w-full"></div>
+      <div className="mt-8 pt-6 border-t border-slate-100 flex justify-end">
+          <div className="h-12 bg-indigo-200 rounded-xl w-48"></div>
       </div>
     </div>
   );

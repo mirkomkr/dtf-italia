@@ -91,8 +91,8 @@ export const TechnicalSpecsBox = () => {
       <div>
         <h4 className="text-sm font-semibold text-indigo-900">Specifiche Tecniche</h4>
         <ul className="text-sm text-indigo-800 mt-1 space-y-1 list-disc list-inside">
-          <li>File <strong>PNG trasparente</strong> (senza sfondo)</li>
-          <li>Risoluzione ideale <strong>300 DPI</strong></li>
+          <li>File <strong>PDF, AI, EPS, SVG, TIFF, PNG, con sfondo trasparente</strong> (senza sfondo)</li>
+          <li>Risoluzione <strong>da 72 a 300 DPI</strong></li>
           <li>Profilo colore <strong>CMYK</strong> (convertiamo noi se invii RGB)</li>
           <li>Larghezza massima di stampa: <strong>58cm</strong></li>
         </ul>

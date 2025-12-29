@@ -1,0 +1,59 @@
+import React from 'react';
+import { cn } from '@/lib/utils';
+import { CreditCard } from 'lucide-react';
+
+export default function PaymentActions({ 
+    onPaymentSelect, 
+    isProcessing, 
+    isTestMode = false, 
+    brandColor = 'indigo' 
+}) {
+    // We keep buttons standardized (Stripe Purple / Paypal Blue) or brand them?
+    // Stripe is usually purple-ish. Paypal is Blue.
+    // Let's keep official brand colors for payment methods but use `brandColor` for consistent styling context if needed.
+    // The "Test S3" button will be styling neutral or brand colored.
+    
+    return (
+        <div className="mt-auto pt-6 border-t border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wider">Metodo di Pagamento</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <button 
+                    onClick={() => onPaymentSelect('stripe')}
+                    disabled={isProcessing}
+                    className="group py-4 px-4 bg-[#635BFF] hover:bg-[#544de6] text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5"
+                >
+                   <CreditCard className="w-5 h-5 opacity-80 group-hover:opacity-100" />
+                   {isProcessing ? 'Elaborazione...' : 'Paga con Carta'}
+                </button>
+                
+                <button 
+                    onClick={() => onPaymentSelect('paypal')}
+                    disabled={isProcessing}
+                    className="group py-4 px-4 bg-[#0070BA] hover:bg-[#005ea6] text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5"
+                >
+                    {/* Simple PayPal Icon SVG */}
+                    <svg className="w-5 h-5 fill-current opacity-80 group-hover:opacity-100" viewBox="0 0 24 24">
+                        <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.946 5.438-3.158 7.12-6.549 7.12h-1.08c-.44 0-.793.337-.856.773l-.76 4.918c-.108.704-.716 1.232-1.431 1.232H7.076a.641.641 0 0 1-.633-.74l.633-4.062z"/>
+                    </svg>
+                    PayPal
+                </button>
+            </div>
+
+            {isTestMode && (
+                <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
+                    <button 
+                        onClick={() => onPaymentSelect('test-s3')}
+                        disabled={isProcessing}
+                        className="w-full py-3 px-4 bg-gray-800 hover:bg-black text-white font-mono text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                    >
+                        [DEV] Test Checkout & S3 Upload
+                    </button>
+                    <p className="text-xs text-center text-gray-400 mt-2">
+                        Simula approvazione immediata senza transazione reale
+                    </p>
+                </div>
+            )}
+        </div>
+    );
+}

@@ -24,7 +24,7 @@ const ConfigStep = dynamic(() => import('./ConfigStep'), {
     ssr: false // Defer heavy config logic
 });
 
-const CheckoutStep = dynamic(() => import('./CheckoutStep'), {
+const UnifiedCheckout = dynamic(() => import('../shared/UnifiedCheckout'), {
   loading: () => <p className="p-10 text-center text-gray-500">Caricamento Checkout...</p>,
   ssr: false
 });
@@ -56,13 +56,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   // --- Step 3 (Upload) State ---
 
   
-  // --- Step 2 (Data) State ---
-  const [formData, setFormData] = useState({
-    firstName: '', lastName: '', email: '',
-    address: '', city: '', zip: ''
-  });
-  const [shippingOption, setShippingOption] = useState('shipping');
-  const [shippingCost, setShippingCost] = useState(0);
+
 
   // Files State
   const [files, setFiles] = useState([]);
@@ -198,70 +192,12 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   // Replaced by direct calls in handlers.
   // Shipping cost effect is light enough to stay or can be moved to shipping selector on change.
   // For strictness, let's keep it but it's very cheap.
-  React.useEffect(() => {
-    setShippingCost(shippingOption === 'pickup' ? 0 : 7.50);
-  }, [shippingOption]);
 
 
-  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleCheckout = async (gateway) => {
-    setIsProcessing(true);
-    try {
-      const payload = new FormData();
-      payload.append('firstName', formData.firstName);
-      payload.append('lastName', formData.lastName);
-      payload.append('email', formData.email);
-      if(shippingOption === 'shipping') {
-         payload.append('address', formData.address);
-         payload.append('city', formData.city);
-         payload.append('zip', formData.zip);
-      }
-      payload.append('shippingOption', shippingOption);
-      
-      if (enableVariants) {
-          payload.append('detailedQuantities', JSON.stringify(quantities));
-      } else {
-          payload.append('quantity', singleQuantity);
-      }
-      
-      const frontLabel = frontPrint === 'none' ? 'Nessuna' : (frontPrint === '1_color' ? '1 Colore' : (frontPrint === '2_colors' ? '2 Colori' : 'Full Color'));
-      const backLabel = backPrint === 'none' ? 'Nessuna' : (backPrint === '1_color' ? '1 Colore' : (backPrint === '2_colors' ? '2 Colori' : 'Full Color'));
-      
-      payload.append('frontPrint', frontLabel);
-      payload.append('backPrint', backLabel);
-      payload.append('fileCheck', fileCheck);
-      
-      payload.append('unitPrice', price.unitPrice);
-      payload.append('totalPrice', price.totalPrice + shippingCost);
-      payload.append('shippingCost', shippingCost);
-      payload.append('totalQuantity', totalQuantity);
-      payload.append('paymentMethod', gateway);
-
-      if (product && product.id) {
-        payload.append('productId', product.id);
-      }
-
-      const response = await fetch('/api/order/serigrafia', {
-        method: 'POST',
-        body: payload
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-         setOrderId(data.orderId);
-         setCurrentStep(3); 
-      } else {
-        throw new Error(data.error || 'Errore sconosciuto');
-      }
-
-    } catch (error) {
-      console.error('Checkout error:', error);
-      alert('Errore durante il checkout: ' + error.message);
-    } finally {
-      setIsProcessing(false);
-    }
+  const handleOrderSuccess = (newOrderId) => {
+    setOrderId(newOrderId);
+    setCurrentStep(3);
   };
 
 
@@ -305,18 +241,19 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
         )}
         
         {currentStep === 2 && (
-            <CheckoutStep 
-                totalQuantity={totalQuantity}
-                price={price}
-                shippingCost={shippingCost}
-                quantities={quantities}
-                enableVariants={enableVariants}
-                shippingOption={shippingOption}
-                setShippingOption={setShippingOption}
-                formData={formData}
-                handleInputChange={handleInputChange}
-                handleCheckout={handleCheckout}
-                isProcessing={isProcessing}
+            <UnifiedCheckout 
+                type="serigrafia"
+                priceData={price}
+                productData={{
+                    quantities,
+                    singleQuantity,
+                    frontPrint,
+                    backPrint,
+                    fileCheck,
+                    totalQuantity
+                }}
+                brandColor="red"
+                onSuccess={handleOrderSuccess}
                 onBack={() => setCurrentStep(1)}
             />
         )}

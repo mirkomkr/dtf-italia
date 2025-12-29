@@ -7,6 +7,11 @@ import DTFConfigStep from './DTFConfigStep';
 import { ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+const UnifiedCheckout = dynamic(() => import('../shared/UnifiedCheckout'), {
+  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Checkout...</p>,
+  ssr: false
+});
+
 const FileUploader = dynamic(() => import('../shared/FileUploader'), {
   loading: () => <p className="p-10 text-center text-gray-500">Caricamento Uploader...</p>,
   ssr: false
@@ -66,41 +71,12 @@ export default function DTFContainer({ product }) {
     }
   };
 
-  const handleCheckout = async () => {
-    setIsProcessing(true);
-    try {
-        if (!config.price) throw new Error("Prezzo non calcolato");
-        
-        const payload = {
-            productId: product?.id || 0,
-            quantity: config.quantity, 
-            meta: {
-                totalMeters: config.price.details.totalMeters,
-                format: config.format,
-                extras: {
-                    fullService: config.isFullService,
-                    flashOrder: config.isFlashOrder
-                }
-            }
-        };
-
-        // Simulate API
-        // In real app use fetch('/api/checkout/create-session', ...)
-        await new Promise(r => setTimeout(r, 1500));
-        
-        // Mock Success
-        const newOrderId = `ORD-${Date.now().toString().slice(-6)}`;
-        setOrderId(newOrderId);
-        setCurrentStep(3); // Advance/Refresh to Upload View
-        
-        // alert(`Ordine ${newOrderId} creato! Procedi con l'upload.`);
-
-    } catch (error) {
-        console.error("Checkout error:", error);
-        alert("Errore durante il checkout");
-    } finally {
-        setIsProcessing(false);
-    }
+  const handleOrderSuccess = (newOrderId) => {
+    setOrderId(newOrderId);
+    // Stay on Step 3 but UnifiedCheckout will unmount because !orderId condition fails?
+    // Wait, Step 3 in DTFContainer has: {currentStep === 3 && !orderId && ...} => Checkout
+    // {currentStep === 3 && orderId && ...} => Upload
+    // So setting orderId triggers the Upload view. Perfecto.
   };
 
   return (
@@ -166,63 +142,21 @@ export default function DTFContainer({ product }) {
         )}
 
         {currentStep === 3 && !orderId && config.price && (
-            <div className="space-y-8">
-                <h3 className="text-xl font-bold text-gray-900">Riepilogo Ordine DTF</h3>
-                
-                <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 space-y-4">
-                    <div className="flex justify-between items-center border-b border-slate-200 pb-4">
-                        <span className="text-slate-600">Formato</span>
-                        <span className="font-bold text-slate-900 uppercase">{config.format} ({config.width || '?'}x{config.height || '?'} cm)</span>
-                    </div>
-                    <div className="flex justify-between items-center border-b border-slate-200 pb-4">
-                         <span className="text-slate-600">Quantità Pezzi</span>
-                         <span className="font-bold text-slate-900">{config.quantity}</span>
-                    </div>
-                    <div className="flex justify-between items-center border-b border-slate-200 pb-4">
-                         <span className="text-slate-600">Metri Lineari Totali</span>
-                         <span className="font-bold text-slate-900">{config.price.details.totalMeters} mt</span>
-                    </div>
-                    
-                    {config.isFullService && (
-                         <div className="flex justify-between items-center text-indigo-600">
-                            <span className="font-medium">Opzione: Pensa a tutto DTF Italia</span>
-                            <span>+10%</span>
-                        </div>
-                    )}
-                    {config.isFlashOrder && (
-                         <div className="flex justify-between items-center text-amber-600">
-                            <span className="font-medium">Opzione: Ordine Flash</span>
-                            <span>+10%</span>
-                        </div>
-                    )}
-                    
-                    <div className="pt-4 flex justify-between items-end">
-                        <span className="text-lg font-bold text-slate-800">Totale</span>
-                        <span className="text-3xl font-black text-indigo-600">€{config.price.totalPrice?.toFixed(2)}</span>
-                    </div>
-                </div>
-
-                <div className="flex justify-between items-center">
-                    <button
-                        onClick={() => setCurrentStep(2)}
-                        className="text-slate-500 font-medium hover:text-indigo-600 transition-colors"
-                    >
-                        &larr; Indietro
-                    </button>
-                    
-                    <button
-                        onClick={handleCheckout}
-                        disabled={isProcessing}
-                        className="bg-green-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-green-700 transition-colors shadow-lg shadow-green-200 flex items-center gap-2"
-                    >
-                       {isProcessing ? 'Elaborazione...' : (
-                           <>
-                             <ShoppingCart size={20} /> Conferma e Paga
-                           </>
-                       )}
-                    </button>
-                </div>
-            </div>
+            <UnifiedCheckout 
+                type="dtf"
+                priceData={config.price}
+                productData={{
+                    format: config.format,
+                    width: config.width,
+                    height: config.height,
+                    quantity: config.quantity,
+                    isFullService: config.isFullService,
+                    isFlashOrder: config.isFlashOrder
+                }}
+                brandColor="indigo"
+                onSuccess={handleOrderSuccess}
+                onBack={() => setCurrentStep(2)}
+            />
         )}
 
         {currentStep === 3 && orderId && (

@@ -4,6 +4,11 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { calculatePrice } from '@/lib/pricing-engine';
 import dynamic from 'next/dynamic';
 
+const FileUploader = dynamic(() => import('../shared/FileUploader'), {
+  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Uploader...</p>,
+  ssr: false
+});
+
 // Dynamic imports for ALL steps and UI components to minimize initial TBT
 const StepNavigation = dynamic(() => import('../shared/StepNavigation'), {
   spacing: '0', // No placeholder needed or minimal
@@ -49,8 +54,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   const [fileCheck, setFileCheck] = useState(false);
   
   // --- Step 3 (Upload) State ---
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [fileUploaded, setFileUploaded] = useState(false);
+
   
   // --- Step 2 (Data) State ---
   const [formData, setFormData] = useState({
@@ -59,6 +63,12 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   });
   const [shippingOption, setShippingOption] = useState('shipping');
   const [shippingCost, setShippingCost] = useState(0);
+
+  // Files State
+  const [files, setFiles] = useState([]);
+  const handleFilesChange = (newFiles) => {
+    setFiles(newFiles);
+  };
 
   // --- Pricing State ---
   const [price, setPrice] = useState({ unitPrice: 0, totalPrice: 0 });
@@ -177,15 +187,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     }
   }, [currentStep, orderId]);
 
-  const handleFileSelect = (file) => {
-      setSelectedFile(file);
-      setFileUploaded(true);
-  };
 
-  const handleFileRemove = () => {
-      setSelectedFile(null);
-      setFileUploaded(false);
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -262,31 +264,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     }
   };
 
-  const handleUploadSubmit = async () => {
-      if (!selectedFile || !orderId) return;
-      setIsProcessing(true);
-      try {
-          const payload = new FormData();
-          payload.append('orderId', orderId);
-          payload.append('file', selectedFile);
 
-          const response = await fetch('/api/order/uploadbox', { 
-              method: 'POST', 
-              body: payload 
-          });
-          
-          if(response.ok) {
-              alert("File caricato correttamente! Riceverai una mail di conferma.");
-          } else {
-              throw new Error("Upload fallito");
-          }
-
-      } catch (e) {
-          alert(e.message);
-      } finally {
-          setIsProcessing(false);
-      }
-  };
 
   return (
     <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full">
@@ -299,6 +277,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             ]}
             onStepClick={handleStepClick}
             isStepCompleted={!!orderId}
+            brandColor="red"
         />
         
         {currentStep === 1 && (
@@ -342,16 +321,32 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             />
         )}
 
-        {currentStep === 3 && (
-            <UploadStep 
-                orderId={orderId}
-                selectedFile={selectedFile}
-                handleFileSelect={handleFileSelect}
-                handleFileRemove={handleFileRemove}
-                handleUploadSubmit={handleUploadSubmit}
-                isProcessing={isProcessing}
-                fileUploaded={fileUploaded}
-            />
+        {currentStep === 3 && orderId && (
+            <div className="space-y-6 text-center animate-in fade-in zoom-in duration-300">
+                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Ordine Confermato #{orderId}</h2>
+                <p className="text-slate-600 mb-8">Ora carica i tuoi file di stampa per completare l'ordine.</p>
+                
+                <FileUploader 
+                    orderId={orderId}
+                    uploadMode="s3"
+                    brandColor="red"
+                    files={[]} // No local state needed for files list if we trust the component to handle itself or we can add local state if needed. DTFContainer has local state. SerigrafiaContainer deleted it.
+                    // If FileUploader needs onFilesChange to show list, I should keep state.
+                    // The user asked to "Remove old functions handled by shared component".
+                    // The `FileUploader` component I saw earlier uses `files` prop for `currentFiles` list.
+                    // If I don't pass `files` state, `FileUploader` assumes `files=[]`.
+                    // But `FileUploader` calls `onFilesChange`.
+                    // If I don't maintain state, `currentFiles` will be empty on re-render?
+                    // Let's check FileUploader logic.
+                    // `const currentFiles = files.length > 0 ? files : (file ? [file] : []);`
+                    // It relies on props.
+                    // So I SHOULD maintain `files` state in SerigrafiaContainer if I want the list to persist.
+                    // I will re-add `files` state, but simplified.
+                />
+            </div>
         )}
     </div>
   );

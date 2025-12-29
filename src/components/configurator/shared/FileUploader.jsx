@@ -14,12 +14,32 @@ export default function FileUploader({
     maxSize = MAX_FILE_SIZE_BYTES,
     allowedExtensions = ALLOWED_EXTENSIONS,
     uploadMode = 'local', // 'local' | 's3'
-    orderId = null
+    orderId = null,
+    brandColor = 'indigo' // 'indigo' | 'red'
 }) {
     const fileInputRef = useRef(null);
     const [uploadError, setUploadError] = useState(null);
     const [isDragOver, setIsDragOver] = useState(false);
     const [uploadProgress, setUploadProgress] = useState({}); // { fileName: percentage }
+
+    // Dynamic Classes
+    const isRed = brandColor === 'red';
+    
+    // Border & Bg
+    const normalClass = isRed 
+        ? "border-red-200 bg-red-50/50 hover:bg-red-50" 
+        : "border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50";
+    
+    const dragClass = isRed 
+        ? "border-red-400 bg-red-100" 
+        : "border-indigo-400 bg-indigo-100";
+        
+    // Text
+    const textPrimaryClass = isRed ? "text-red-900" : "text-indigo-900";
+    const textSecondaryClass = isRed ? "text-red-600" : "text-indigo-600";
+    
+    // Icon
+    const iconClass = isRed ? "text-red-500" : "text-indigo-500";
 
     // Unified File Handling
     const currentFiles = files.length > 0 ? files : (file ? [file] : []);
@@ -148,7 +168,7 @@ export default function FileUploader({
                 tabIndex={0}
                 className={cn(
                     "border-2 border-dashed rounded-xl p-8 transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[16rem] group outline-none",
-                    isDragOver ? "border-indigo-400 bg-indigo-100" : "border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50"
+                    isDragOver ? dragClass : normalClass
                 )}
             >
                 <input 
@@ -163,7 +183,7 @@ export default function FileUploader({
                 {currentFiles.length > 0 ? (
                     <div className="w-full space-y-3">
                         {currentFiles.map((f, i) => (
-                           <div key={i} className="flex items-center justify-between bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                           <div key={i} className={`flex items-center justify-between bg-white p-3 rounded-lg border shadow-sm ${isRed ? 'border-red-100' : 'border-indigo-100'}`}>
                                 <div className="flex items-center gap-3 overflow-hidden w-full">
                                     <FileCheck className="w-8 h-8 text-green-500 flex-shrink-0" />
                                     <div className="min-w-0 flex-grow">
@@ -200,14 +220,14 @@ export default function FileUploader({
                         "w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm transition-transform",
                         isDragOver ? "scale-110" : "group-hover:scale-110"
                     )}>
-                      {uploadError ? <AlertCircle className="w-8 h-8 text-red-500"/> : <Upload className="w-8 h-8 text-indigo-500"/>}
+                      {uploadError ? <AlertCircle className="w-8 h-8 text-red-500"/> : <Upload className={`w-8 h-8 ${iconClass}`}/>}
                     </div>
                     {uploadError ? (
                        <p className="text-red-600 font-medium px-4">{uploadError}</p>
                     ) : (
                       <>
-                        <p className="text-indigo-900 font-bold text-lg mb-1">{isDragOver ? 'Rilascia i file qui' : 'Clicca per caricare'}</p>
-                        <p className="text-indigo-600 text-xs font-medium mb-1">
+                        <p className={`${textPrimaryClass} font-bold text-lg mb-1`}>{isDragOver ? 'Rilascia i file qui' : 'Clicca per caricare'}</p>
+                        <p className={`${textSecondaryClass} text-xs font-medium mb-1`}>
                           Accettiamo: {allowedExtensions.map(e => e.replace('.', '')).join(', ').toUpperCase()}
                         </p>
                         <p className="text-slate-400 text-[10px]">

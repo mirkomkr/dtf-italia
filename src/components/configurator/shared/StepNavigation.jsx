@@ -9,7 +9,7 @@ const CheckIcon = ({ className }) => (
 );
 
 
-export default function StepNavigation({ currentStep, steps, onStepClick, isStepCompleted }) {
+export default function StepNavigation({ currentStep, steps, onStepClick, isStepCompleted, brandColor = 'indigo' }) {
   // steps: array of objects { id: 1, label: 'Configura' }
   const defaultSteps = [
     { id: 1, label: 'Configura' },
@@ -18,6 +18,9 @@ export default function StepNavigation({ currentStep, steps, onStepClick, isStep
   ];
   
   const actualSteps = steps || defaultSteps;
+
+  const activeBgClass = brandColor === 'red' ? 'bg-red-600 shadow-md ring-2 ring-red-100' : 'bg-indigo-600 shadow-md ring-2 ring-indigo-100';
+  const activeTextClass = brandColor === 'red' ? 'text-red-700' : 'text-indigo-700';
 
   return (
     <nav className="flex justify-between mb-8 border-b border-gray-100 pb-4 flex-shrink-0 w-full">
@@ -40,14 +43,14 @@ export default function StepNavigation({ currentStep, steps, onStepClick, isStep
                 <div className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors",
                   isActive 
-                    ? "bg-indigo-600 text-white shadow-md ring-2 ring-indigo-100" 
+                    ? `${activeBgClass} text-white`
                     : (isPast ? "bg-green-500 text-white" : "bg-gray-100 text-gray-400")
                 )}>
                   {isPast ? <CheckIcon className="w-5 h-5"/> : step.id}
                 </div>
                 <span className={cn(
                   "text-xs mt-1 font-medium",
-                  isActive ? "text-indigo-700" : "text-gray-500"
+                  isActive ? activeTextClass : "text-gray-500"
                 )}>
                   {step.label}
                 </span>

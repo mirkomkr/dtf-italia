@@ -31,16 +31,18 @@ export default function UploadStep({
                 file={selectedFile}
                 onFileSelect={handleFileSelect}
                 onFileRemove={handleFileRemove}
+                brandColor="red"
+                uploadMode="s3"
+                orderId={orderId}
             />
 
             <div className="mt-auto space-y-3">
-              <button 
-                onClick={handleUploadSubmit}
-                disabled={!fileUploaded || isProcessing}
-                className="w-full py-4 px-6 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              <a 
+                href="/"
+                className="block w-full py-4 px-6 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-lg transition-all text-center"
               >
-                {isProcessing ? 'Caricamento...' : 'Invia File e Concludi'}
-              </button>
+                Torna alla Home
+              </a>
             </div>
       </div>
   );

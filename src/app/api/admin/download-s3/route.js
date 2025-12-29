@@ -22,6 +22,7 @@ export async function GET(request) {
         const command = new GetObjectCommand({
             Bucket: bucketName,
             Key: key,
+            ResponseContentDisposition: `attachment; filename="${key.split('/').pop()}"`,
         });
 
         // Create a signed URL that expires in 1 hour (3600 seconds)

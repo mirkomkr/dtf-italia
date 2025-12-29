@@ -1,7 +1,6 @@
 import React from 'react';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Check, Home, Package } from 'lucide-react';
+import { Check, Home } from 'lucide-react';
 
 export default function SuccessStep({ 
     orderId, 
@@ -14,9 +13,6 @@ export default function SuccessStep({
     const buttonPrimaryClass = isRed 
         ? "bg-red-600 hover:bg-red-700 shadow-red-200" 
         : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200";
-    const buttonSecondaryClass = isRed
-        ? "text-red-600 bg-red-50 hover:bg-red-100 border-red-100"
-        : "text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border-indigo-100";
 
     return (
         <div className="flex flex-col items-center justify-center text-center space-y-6 animate-in zoom-in duration-500 py-12">
@@ -27,41 +23,32 @@ export default function SuccessStep({
             </div>
 
             <div className="space-y-2">
-                <h2 className="text-3xl font-black text-slate-900">Ordine Ricevuto!</h2>
-                <div className="text-slate-500 font-medium text-lg">
-                    ID Ordine: <span className="font-mono font-bold text-slate-800 tracking-wider">#{orderId}</span>
+                <h2 className="text-3xl font-black text-slate-900">Ordine Ricevuto con Successo!</h2>
+                <div className="text-slate-500 font-medium text-lg flex flex-col gap-2">
+                     <span className="text-sm uppercase tracking-widest text-slate-400">Codice Ordine</span>
+                     <span className="font-mono text-4xl font-extrabold text-slate-800 tracking-wider">#{orderId}</span>
+                     <span className="text-xs text-slate-400 mt-1">Segna questo codice per qualsiasi richiesta di assistenza.</span>
                 </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md w-full mx-auto">
-                <p className="text-slate-700 leading-relaxed">
-                    I tuoi file sono stati caricati correttamente. <br/>
-                    Riceverai a breve una mail di conferma con il riepilogo e i dettagli per la spedizione o il ritiro.
+                <p className="text-slate-700 leading-relaxed font-medium">
+                    Il tuo ordine è in fase di elaborazione.<br /> 
+                    Riceverai a breve un'email di conferma all'indirizzo indicato.
                 </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md pt-4">
-                <Link 
-                    href="/" 
+            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md pt-4 justify-center">
+                <button
+                    onClick={() => window.location.href = '/'}
                     className={cn(
-                        "flex-1 py-4 px-6 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2",
+                        "w-full py-4 px-6 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1",
                         buttonPrimaryClass
                     )}
                 >
                     <Home className="w-5 h-5" />
                     Torna alla Home
-                </Link>
-                
-                <Link 
-                    href="/account/orders" // Placeholder link
-                    className={cn(
-                        "flex-1 py-4 px-6 rounded-xl font-bold border transition-all flex items-center justify-center gap-2",
-                        buttonSecondaryClass
-                    )}
-                >
-                    <Package className="w-5 h-5" />
-                    I Miei Ordini
-                </Link>
+                </button>
             </div>
             
         </div>

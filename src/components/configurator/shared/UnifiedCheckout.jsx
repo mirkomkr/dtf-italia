@@ -90,6 +90,7 @@ export default function UnifiedCheckout({
                     <CustomerForm 
                         formData={formData} 
                         onChange={(e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))}
+                        onAddressSelect={(addressData) => setFormData(prev => ({ ...prev, ...addressData }))}
                         showAddress={shippingOption === 'shipping'}
                         brandColor={brandColor}
                     />

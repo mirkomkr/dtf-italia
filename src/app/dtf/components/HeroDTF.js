@@ -80,7 +80,7 @@ export default function Hero({ product }) {
                     </div>
 
                     {/* Right: Configurator */}
-                    <div id="configurator-section" className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-indigo-500/20 shadow-2xl shadow-black/20 min-h-[700px] flex flex-col justify-center">
+                    <div id="configurator-section" className="w-full flex flex-col justify-center">
                        <LazyLoader>
                              {finalProduct ? (
                                  <UniversalContainer 

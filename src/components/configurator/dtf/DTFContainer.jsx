@@ -92,7 +92,7 @@ export default function DTFContainer({ product }) {
         if (topElement) {
             // Calculate absolute position relative to document
             const elementPosition = topElement.getBoundingClientRect().top + window.scrollY;
-            const offsetPosition = elementPosition - 20;
+            const offsetPosition = elementPosition + 40;
 
             window.scrollTo({
                 top: offsetPosition,

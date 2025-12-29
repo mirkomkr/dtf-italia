@@ -261,6 +261,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                 brandColor="red"
                 onSuccess={handleOrderSuccess}
                 onBack={() => setCurrentStep(1)}
+                uploadedFileKey={null}
             />
         )}
 

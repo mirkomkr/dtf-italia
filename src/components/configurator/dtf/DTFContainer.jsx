@@ -162,6 +162,7 @@ export default function DTFContainer({ product }) {
                 brandColor="indigo"
                 onSuccess={handleOrderSuccess}
                 onBack={() => setCurrentStep(2)}
+                uploadedFileKey={null} // File upload happens AFTER checkout in this flow
             />
         )}
 

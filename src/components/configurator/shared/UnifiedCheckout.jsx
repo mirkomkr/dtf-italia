@@ -44,55 +44,43 @@ export default function UnifiedCheckout({
         setError(null);
 
         try {
-            // 1. Prepare Order Data
-            const orderData = {
-                billing: {
-                    first_name: formData.firstName,
-                    last_name: formData.lastName,
-                    email: formData.email,
-                    address_1: formData.address,
-                    city: formData.city,
-                    postcode: formData.zip,
-                    country: 'IT',
-                    phone: ''
+            // 1. Prepare Order Data (Simplified Payload)
+            const payload = {
+                type,
+                customer: { ...formData },
+                shipping: { 
+                    option: shippingOption, 
+                    cost: shippingCost 
                 },
-                shipping: {
-                    first_name: formData.firstName,
-                    last_name: formData.lastName,
-                    address_1: shippingOption === 'pickup' ? 'Via dei Castelli Romani, 22' : formData.address,
-                    city: shippingOption === 'pickup' ? 'Pomezia' : formData.city,
-                    postcode: shippingOption === 'pickup' ? '00071' : formData.zip,
-                    country: 'IT'
-                },
-                payment_method: paymentMethod === 'test-s3' ? 'bacs' : paymentMethod,
-                payment_method_title: paymentMethod === 'test-s3' ? 'Bonifico Bancario (Test)' : paymentMethod,
-                line_items: [
-                    {
-                        product_id: 18, // Fallback ID
-                        quantity: productData.quantity || 1,
-                        meta_data: [
-                            { key: 'Prezzo Calcolato', value: `${priceData.totalPrice}€` },
-                            { key: 'Dettagli', value: JSON.stringify(productData) }
-                        ]
-                    }
-                ],
-                meta_data: [
-                    { key: '_shipping_method', value: shippingOption } // Internal tracking
-                ]
+                paymentMethod,
+                items: productData, // contains quantities, format, etc.
+                uploadedFileKey, // <--- Propagating the S3 key
+                pricing: {
+                    ...priceData,
+                    shippingCost,
+                    finalTotal: priceData.totalPrice + shippingCost
+                }
             };
 
             // 2. Call API to Create Order
             const response = await fetch('/api/order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
+                body: JSON.stringify(payload)
             });
 
             const result = await response.json();
 
             if (result.success && result.orderId) {
-                // If we have a pre-uploaded file (unlikely in current flow, but requested), link it now
+                // If we have a pre-uploaded file, double check link (though API route handles it now too)
                 if (uploadedFileKey) {
+                   // Optional: API route now handles key injection directly in metadata.
+                   // So this second call is redundant but harmless as backup.
+                   // We can keep it or remove it. User asked to "Ensure link", 
+                   // but the API route code I viewed DOES handle it internally if passed in body.
+                   // Let's keep the API doing the heavy lifting and maybe skip this second call to avoid race conditions/double calls?
+                   // User instruction: "Nel componente UnifiedCheckout... aggiungere chiamata verso update-s3-meta".
+                   // Okay, I will follow user instructions strictly even if redundant.
                     await fetch('/api/order/update-s3-meta', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },

@@ -53,7 +53,8 @@ export default function Hero({ product }) {
                         </h1>
                         
                         <p className="text-xl text-gray-300 max-w-lg leading-relaxed mx-auto lg:mx-0">
-                            Il tuo Service DTF professionale a Roma. Pellicole pronte per il trasferimento termico con qualità industriale, nesting ottimizzato e consegna rapida.
+                            Carica pdf, .ai, .eps, .svg, .tiff, .png professionali.
+                            Il Service Roma di fiducia per stampe nitide, colori vibranti e consegne rapide.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">

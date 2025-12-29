@@ -4,7 +4,6 @@ import {
   formatCurrency 
 } from '../../../lib/pricing-engine';
 import { PRICING_CONFIG } from '../../../lib/pricing-config';
-import SingleSizeSelector from '../shared/SingleSizeSelector';
 import { Check, Info, Zap, Package } from 'lucide-react';
 import DTFVisualizer from './DTFVisualizer';
 
@@ -37,7 +36,7 @@ const DTFConfigStep = ({ onUpdate, initialConfig }) => {
     }
 
     const params = {
-      quantity: parseInt(quantity, 10),
+      quantity: parseInt(quantity, 10) || 1, // Fallback to 1 if NaN
       format: selectedFormat,
       width: parseFloat(w),
       height: parseFloat(h),
@@ -71,7 +70,7 @@ const DTFConfigStep = ({ onUpdate, initialConfig }) => {
         <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
             1. Seleziona Formato
         </h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {Object.entries(DTF_FORMATS).map(([key, value]) => {
             const isSelected = selectedFormat === key;
             return (
@@ -79,30 +78,32 @@ const DTFConfigStep = ({ onUpdate, initialConfig }) => {
                 key={key}
                 onClick={() => handleFormatSelect(key)}
                 className={`
-                  relative flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all duration-200 h-28
+                  relative flex items-center p-3 rounded-xl border-2 transition-all duration-200 text-left
                   ${isSelected 
                     ? 'border-indigo-600 bg-indigo-50 shadow-sm' 
                     : 'border-slate-200 bg-white hover:border-indigo-200 hover:bg-slate-50'
                   }
                 `}
               >
+                 <div className="flex-1 min-w-0">
+                     <span className="block text-sm font-bold text-slate-800 leading-tight truncate">
+                        {value.label}
+                     </span>
+                     {!value.isCustom ? (
+                        <span className="block text-xs text-slate-500 font-mono mt-0.5">
+                            {value.w}x{value.h} cm
+                        </span>
+                     ) : (
+                        <span className="block text-xs text-slate-400 font-mono mt-0.5">
+                            Inserisci misure
+                        </span>
+                     )}
+                 </div>
+                 
                  {isSelected && (
-                    <div className="absolute top-2 right-2 bg-indigo-600 text-white p-0.5 rounded-full">
+                    <div className="ml-2 bg-indigo-600 text-white p-1 rounded-full flex-shrink-0">
                         <Check size={12} />
                     </div>
-                 )}
-                 <span className="text-sm font-bold text-slate-800 text-center leading-tight mb-1">
-                    {value.label}
-                 </span>
-                 
-                 {!value.isCustom ? (
-                    <span className="text-xs text-slate-500 font-mono">
-                        {value.w}x{value.h} cm
-                    </span>
-                 ) : (
-                    <span className="text-xs text-slate-400 font-mono">
-                        Inserisci misure
-                    </span>
                  )}
               </button>
             );
@@ -184,11 +185,14 @@ const DTFConfigStep = ({ onUpdate, initialConfig }) => {
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
             <div className="flex flex-col md:flex-row gap-8 items-center justify-between">
                 <div className="w-full md:w-auto">
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Numero di Pezzi/Copie</label>
-                    <SingleSizeSelector 
+                    <label htmlFor="quantity-input" className="block text-sm font-medium text-slate-700 mb-2">Numero di Pezzi/Copie</label>
+                    <input 
+                        id="quantity-input"
+                        type="number"
+                        min="1"
                         value={quantity}
-                        onChange={(val) => setQuantity(val)}
-                        min={1}
+                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 0))}
+                        className="block w-32 rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-lg font-bold text-center"
                     />
                 </div>
 

@@ -2,7 +2,7 @@ import React, { useRef, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { Upload, FileCheck, AlertCircle } from 'lucide-react';
 
-const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50MB
+const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024; // 100MB
 const ALLOWED_EXTENSIONS = ['.pdf', '.ai', '.eps', '.svg', '.tiff', '.png'];
 
 export default function FileUploader({ 
@@ -116,8 +116,11 @@ export default function FileUploader({
                     ) : (
                       <>
                         <p className="text-indigo-900 font-bold text-lg mb-1">{isDragOver ? 'Rilascia il file qui' : 'Clicca per caricare'}</p>
-                        <p className="text-indigo-600 text-xs uppercase font-semibold tracking-wide mb-1">
-                          {allowedExtensions.map(e => e.replace('.', '')).join(', ').toUpperCase()}
+                        <p className="text-indigo-600 text-xs font-medium mb-1">
+                          Accettiamo: {allowedExtensions.map(e => e.replace('.', '')).join(', ').toUpperCase()}
+                        </p>
+                        <p className="text-slate-400 text-[10px]">
+                          Max 100MB • Risoluzione 72-300 DPI
                         </p>
                       </>
                     )}

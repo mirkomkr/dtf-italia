@@ -11,19 +11,25 @@ export default function UnifiedCheckout({
     brandColor = 'indigo',
     onSuccess, // (orderId) => void
     onBack,
-    isTestMode = true // Default true for now to allow testing
+    isTestMode = true, // Default true for now to allow testing
+    uploadedFileKey = null
 }) {
     const [formData, setFormData] = useState({
-        firstName: '', lastName: '', email: '',
-        address: '', city: '', zip: ''
+        firstName: '',
+        lastName: '',
+        email: '',
+        address: '',
+        city: '',
+        zip: ''
     });
     const [shippingOption, setShippingOption] = useState('shipping');
     const [isProcessing, setIsProcessing] = useState(false);
+    const [error, setError] = useState(null);
 
     // Logic for shipping cost
     const shippingCost = shippingOption === 'pickup' ? 0.00 : 7.50; // Standard fixed rate
 
-    const handlePayment = async (method) => {
+    const handlePayment = async (paymentMethod) => {
         // Validation
         if (!formData.firstName || !formData.lastName || !formData.email) {
             alert("Compila tutti i campi obbligatori.");
@@ -35,38 +41,76 @@ export default function UnifiedCheckout({
         }
 
         setIsProcessing(true);
+        setError(null);
 
         try {
-            const payload = {
-                type,
-                customer: { ...formData },
-                shipping: { option: shippingOption, cost: shippingCost },
-                paymentMethod: method,
-                items: productData,
-                pricing: {
-                    ...priceData,
-                    shippingCost,
-                    finalTotal: priceData.totalPrice + shippingCost
-                }
+            // 1. Prepare Order Data
+            const orderData = {
+                billing: {
+                    first_name: formData.firstName,
+                    last_name: formData.lastName,
+                    email: formData.email,
+                    address_1: formData.address,
+                    city: formData.city,
+                    postcode: formData.zip,
+                    country: 'IT',
+                    phone: ''
+                },
+                shipping: {
+                    first_name: formData.firstName,
+                    last_name: formData.lastName,
+                    address_1: shippingOption === 'pickup' ? 'Via dei Castelli Romani, 22' : formData.address,
+                    city: shippingOption === 'pickup' ? 'Pomezia' : formData.city,
+                    postcode: shippingOption === 'pickup' ? '00071' : formData.zip,
+                    country: 'IT'
+                },
+                payment_method: paymentMethod === 'test-s3' ? 'bacs' : paymentMethod,
+                payment_method_title: paymentMethod === 'test-s3' ? 'Bonifico Bancario (Test)' : paymentMethod,
+                line_items: [
+                    {
+                        product_id: 18, // Fallback ID
+                        quantity: productData.quantity || 1,
+                        meta_data: [
+                            { key: 'Prezzo Calcolato', value: `${priceData.totalPrice}€` },
+                            { key: 'Dettagli', value: JSON.stringify(productData) }
+                        ]
+                    }
+                ],
+                meta_data: [
+                    { key: '_shipping_method', value: shippingOption } // Internal tracking
+                ]
             };
 
+            // 2. Call API to Create Order
             const response = await fetch('/api/order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(orderData)
             });
 
             const result = await response.json();
 
             if (result.success && result.orderId) {
+                // If we have a pre-uploaded file (unlikely in current flow, but requested), link it now
+                if (uploadedFileKey) {
+                    await fetch('/api/order/update-s3-meta', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            orderId: result.orderId, 
+                            s3Key: uploadedFileKey 
+                        })
+                    }).catch(err => console.error("S3 Link Error:", err));
+                }
+                
                 onSuccess(result.orderId);
             } else {
                 throw new Error(result.error || "Errore sconosciuto");
             }
 
-        } catch (error) {
-            console.error(error);
-            alert("Errore durante la creazione dell'ordine: " + error.message);
+        } catch (err) {
+            console.error("Payment Error:", err);
+            setError(err.message);
         } finally {
             setIsProcessing(false);
         }

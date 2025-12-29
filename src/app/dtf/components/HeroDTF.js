@@ -19,7 +19,8 @@ const CheckIcon = ({ className }) => (
 );
 
 export default function Hero({ product }) {
-    // product is now passed from Server Component (app/page.js)
+    // Fallback product to ensure configurator always renders
+    const finalProduct = product || { id: 'dtf-service', name: 'Service Stampa DTF', slug: 'service-stampa-dtf-roma' };
 
     const scrollToConfig = () => {
         document.getElementById('configurator-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -48,13 +49,11 @@ export default function Hero({ product }) {
                         </div>
                         
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
-                            Stampa <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Direct to Film</span> <br />
-                            Professionali
+                            Stampa <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Direct to Film</span> Roma
                         </h1>
                         
                         <p className="text-xl text-gray-300 max-w-lg leading-relaxed mx-auto lg:mx-0">
-                            Pellicole DTF professionali per aziende e professionisti. 
-                            Il Service Roma di fiducia per stampe nitide, colori vibranti e consegne rapide.
+                            Il tuo Service DTF professionale a Roma. Pellicole pronte per il trasferimento termico con qualità industriale, nesting ottimizzato e consegna rapida.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -71,17 +70,21 @@ export default function Hero({ product }) {
                                 Scopri Catalogo
                             </Link>
                         </div>
+                        
+                        <p className="mt-4 text-indigo-300 text-sm font-medium">
+                            ✓ Ritiro in sede a Roma o Spedizione Express in 24h
+                        </p>
                     </div>
 
                     {/* Right: Configurator */}
                     <div id="configurator-section" className="bg-white/95 backdrop-blur-md rounded-3xl p-2 border border-indigo-500/20 shadow-2xl shadow-black/20">
                        <LazyLoader>
                            <Suspense fallback={<SkeletonConfigurator height="600px" />}>
-                                {product ? (
+                                {finalProduct ? (
                                     <UniversalContainer 
-                                        product={product} 
-                                        categorySlug="service-stampa-dtf-roma" // Forced Slug for SEO
-                                        variant="hero" // Full Width Mode
+                                        product={finalProduct} 
+                                        categorySlug="service-stampa-dtf-roma" 
+                                        variant="hero" 
                                     />
                                 ) : (
                                     <SkeletonConfigurator height="600px" />

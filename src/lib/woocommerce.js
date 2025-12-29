@@ -27,7 +27,8 @@ async function fetchWooCommerce(endpoint, params = {}, options = {}) {
   // Dev mode: reduce revalidation time to see changes faster, or use 0 to disable.
   // Prod mode: default 3600 (1 hour). Can be overridden via options.revalidate.
   const isDev = process.env.NODE_ENV === 'development';
-  const defaultRevalidate = isDev ? 60 : 3600;
+  // const defaultRevalidate = isDev ? 60 : 3600; 
+  const defaultRevalidate = 0; // TEMPORARILY DISABLED CACHE
   const revalidateTime = options.revalidate !== undefined ? options.revalidate : defaultRevalidate;
 
   const res = await fetch(url.toString(), {

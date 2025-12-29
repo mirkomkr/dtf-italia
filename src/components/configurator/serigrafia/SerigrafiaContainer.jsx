@@ -206,12 +206,21 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     setCurrentStep(3);
   };
 
-  // Auto-Scroll to Top on Step Change
+  // Auto-Scroll to Top on Step Change (Instant & Precise)
   React.useEffect(() => {
-    const topElement = document.getElementById('configurator-top');
-    if (topElement) {
-        topElement.scrollIntoView({ behavior: 'smooth' });
-    }
+    setTimeout(() => {
+        const topElement = document.getElementById('configurator-top');
+        if (topElement) {
+            // Calculate absolute position relative to document
+            const elementPosition = topElement.getBoundingClientRect().top + window.scrollY;
+            const offsetPosition = elementPosition - 20;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'instant'
+            });
+        }
+    }, 0);
   }, [currentStep, orderId]);
 
   return (

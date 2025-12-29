@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { usePlacesWidget } from "react-google-autocomplete";
-import Script from 'next/script';
 
 // Internal component for the Google-connected input
-// Renders only when script is loaded to avoid hook errors/duplication
 function GoogleAddressInput({ 
     value, 
     onChange, 
@@ -14,7 +12,7 @@ function GoogleAddressInput({
     required 
 }) {
     const { ref } = usePlacesWidget({
-        apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, // Keep apiKey for safe fallback, library handles dedupe usually
+        apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY, 
         onPlaceSelected: (place) => {
             let address = '';
             let city = '';
@@ -62,7 +60,7 @@ function GoogleAddressInput({
             onChange={onChange} 
             className={className}
             required={required}
-            autoComplete="off" // Disable browser default autocomplete
+            autoComplete="off"
         />
     );
 }
@@ -82,26 +80,10 @@ export default function CustomerForm({
         : "focus:ring-indigo-500 focus:border-indigo-500";
 
     const labelClass = "block text-xs font-semibold text-gray-500 mb-1 ml-1";
-
-    const [googleReady, setGoogleReady] = useState(false);
-
-    useEffect(() => {
-        if (window.google?.maps?.places) {
-            setGoogleReady(true);
-        }
-    }, []);
-
     const inputClass = cn("w-full p-3 border border-gray-300 rounded-xl text-sm transition-shadow focus:ring-2 outline-none bg-gray-50/50 focus:bg-white", focusRingClass);
 
     return (
         <div className="space-y-4">
-             {/* Load Google Maps Script Lazily */}
-             <Script 
-                src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&loading=async`}
-                strategy="lazyOnload"
-                onLoad={() => setGoogleReady(true)}
-            />
-
             <h3 className="text-lg font-bold text-gray-900 mb-4">I tuoi dati</h3>
             
             <div className="grid grid-cols-2 gap-4">
@@ -149,27 +131,14 @@ export default function CustomerForm({
                     <div>
                         <label className={labelClass}>Indirizzo di Spedizione</label>
                         
-                        {/* Conditional Rendering of Input */}
-                        {googleReady ? (
-                             <GoogleAddressInput 
-                                value={formData.address}
-                                onChange={onChange}
-                                onAddressSelect={onAddressSelect}
-                                className={inputClass}
-                                placeholder="Via Roma, 1"
-                                required
-                             />
-                        ) : (
-                            <input 
-                                type="text" 
-                                name="address" 
-                                placeholder="Via Roma, 1" 
-                                value={formData.address || ''} 
-                                onChange={onChange} 
-                                className={inputClass}
-                                required
-                            />
-                        )}
+                        <GoogleAddressInput 
+                            value={formData.address}
+                            onChange={onChange}
+                            onAddressSelect={onAddressSelect}
+                            className={inputClass}
+                            placeholder="Via Roma, 1"
+                            required
+                        />
 
                         <div className="flex justify-end mt-1">
                             <span className="text-[10px] text-gray-400 font-medium bg-white px-2 py-0.5 rounded border border-gray-100 shadow-sm flex items-center gap-1">

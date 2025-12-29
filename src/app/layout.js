@@ -1,6 +1,16 @@
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Header from "@/components/Header";
+import dynamic from 'next/dynamic';
 import Script from 'next/script';
 
-// ... (existing imports)
+const Footer = dynamic(() => import('@/components/Footer'), { ssr: true });
+
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: 'swap',
+  preload: true
+});
 
 export default function RootLayout({ children }) {
   return (

@@ -104,7 +104,7 @@ export default function DTFContainer({ product }) {
   };
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full">
       <StepNavigation 
         currentStep={currentStep} 
         steps={steps}

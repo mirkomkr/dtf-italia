@@ -7,7 +7,11 @@ import { getWooCommerceProducts } from "@/lib/woocommerce";
 
 const UniversalContainer = dynamic(() => import('@/app/serigrafia/components/ConfiguratoreSerigrafia'), { 
   ssr: false,
-  loading: () => <div className="animate-pulse bg-white rounded-3xl min-h-[600px] w-full border border-gray-200"></div>
+  loading: () => (
+    <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full flex items-center justify-center">
+        <div className="animate-pulse text-slate-400 font-medium">Inizializzazione configuratore...</div>
+    </div>
+  )
 });
 
 /* ===============================
@@ -117,7 +121,11 @@ export default async function ProductPage({ params }) {
         <GalleriaProdotto images={product.images} name={product.name} />
         
         {/* Lazy Loaded Configurator with Intersection Observer */}
-        <LazyLoader placeholder={<div className="animate-pulse bg-white rounded-3xl min-h-[600px] w-full border border-gray-200"></div>}>
+        <LazyLoader placeholder={
+           <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full flex items-center justify-center">
+                <div className="animate-pulse text-slate-400 font-medium">Inizializzazione configuratore...</div>
+           </div>
+        }>
           <UniversalContainer 
             product={product} 
             categorySlug={product.categories?.[0]?.slug || 'stampa-abbigliamento-serigrafia'} 

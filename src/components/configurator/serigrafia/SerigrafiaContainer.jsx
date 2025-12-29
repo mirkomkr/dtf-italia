@@ -289,7 +289,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100 max-w-lg w-full mx-auto flex flex-col min-h-[600px]">
+    <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full">
         <StepNavigation 
             currentStep={currentStep} 
             steps={[

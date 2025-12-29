@@ -179,7 +179,7 @@ export default function FileUploader({
                 role="button"
                 tabIndex={0}
                 className={cn(
-                    "border-2 border-dashed rounded-xl p-8 transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[16rem] group outline-none",
+                    "border-2 border-dashed rounded-xl p-4 md:p-8 transition-colors cursor-pointer flex flex-col items-center justify-center min-h-[12rem] md:min-h-[16rem] group outline-none",
                     isDragOver ? dragClass : normalClass
                 )}
             >
@@ -197,22 +197,24 @@ export default function FileUploader({
                         {currentFiles.map((f, i) => (
                            <div key={i} className={`flex items-center justify-between bg-white p-3 rounded-lg border shadow-sm ${isRed ? 'border-red-100' : 'border-indigo-100'}`}>
                                 <div className="flex items-center gap-3 overflow-hidden w-full">
-                                    <FileCheck className="w-8 h-8 text-green-500 flex-shrink-0" />
+                                    <FileCheck className="w-6 h-6 md:w-8 md:h-8 text-green-500 flex-shrink-0" />
                                     <div className="min-w-0 flex-grow">
-                                        <p className="font-bold text-sm text-gray-800 truncate">{f.name}</p>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <p className="font-bold text-sm text-gray-800 truncate mr-2">{f.name}</p>
+                                            {uploadMode === 's3' && (
+                                                <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                                                    {uploadProgress[f.name] === 100 ? 'CARICATO' : (uploadProgress[f.name] === -1 ? 'ERRORE' : 'IN CODA...')}
+                                                </p>
+                                            )}
+                                        </div>
                                         
                                         {/* Progress Bar */}
                                         {uploadMode === 's3' && (
-                                            <div className="mt-1 w-full">
-                                                <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                                                    <div 
-                                                        className={`h-full transition-all duration-300 ${uploadProgress[f.name] === -1 ? 'bg-red-500' : 'bg-green-500'}`}
-                                                        style={{ width: `${Math.max(5, uploadProgress[f.name] || 0)}%` }}
-                                                    />
-                                                </div>
-                                                <p className="text-[10px] text-right mt-0.5 font-bold text-slate-500">
-                                                    {uploadProgress[f.name] === 100 ? 'CARICATO' : (uploadProgress[f.name] === -1 ? 'ERRORE' : 'IN CODA...')}
-                                                </p>
+                                            <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                                <div 
+                                                    className={`h-full transition-all duration-300 ${uploadProgress[f.name] === -1 ? 'bg-red-500' : 'bg-green-500'}`}
+                                                    style={{ width: `${Math.max(5, uploadProgress[f.name] || 0)}%` }}
+                                                />
                                             </div>
                                         )}
                                     </div>
@@ -229,20 +231,20 @@ export default function FileUploader({
                 ) : (
                   <>
                     <div className={cn(
-                        "w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm transition-transform",
+                        "w-12 h-12 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm transition-transform",
                         isDragOver ? "scale-110" : "group-hover:scale-110"
                     )}>
-                      {uploadError ? <AlertCircle className="w-8 h-8 text-red-500"/> : <Upload className={`w-8 h-8 ${iconClass}`}/>}
+                      {uploadError ? <AlertCircle className="w-6 h-6 md:w-8 md:h-8 text-red-500"/> : <Upload className={`w-6 h-6 md:w-8 md:h-8 ${iconClass}`}/>}
                     </div>
                     {uploadError ? (
-                       <p className="text-red-600 font-medium px-4">{uploadError}</p>
+                       <p className="text-red-600 font-medium px-4 text-center text-sm">{uploadError}</p>
                     ) : (
                       <>
-                        <p className={`${textPrimaryClass} font-bold text-lg mb-1`}>{isDragOver ? 'Rilascia i file qui' : 'Clicca per caricare'}</p>
-                        <p className={`${textSecondaryClass} text-xs font-medium mb-1`}>
+                        <p className={`${textPrimaryClass} font-bold text-base md:text-lg mb-1 text-center`}>{isDragOver ? 'Rilascia i file qui' : 'Clicca per caricare'}</p>
+                        <p className={`${textSecondaryClass} text-xs font-medium mb-1 text-center`}>
                           Accettiamo: {allowedExtensions.map(e => e.replace('.', '')).join(', ').toUpperCase()}
                         </p>
-                        <p className="text-slate-400 text-[10px]">
+                        <p className="text-slate-400 text-[10px] text-center">
                           Max 100MB • Risoluzione 72-300 DPI
                         </p>
                       </>

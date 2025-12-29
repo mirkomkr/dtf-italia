@@ -206,10 +206,16 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     setCurrentStep(3);
   };
 
-
+  // Auto-Scroll to Top on Step Change
+  React.useEffect(() => {
+    const topElement = document.getElementById('configurator-top');
+    if (topElement) {
+        topElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [currentStep, orderId]);
 
   return (
-    <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full">
+    <div id="configurator-top" className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full">
         <StepNavigation 
             currentStep={currentStep} 
             steps={[

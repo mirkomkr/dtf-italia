@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import StepNavigation from '../shared/StepNavigation';
 import DTFConfigStep from './DTFConfigStep';
+import UnifiedCheckout from '../shared/UnifiedCheckout';
+import SuccessStep from '../shared/SuccessStep';
 import { ShoppingCart } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-const UnifiedCheckout = dynamic(() => import('../shared/UnifiedCheckout'), {
-  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Checkout...</p>,
+const FileUploader = dynamic(() => import('../shared/FileUploader'), {
+  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Uploader...</p>,
   ssr: false
 });
 

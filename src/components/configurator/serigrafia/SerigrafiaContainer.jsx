@@ -4,6 +4,10 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { calculatePrice } from '@/lib/pricing-engine';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
+import StepNavigation from '../shared/StepNavigation';
+import ConfigStep from './ConfigStep'; // Assicurati che il percorso sia corretto (stessa cartella)
+import UnifiedCheckout from '../shared/UnifiedCheckout';
+import SuccessStep from '../shared/SuccessStep';
 
 const FileUploader = dynamic(() => import('../shared/FileUploader'), {
   loading: () => <p className="p-10 text-center text-gray-500">Caricamento Uploader...</p>,

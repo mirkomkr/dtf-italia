@@ -10,8 +10,8 @@ const UniversalContainer = dynamic(() => import('@/components/configurator/dtf/D
   loading: () => (
     <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-indigo-500/20 shadow-2xl min-h-[700px] flex items-center justify-center">
         <div className="text-center">
-            <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-indigo-900 font-bold animate-pulse">Caricamento configuratore...</p>
+             <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+             <p className="text-indigo-900 font-bold animate-pulse">Caricamento configuratore...</p>
         </div>
     </div>
   )

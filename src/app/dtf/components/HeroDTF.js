@@ -49,12 +49,12 @@ export default function Hero({ product }) {
                         </div>
                         
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
-                            Stampa <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">Direct to Film</span> Roma
+                            Stampa <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">DTF</span> Roma
                         </h1>
                         
                         <p className="text-xl text-gray-300 max-w-lg leading-relaxed mx-auto lg:mx-0">
-                            Carica pdf, .ai, .eps, .svg, .tiff, .png professionali.
-                            Il Service Roma di fiducia per stampe nitide, colori vibranti e consegne rapide.
+                            Carica pdf, ai, eps, svg, tiff, png professionali.
+                            Il Service DTF di fiducia a Roma per stampe nitide, colori vibranti e consegne rapide.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -78,7 +78,7 @@ export default function Hero({ product }) {
                     </div>
 
                     {/* Right: Configurator */}
-                    <div id="configurator-section" className="bg-white/95 backdrop-blur-md rounded-3xl p-2 border border-indigo-500/20 shadow-2xl shadow-black/20">
+                    <div id="configurator-section" className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-indigo-500/20 shadow-2xl shadow-black/20 min-h-[700px] flex flex-col justify-center">
                        <LazyLoader>
                            <Suspense fallback={<SkeletonConfigurator height="600px" />}>
                                 {finalProduct ? (

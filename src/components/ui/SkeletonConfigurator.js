@@ -2,19 +2,18 @@
 export default function SkeletonConfigurator() {
   return (
     <div 
-      className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-indigo-500/20 shadow-2xl min-h-[600px] max-w-4xl w-full mx-auto flex flex-col animate-pulse"
-      style={{ minHeight: '600px', contentVisibility: 'auto' }}
+      className="w-full h-full flex flex-col animate-pulse min-h-[700px]"
       aria-busy="true"
     >
       {/* Step Navigation Skeleton */}
-      <div className="flex justify-between items-center mb-12 px-12 relative">
+      <div className="flex justify-between items-center mb-12 relative">
           {[1, 2, 3].map((step) => (
               <div key={step} className="flex flex-col items-center z-10 gap-2">
                   <div className="w-10 h-10 rounded-full bg-indigo-100"></div>
                   <div className="h-3 w-16 bg-slate-100 rounded"></div>
               </div>
           ))}
-          <div className="absolute top-5 left-12 right-12 h-1 bg-slate-50 -z-0"></div>
+          <div className="absolute top-5 left-0 right-0 h-1 bg-slate-50 -z-0"></div>
       </div>
 
       {/* Content Skeleton */}

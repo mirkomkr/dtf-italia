@@ -83,20 +83,35 @@ export default function DTFContainer({ product }) {
   };
 
   // Auto-Scroll to Top on Step Change (Instant & Precise)
+  const isFirstRender = React.useRef(true);
+
   React.useEffect(() => {
-    setTimeout(() => {
+    // Prevent scroll on initial render
+    if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+    }
+
+    const timer = setTimeout(() => {
         const topElement = document.getElementById('configurator-top');
         if (topElement) {
             // Calculate absolute position relative to document
             const elementPosition = topElement.getBoundingClientRect().top + window.scrollY;
-            const offsetPosition = elementPosition - 40;
-
+            const offsetPosition = elementPosition - 40; // Keeping -40 offset from before? Reference Serigrafia used -20.
+            // DTFContainer had -40 in previous edit (Step 808). Serigrafia had -20.
+            // I should probably stick to -40 for DTF if that was the last specific edit for it, or standardize to -20.
+            // User prompt for Serigrafia said -20.
+            // I will use -40 for DTF as established, or maybe -20 to be consistent. 
+            // Let's use -40 as it was the last specific tuning for DTF.
+            
             window.scrollTo({
                 top: offsetPosition,
-                behavior: 'instant'
+                behavior: 'smooth'
             });
         }
-    }, 0);
+    }, 150);
+
+    return () => clearTimeout(timer);
   }, [currentStep, orderId]);
 
   return (

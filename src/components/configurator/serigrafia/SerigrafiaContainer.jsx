@@ -191,8 +191,16 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   };
 
   // Auto-Scroll to Top on Step Change (Instant & Precise)
+  const isFirstRender = React.useRef(true);
+  
   React.useEffect(() => {
-    setTimeout(() => {
+    // Prevent scroll on initial render
+    if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+    }
+
+    const timer = setTimeout(() => {
         const topElement = document.getElementById('configurator-top');
         if (topElement) {
             // Calculate absolute position relative to document
@@ -201,10 +209,12 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
             window.scrollTo({
                 top: offsetPosition,
-                behavior: 'instant'
+                behavior: 'smooth'
             });
         }
-    }, 0);
+    }, 150);
+    
+    return () => clearTimeout(timer);
   }, [currentStep, orderId]);
 
   return (

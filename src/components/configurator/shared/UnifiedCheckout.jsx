@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import OrderSummary from './OrderSummary';
 import ShippingSelector from './ShippingSelector';
@@ -9,7 +11,6 @@ export default function UnifiedCheckout({
     priceData, // { unitPrice, totalPrice, details... }
     productData, // { quantities, format, ... }
     brandColor = 'indigo',
-    onSuccess, // (orderId) => void
     onSuccess, // (orderId) => void
     onBack,
     uploadedFileKey = null
@@ -27,7 +28,7 @@ export default function UnifiedCheckout({
     const [error, setError] = useState(null);
 
     // Logic for shipping cost
-    const shippingCost = shippingOption === 'pickup' ? 0.00 : 7.50; // Standard fixed rate
+    const shippingCost = shippingOption === 'pickup' ? 0.00 : 7.50; 
 
     const handlePayment = async (paymentMethod) => {
         // Validation
@@ -44,7 +45,7 @@ export default function UnifiedCheckout({
         setError(null);
 
         try {
-            // 1. Prepare Order Data (Simplified Payload)
+            // 1. Prepare Order Data
             const payload = {
                 type,
                 customer: { ...formData },
@@ -53,8 +54,8 @@ export default function UnifiedCheckout({
                     cost: shippingCost 
                 },
                 paymentMethod,
-                items: productData, // contains quantities, format, etc.
-                uploadedFileKey, // <--- Propagating the S3 key
+                items: productData,
+                uploadedFileKey, 
                 pricing: {
                     ...priceData,
                     shippingCost,
@@ -72,15 +73,8 @@ export default function UnifiedCheckout({
             const result = await response.json();
 
             if (result.success && result.orderId) {
-                // If we have a pre-uploaded file, double check link (though API route handles it now too)
+                // S3 Link update as backup if key is present
                 if (uploadedFileKey) {
-                   // Optional: API route now handles key injection directly in metadata.
-                   // So this second call is redundant but harmless as backup.
-                   // We can keep it or remove it. User asked to "Ensure link", 
-                   // but the API route code I viewed DOES handle it internally if passed in body.
-                   // Let's keep the API doing the heavy lifting and maybe skip this second call to avoid race conditions/double calls?
-                   // User instruction: "Nel componente UnifiedCheckout... aggiungere chiamata verso update-s3-meta".
-                   // Okay, I will follow user instructions strictly even if redundant.
                     await fetch('/api/order/update-s3-meta', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -108,6 +102,12 @@ export default function UnifiedCheckout({
         <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Left Column: Forms */}
             <div className="flex-1 space-y-8">
+                {error && (
+                    <div className="p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
+                        {error}
+                    </div>
+                )}
+                
                 <section>
                     <h2 className="text-xl font-bold text-gray-900 mb-4">1. Metodo di Consegna</h2>
                     <ShippingSelector 

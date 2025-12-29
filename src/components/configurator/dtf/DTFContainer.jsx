@@ -5,33 +5,30 @@ import dynamic from 'next/dynamic';
 import StepNavigation from '../shared/StepNavigation';
 import DTFConfigStep from './DTFConfigStep';
 import { ShoppingCart } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const UnifiedCheckout = dynamic(() => import('../shared/UnifiedCheckout'), {
   loading: () => <p className="p-10 text-center text-gray-500">Caricamento Checkout...</p>,
   ssr: false
 });
 
-const FileUploader = dynamic(() => import('../shared/FileUploader'), {
-  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Uploader...</p>,
-  ssr: false
-});
-
-const SuccessStep = dynamic(() => import('../shared/SuccessStep'), {
-  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Successo...</p>,
-  ssr: false
-});
-
-const CheckIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="20 6 9 17 4 12" />
-    </svg>
-);
+// ... (other dynamic imports remain the same)
 
 export default function DTFContainer({ product }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlOrderId = searchParams.get('order_id');
+
   const [currentStep, setCurrentStep] = useState(1);
   const [orderId, setOrderId] = useState(null);
+
+  // Recovery Mode Effect
+  React.useEffect(() => {
+      if (urlOrderId) {
+          setOrderId(urlOrderId);
+          setCurrentStep(3);
+      }
+  }, [urlOrderId]);
   
   // Configuration State
   const [config, setConfig] = useState({

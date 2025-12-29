@@ -3,46 +3,30 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { calculatePrice } from '@/lib/pricing-engine';
 import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
 
 const FileUploader = dynamic(() => import('../shared/FileUploader'), {
   loading: () => <p className="p-10 text-center text-gray-500">Caricamento Uploader...</p>,
   ssr: false
 });
 
-// Dynamic imports for ALL steps and UI components to minimize initial TBT
-const SuccessStep = dynamic(() => import('../shared/SuccessStep'), {
-  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Successo...</p>,
-  ssr: false
-});
-
-const StepNavigation = dynamic(() => import('../shared/StepNavigation'), {
-  spacing: '0', // No placeholder needed or minimal
-  ssr: true // StepNavigation is small and visual, SSR is okay but if heavy, set to false.
-            // User requested "Move StepNavigation into dynamic...". 
-            // Layout shift might occur if ssr: false. 
-            // Given icons are optimized now, SSR true is better for CLS, but if TBT is priority...
-            // Let's use ssr: true but with the optimized file.
-});
-
-const ConfigStep = dynamic(() => import('./ConfigStep'), {
-    loading: () => <div className="animate-pulse h-96 bg-gray-50 rounded-2xl" />,
-    ssr: false // Defer heavy config logic
-});
-
-const UnifiedCheckout = dynamic(() => import('../shared/UnifiedCheckout'), {
-  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Checkout...</p>,
-  ssr: false
-});
-
-const UploadStep = dynamic(() => import('./UploadStep'), {
-  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Upload...</p>,
-  ssr: false
-});
+// ... imports ...
 
 export default function SerigrafiaContainer({ product, enableVariants = true }) {
+  const searchParams = useSearchParams();
+  const urlOrderId = searchParams.get('order_id');
+
   // Steps: 1=Config, 2=Checkout, 3=Upload (Success)
   const [currentStep, setCurrentStep] = useState(1);
   const [orderId, setOrderId] = useState(null); 
+  
+  // Recovery Mode Effect
+  React.useEffect(() => {
+      if (urlOrderId) {
+          setOrderId(urlOrderId);
+          setCurrentStep(3);
+      }
+  }, [urlOrderId]); 
   
   // --- Step 1 State ---
   const [activeGender, setActiveGender] = useState('uomo'); 

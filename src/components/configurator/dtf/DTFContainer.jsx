@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -6,17 +5,23 @@ import dynamic from 'next/dynamic';
 import StepNavigation from '../shared/StepNavigation';
 import DTFConfigStep from './DTFConfigStep';
 import { ShoppingCart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const FileUploader = dynamic(() => import('../shared/FileUploader'), {
   loading: () => <p className="p-10 text-center text-gray-500">Caricamento Uploader...</p>,
   ssr: false
 });
 
-import { useRouter } from 'next/navigation';
+const CheckIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+);
 
 export default function DTFContainer({ product }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [orderId, setOrderId] = useState(null);
   
   // Configuration State
   const [config, setConfig] = useState({
@@ -26,7 +31,7 @@ export default function DTFContainer({ product }) {
     isFlashOrder: false,
     width: 0,
     height: 0,
-    price: null // stores the full calculation result
+    price: null
   });
 
   // Files State
@@ -35,8 +40,13 @@ export default function DTFContainer({ product }) {
   // Processing State
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const steps = [
+    { id: 1, label: 'Configura' },
+    { id: 2, label: 'Revisione' },
+    { id: 3, label: orderId ? 'Upload File' : 'Riepilogo' }
+  ];
+
   const handleConfigUpdate = (newConfig) => {
-    // newConfig contains { quantity, format, width, height, isFullService, isFlashOrder, price }
     setConfig(prev => ({ ...prev, ...newConfig }));
   };
 
@@ -50,7 +60,8 @@ export default function DTFContainer({ product }) {
   };
 
   const handleStepClick = (step) => {
-    if (step < currentStep) {
+    if (step === 3 && !orderId) return; // Prevent jump to upload if not confirmed
+    if (step < currentStep || orderId) {
       setCurrentStep(step);
     }
   };
@@ -66,31 +77,23 @@ export default function DTFContainer({ product }) {
             meta: {
                 totalMeters: config.price.details.totalMeters,
                 format: config.format,
-                fileNames: files.map(f => f.name),
                 extras: {
                     fullService: config.isFullService,
                     flashOrder: config.isFlashOrder
-                },
-                priceMismatchCheck: config.price.totalPrice
+                }
             }
         };
 
-        // Real production endpoint (Client-side call for Stripe/Checkout session)
-        const response = await fetch('/api/checkout/create-session', {
-             method: 'POST',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify(payload)
-        });
-
-        // For now, since the endpoint might not exist, we just simulate success or handle response
-        // In a real scenario: const data = await response.json(); if(data.url) window.location.href = data.url;
+        // Simulate API
+        // In real app use fetch('/api/checkout/create-session', ...)
+        await new Promise(r => setTimeout(r, 1500));
         
-        // Simulating the flow described in the prompt "point to /api/checkout/create-session"
-        console.log("Checkout initiated with:", payload);
+        // Mock Success
+        const newOrderId = `ORD-${Date.now().toString().slice(-6)}`;
+        setOrderId(newOrderId);
+        setCurrentStep(3); // Advance/Refresh to Upload View
         
-        // Redirect to standard cart or checkout if backend logic dictates
-        // alert(`Checkout avviato! (Simulazione)\nTotale: €${config.price.totalPrice}`);
-        alert("Ordine aggiunto al carrello (Simulazione per Endpoint)");
+        // alert(`Ordine ${newOrderId} creato! Procedi con l'upload.`);
 
     } catch (error) {
         console.error("Checkout error:", error);
@@ -100,22 +103,16 @@ export default function DTFContainer({ product }) {
     }
   };
 
-  // Steps definition for Navigation
-  const steps = [
-    { id: 1, label: 'Configura' },
-    { id: 2, label: 'Carica File' },
-    { id: 3, label: 'Riepilogo' }
-  ];
-
   return (
     <div className="w-full h-full flex flex-col">
       <StepNavigation 
         currentStep={currentStep} 
         steps={steps}
         onStepClick={handleStepClick}
+        isStepCompleted={!!orderId} 
       />
       
-      <div className="mt-8">
+      <div className="mt-8 flex-grow">
         {currentStep === 1 && (
             <div>
                 <DTFConfigStep 
@@ -127,7 +124,7 @@ export default function DTFContainer({ product }) {
                         onClick={() => setCurrentStep(2)}
                         className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
                     >
-                        Procedi al Caricamento File &rarr;
+                        Procedi &rarr;
                     </button>
                 </div>
             </div>
@@ -135,13 +132,22 @@ export default function DTFContainer({ product }) {
 
         {currentStep === 2 && (
             <div className="space-y-6">
-                <h3 className="text-xl font-bold text-gray-900">Carica i tuoi file di stampa</h3>
-                <FileUploader 
-                    files={files}
-                    onFilesChange={handleFilesChange}
-                    maxSize={100 * 1024 * 1024} // 100MB as per request
-                    accept={{ 'image/png': ['.png'], 'application/pdf': ['.pdf'], 'image/tiff': ['.tif', '.tiff'], 'image/svg+xml': ['.svg'], 'application/postscript': ['.ai', '.eps'] }}
-                />
+                <h3 className="text-xl font-bold text-gray-900">Prepara i tuoi file</h3>
+                
+                <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6">
+                    <h4 className="font-bold text-indigo-900 mb-2">Istruzioni per l'upload</h4>
+                    <p className="text-indigo-800 text-sm mb-4">
+                        Per garantire la massima qualità di stampa, caricherai i tuoi file nel prossimo step, 
+                        <strong> dopo aver confermato l'ordine</strong>.
+                    </p>
+                    <ul className="list-disc list-inside text-indigo-700 text-sm space-y-1">
+                        <li>Formati accettati: <strong>PDF, AI, EPS, SVG, TIFF, PNG</strong></li>
+                        <li>Risoluzione consigliata: <strong>300 DPI</strong></li>
+                        <li>Sfondo: <strong>Trasparente</strong></li>
+                        <li>Metodo colore: <strong>CMYK</strong> (convertiamo noi se invii RGB)</li>
+                    </ul>
+                </div>
+
                  <div className="mt-8 flex justify-between">
                     <button
                         onClick={() => setCurrentStep(1)}
@@ -151,8 +157,7 @@ export default function DTFContainer({ product }) {
                     </button>
                     <button
                         onClick={() => setCurrentStep(3)}
-                        disabled={files.length === 0}
-                        className={`px-8 py-3 rounded-xl font-bold transition-colors shadow-lg ${files.length > 0 ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+                        className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200"
                     >
                         Vai al Riepilogo &rarr;
                     </button>
@@ -160,7 +165,7 @@ export default function DTFContainer({ product }) {
             </div>
         )}
 
-        {currentStep === 3 && config.price && (
+        {currentStep === 3 && !orderId && config.price && (
             <div className="space-y-8">
                 <h3 className="text-xl font-bold text-gray-900">Riepilogo Ordine DTF</h3>
                 
@@ -202,7 +207,7 @@ export default function DTFContainer({ product }) {
                         onClick={() => setCurrentStep(2)}
                         className="text-slate-500 font-medium hover:text-indigo-600 transition-colors"
                     >
-                        &larr; Modifica File
+                        &larr; Indietro
                     </button>
                     
                     <button
@@ -212,11 +217,30 @@ export default function DTFContainer({ product }) {
                     >
                        {isProcessing ? 'Elaborazione...' : (
                            <>
-                             <ShoppingCart size={20} /> Aggiungi al Carrello
+                             <ShoppingCart size={20} /> Conferma e Paga
                            </>
                        )}
                     </button>
                 </div>
+            </div>
+        )}
+
+        {currentStep === 3 && orderId && (
+            <div className="space-y-6 text-center animate-in fade-in zoom-in duration-300">
+                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckIcon />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Ordine Confermato #{orderId}</h2>
+                <p className="text-slate-600 mb-8">Ora carica i tuoi file di stampa per completare l'ordine.</p>
+                
+                <FileUploader 
+                    files={files}
+                    onFilesChange={handleFilesChange}
+                    maxSize={100 * 1024 * 1024}
+                    accept={{ 'image/png': ['.png'], 'application/pdf': ['.pdf'], 'image/tiff': ['.tif', '.tiff'], 'image/svg+xml': ['.svg'], 'application/postscript': ['.ai', '.eps'] }}
+                    uploadMode="s3"
+                    orderId={orderId}
+                />
             </div>
         )}
       </div>

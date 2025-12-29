@@ -2,14 +2,19 @@
 
 // import { Check } from 'lucide-react'; // REMOVED
 import LazyLoader from "@/components/common/LazyLoader";
-import SkeletonConfigurator from "@/components/ui/SkeletonConfigurator";
-import { Suspense } from 'react'; // removed unused useEffect, useState
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
 const UniversalContainer = dynamic(() => import('@/components/configurator/dtf/DTFContainer'), {
   ssr: false,
-  loading: () => <SkeletonConfigurator height="600px" />
+  loading: () => (
+    <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-indigo-500/20 shadow-2xl min-h-[700px] flex items-center justify-center">
+        <div className="text-center">
+            <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-indigo-900 font-bold animate-pulse">Caricamento configuratore...</p>
+        </div>
+    </div>
+  )
 });
 
 const CheckIcon = ({ className }) => (
@@ -80,17 +85,17 @@ export default function Hero({ product }) {
                     {/* Right: Configurator */}
                     <div id="configurator-section" className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-indigo-500/20 shadow-2xl shadow-black/20 min-h-[700px] flex flex-col justify-center">
                        <LazyLoader>
-                           <Suspense fallback={<SkeletonConfigurator height="600px" />}>
-                                {finalProduct ? (
-                                    <UniversalContainer 
-                                        product={finalProduct} 
-                                        categorySlug="service-stampa-dtf-roma" 
-                                        variant="hero" 
-                                    />
-                                ) : (
-                                    <SkeletonConfigurator height="600px" />
-                                )}
-                           </Suspense>
+                             {finalProduct ? (
+                                 <UniversalContainer 
+                                     product={finalProduct} 
+                                     categorySlug="service-stampa-dtf-roma" 
+                                     variant="hero" 
+                                 />
+                             ) : (
+                                <div className="h-full w-full flex items-center justify-center">
+                                    <p>Caricamento...</p>
+                                </div>
+                             )}
                        </LazyLoader>
                     </div>
                 </div>

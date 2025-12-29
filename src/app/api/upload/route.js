@@ -1,34 +1,36 @@
 import { NextResponse } from 'next/server';
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { s3Client } from '@/lib/s3-client';
 
 export async function POST(request) {
   try {
-    // In a real app, this would handle multipart/form-data
-    // and upload to S3/GCS, returning the signed URL or file key.
-    
-    // For this demo, we'll simulate a successful upload.
-    
-    const formData = await request.formData();
-    const file = formData.get('file');
+    const { filename, contentType, orderId } = await request.json();
 
-    if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      );
+    if (!filename || !orderId) {
+      return NextResponse.json({ error: 'Missing filename or orderId' }, { status: 400 });
     }
 
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const key = `uploads/${orderId}/${Date.now()}-${filename.replace(/\s+/g, '_')}`;
+    
+    const command = new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+      ContentType: contentType,
+    });
+
+    const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
 
     return NextResponse.json({
       success: true,
-      fileId: `file_${Math.random().toString(36).substr(2, 9)}`,
-      filename: file.name,
-      url: `https://storage.example.com/${file.name}` // Fake URL
+      url,
+      key
     });
+
   } catch (error) {
+    console.error("Presign error:", error);
     return NextResponse.json(
-      { error: 'Upload failed' },
+      { error: 'Failed to generate upload URL' },
       { status: 500 }
     );
   }

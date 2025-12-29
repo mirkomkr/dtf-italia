@@ -29,10 +29,6 @@ export async function POST(request) {
              payment_method = 'paypal';
              payment_method_title = 'PayPal';
              set_paid = true;
-        } else if (paymentMethod === 'test-s3' || paymentMethod === 'cod') {
-             payment_method = 'cod';
-             payment_method_title = 'Pagamento alla Consegna / Test';
-             set_paid = true;
         }
 
         // 2. Map Line Items con check di sicurezza

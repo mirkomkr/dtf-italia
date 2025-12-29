@@ -5,13 +5,11 @@ import { CreditCard } from 'lucide-react';
 export default function PaymentActions({ 
     onPaymentSelect, 
     isProcessing, 
-    isTestMode = false, 
     brandColor = 'indigo' 
 }) {
     // We keep buttons standardized (Stripe Purple / Paypal Blue) or brand them?
     // Stripe is usually purple-ish. Paypal is Blue.
     // Let's keep official brand colors for payment methods but use `brandColor` for consistent styling context if needed.
-    // The "Test S3" button will be styling neutral or brand colored.
     
     return (
         <div className="mt-auto pt-6 border-t border-gray-100">
@@ -39,21 +37,6 @@ export default function PaymentActions({
                     PayPal
                 </button>
             </div>
-
-            {isTestMode && (
-                <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
-                    <button 
-                        onClick={() => onPaymentSelect('test-s3')}
-                        disabled={isProcessing}
-                        className="w-full py-3 px-4 bg-gray-800 hover:bg-black text-white font-mono text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-70"
-                    >
-                        [DEV] Test Checkout & S3 Upload
-                    </button>
-                    <p className="text-xs text-center text-gray-400 mt-2">
-                        Simula approvazione immediata senza transazione reale
-                    </p>
-                </div>
-            )}
         </div>
     );
 }

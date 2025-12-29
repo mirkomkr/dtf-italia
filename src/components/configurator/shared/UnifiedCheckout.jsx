@@ -10,8 +10,8 @@ export default function UnifiedCheckout({
     productData, // { quantities, format, ... }
     brandColor = 'indigo',
     onSuccess, // (orderId) => void
+    onSuccess, // (orderId) => void
     onBack,
-    isTestMode = true, // Default true for now to allow testing
     uploadedFileKey = null
 }) {
     const [formData, setFormData] = useState({
@@ -142,7 +142,6 @@ export default function UnifiedCheckout({
                      <PaymentActions 
                         onPaymentSelect={handlePayment} 
                         isProcessing={isProcessing} 
-                        isTestMode={isTestMode} 
                         brandColor={brandColor}
                      />
 

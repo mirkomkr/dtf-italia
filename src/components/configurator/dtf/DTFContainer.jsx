@@ -53,8 +53,8 @@ export default function DTFContainer({ product }) {
 
   const steps = [
     { id: 1, label: 'Configura' },
-    { id: 2, label: 'Revisione' },
-    { id: 3, label: orderId ? 'Upload File' : 'Riepilogo' }
+    { id: 2, label: 'Checkout' },
+    { id: 3, label: 'Upload' }
   ];
 
   const handleConfigUpdate = (newConfig) => {
@@ -187,12 +187,24 @@ export default function DTFContainer({ product }) {
             <SuccessStep orderId={orderId} brandColor="indigo" />
         ) : (
             currentStep === 3 && orderId && (
-                <div className="space-y-6 text-center animate-in fade-in zoom-in duration-300">
-                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <CheckIcon />
+                <div className="space-y-8 animate-in fade-in zoom-in duration-300">
+                    {/* Success Banner */}
+                    <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+                        <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <CheckIcon />
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Pagamento ricevuto con successo!</h2>
+                        <p className="text-green-800 font-medium">L'ordine #{orderId} è stato creato.</p>
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Ordine Confermato #{orderId}</h2>
-                    <p className="text-slate-600 mb-8">Ora carica i tuoi file di stampa per completare l'ordine.</p>
+
+                    {/* CTA / Instruction */}
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center max-w-2xl mx-auto">
+                        <p className="text-amber-900 font-bold text-lg mb-2">⚠️ Azione Richiesta</p>
+                        <p className="text-amber-800">
+                            Ora carica il tuo file di stampa qui sotto per avviare la produzione. <br/>
+                            <strong>Senza il file non potremo procedere con la stampa.</strong>
+                        </p>
+                    </div>
                     
                     <FileUploader 
                         files={files}

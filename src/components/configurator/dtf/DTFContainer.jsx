@@ -34,8 +34,8 @@ export default function DTFContainer({ product }) {
   
   // Configuration State
   const [config, setConfig] = useState({
-    format: 'a3',
-    quantity: 1,
+    format: null,
+    quantity: 0,
     isFullService: false,
     isFlashOrder: false,
     width: 0,

@@ -118,14 +118,19 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   // --- Handlers ---
   const handleQuantityChange = useCallback((size, value) => {
     if (!selectedColor) return;
-    const newVal = Math.max(0, parseInt(value) || 0);
-    
     // We must update state AND recalculate price
     // Since state update is async, we pass the *future* state to the calculator
     setQuantities(prev => {
         const colorData = prev[selectedColor] || {};
         const genderData = colorData[activeGender] || {};
         
+        let newVal;
+        if (value === '') {
+            newVal = '';
+        } else {
+            newVal = Math.max(0, parseInt(value) || 0);
+        }
+
         const newQuantities = {
             ...prev,
             [selectedColor]: {
@@ -137,19 +142,24 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             }
         };
         
-        // Trigger price recalc with NEW quantities
+        // Trigger price recalc with NEW quantities (treating empty as 0 for price)
         recalculatePrice(newQuantities, singleQuantity, frontPrint, backPrint, fileCheck);
         
         return newQuantities;
     });
   }, [selectedColor, activeGender, singleQuantity, frontPrint, backPrint, fileCheck, recalculatePrice]);
 
-  // Wrapper for Single Quantity change (for non-variant products)
-  const handleSingleQuantityChange = useCallback((val) => {
-      const newVal = parseInt(val) || 0;
-      setSingleQuantity(newVal);
-      recalculatePrice(quantities, newVal, frontPrint, backPrint, fileCheck);
-  }, [quantities, frontPrint, backPrint, fileCheck, recalculatePrice]);
+    // Wrapper for Single Quantity change (for non-variant products)
+    const handleSingleQuantityChange = useCallback((val) => {
+        let newVal;
+        if (val === '') {
+            newVal = '';
+        } else {
+            newVal = Math.max(0, parseInt(val) || 0);
+        }
+        setSingleQuantity(newVal);
+        recalculatePrice(quantities, newVal, frontPrint, backPrint, fileCheck);
+    }, [quantities, frontPrint, backPrint, fileCheck, recalculatePrice]);
 
   // Wrappers for Option Changes
   const handleFrontPrintChange = useCallback((val) => {

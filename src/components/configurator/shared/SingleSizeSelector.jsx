@@ -19,8 +19,14 @@ export default function SingleSizeSelector({
         id="single-qty"
         type="number"
         min={min}
-        value={quantity > 0 ? quantity : ''}
+        value={quantity || ''}
+        onFocus={(e) => e.target.select()}
         onChange={(e) => onQuantityChange(e.target.value)}
+        onBlur={() => {
+            if (quantity === '' || parseInt(quantity) < min) {
+                onQuantityChange(min);
+            }
+        }}
         placeholder="0"
         className={cn(
           "w-32 p-2 text-center border rounded-lg focus:ring-2 focus:ring-indigo-500 font-medium transition-colors",

@@ -1,6 +1,7 @@
+'use client';
+
 import React from 'react';
 import { cn } from '@/lib/utils';
-// import Check from 'lucide-react/dist/esm/icons/check'; // REMOVED FOR TBT
 
 const CheckIcon = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -8,9 +9,9 @@ const CheckIcon = ({ className }) => (
     </svg>
 );
 
-
 export default function StepNavigation({ currentStep, steps, onStepClick, isStepCompleted, brandColor = 'indigo' }) {
-  // steps: array of objects { id: 1, label: 'Configura' }
+  
+  // 1. Definiamo i passi di default (fondamentale per non avere errori)
   const defaultSteps = [
     { id: 1, label: 'Configura' },
     { id: 2, label: 'Upload' },
@@ -19,8 +20,20 @@ export default function StepNavigation({ currentStep, steps, onStepClick, isStep
   
   const actualSteps = steps || defaultSteps;
 
-  const activeBgClass = brandColor === 'red' ? 'bg-red-600 shadow-md ring-2 ring-red-100' : 'bg-indigo-600 shadow-md ring-2 ring-indigo-100';
-  const activeTextClass = brandColor === 'red' ? 'text-red-700' : 'text-indigo-700';
+  // 2. Mappa dei colori (Molto pulita!)
+  const colorMap = {
+    red: {
+      bg: 'bg-red-600 ring-red-100',
+      text: 'text-red-700'
+    },
+    indigo: {
+      bg: 'bg-indigo-600 ring-indigo-100',
+      text: 'text-indigo-700'
+    }
+  };
+
+  // Selezioniamo il tema in base alla prop
+  const theme = colorMap[brandColor] || colorMap.indigo;
 
   return (
     <nav className="flex justify-between mb-8 border-b border-gray-100 pb-4 flex-shrink-0 w-full">
@@ -40,17 +53,20 @@ export default function StepNavigation({ currentStep, steps, onStepClick, isStep
                   isClickable ? "cursor-pointer hover:opacity-75" : "cursor-default opacity-50"
                 )}
               >
+                {/* IL CERCHIO CON IL NUMERO */}
                 <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors",
+                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all shadow-sm",
                   isActive 
-                    ? `${activeBgClass} text-white`
+                    ? `${theme.bg} text-white shadow-md ring-2` 
                     : (isPast ? "bg-green-500 text-white" : "bg-gray-100 text-gray-400")
                 )}>
                   {isPast ? <CheckIcon className="w-5 h-5"/> : step.id}
                 </div>
+
+                {/* LA SCRITTA SOTTO */}
                 <span className={cn(
-                  "text-xs mt-1 font-medium",
-                  isActive ? activeTextClass : "text-gray-500"
+                  "text-xs mt-1 font-medium transition-colors",
+                  isActive ? theme.text : "text-gray-500"
                 )}>
                   {step.label}
                 </span>

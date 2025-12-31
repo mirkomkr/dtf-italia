@@ -66,6 +66,7 @@ function SizeInput({ size, parentValue, onCommit }) {
               inputMode="numeric"
               pattern="[0-9]*"
               value={localValue}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => setLocalValue(e.target.value)}
               onBlur={handleBlur}
               placeholder="0"

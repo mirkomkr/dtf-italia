@@ -10,9 +10,9 @@ import DTFVisualizer from './DTFVisualizer';
 const DTFConfigStep = ({ onUpdate, initialConfig }) => {
   const DTF_FORMATS = PRICING_CONFIG.dtf.formats;
   
-  const [selectedFormat, setSelectedFormat] = useState(initialConfig?.format || 'a3');
+  const [selectedFormat, setSelectedFormat] = useState(initialConfig?.format || '');
   const [customDims, setCustomDims] = useState({ w: '', h: '' });
-  const [quantity, setQuantity] = useState(initialConfig?.quantity || 1);
+  const [quantity, setQuantity] = useState(initialConfig?.quantity || 0);
   const [extras, setExtras] = useState({
     isFullService: initialConfig?.isFullService || false,
     isFlashOrder: initialConfig?.isFlashOrder || false
@@ -27,6 +27,11 @@ const DTFConfigStep = ({ onUpdate, initialConfig }) => {
 
   // Recalculate price whenever inputs change
   useEffect(() => {
+    if(!selectedFormat || quantity <= 0) {
+      setPriceData(null);
+      if (onUpdate) onUpdate({format: selectedFormat, quantity, price: null})
+      return;
+    }
     const { w, h } = getDims(selectedFormat);
     
     // Validate inputs
@@ -189,11 +194,30 @@ const DTFConfigStep = ({ onUpdate, initialConfig }) => {
                     <input 
                         id="quantity-input"
                         type="number"
-                        min="1"
-                        value={quantity}
-                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 0))}
-                        className="block w-32 rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-lg font-bold text-center"
-                    />
+                        placeholder="0"
+                        value={quantity === 0 ? '' : quantity}
+                        onFocus={(e) => e.target.select()}
+                        onChange={(e) => {
+                          const valStr = e.target.value;
+                            if (valStr === '') {
+                                setQuantity('0');
+                                return;
+                            }
+                            const val = parseInt(valStr, 10);
+                            if (!isNaN(val)) {
+                                setQuantity(val);
+                            }
+                        }}
+                        onBlur={() => {
+                            if (!quantity || quantity < 1) {
+                                setQuantity(0);
+                            }
+                        }}
+className="block w-32 mx-auto h-12 rounded-xl border-2 border-gray-200 
+               bg-white text-gray-900 text-lg font-bold text-center 
+               transition-all duration-200
+               placeholder:text-gray-300
+               focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10 focus:outline-none"                    />
                 </div>
 
                 <div className="w-full md:w-1/2 bg-slate-50 p-4 rounded-xl text-right">

@@ -29,7 +29,7 @@ async function fetchWooCommerce(endpoint, params = {}, options = {}) {
   }
 
 const authHeader = `Basic ${btoa(`${consumerKey}:${consumerSecret}`)}`;
-  
+
   // Dev mode: reduce revalidation time to see changes faster, or use 0 to disable.
   // Prod mode: default 3600 (1 hour). Can be overridden via options.revalidate.
   const isDev = process.env.NODE_ENV === 'development';
@@ -127,11 +127,11 @@ return data.map(product => ({
   slug: product.slug,
   price: product.price,
   // Puliamo la descrizione: rimuoviamo tag script e stili se presenti
-  description: product.description
+description: product.description
   ? product.description
-      .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gmi, "") // Rimuove script pericolosi
-      .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gmi, "")   // Rimuove stili inline che rompono il CSS
-      .replace(//g, "")                       // Rimuove i commenti pesanti di WordPress/Gutenberg
+      .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gmi, "")
+      .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gmi, "")
+      .replace(//g, "") // Questa era la riga che dava errore
       .trim()
   : "",
   short_description: product.short_description,

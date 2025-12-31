@@ -28,22 +28,24 @@ async function fetchWooCommerce(endpoint, params = {}, options = {}) {
       });
   }
 
-  const authHeader = `Basic ${btoa(`${consumerKey}:${consumerSecret}`)}`;
+const authHeader = `Basic ${btoa(`${consumerKey}:${consumerSecret}`)}`;
   
   // Dev mode: reduce revalidation time to see changes faster, or use 0 to disable.
   // Prod mode: default 3600 (1 hour). Can be overridden via options.revalidate.
   const isDev = process.env.NODE_ENV === 'development';
-  // const defaultRevalidate = isDev ? 60 : 3600; 
-  const defaultRevalidate = 0; // TEMPORARILY DISABLED CACHE
-  const revalidateTime = options.revalidate !== undefined ? options.revalidate : defaultRevalidate;
+const defaultRevalidate = process.env.NODE_ENV === 'development' ? 30 : 3600;
+const revalidateTime = options.revalidate !== undefined ? options.revalidate : defaultRevalidate;
 
-  const fetchOptions = {
+const fetchOptions = {
     method,
     headers: {
       Authorization: authHeader,
       'Content-Type': 'application/json',
     },
-    next: { revalidate: revalidateTime },
+    next: { 
+      revalidate: revalidateTime,
+      tags: ['products'] 
+    },
   };
 
   if (method !== 'GET' && options.body) {
@@ -119,19 +121,26 @@ export const getWooCommerceProducts = cache(async ({ perPage = 50, category, slu
     const data = await fetchWooCommerce("products", params, { revalidate });
     
     // Map data to reduce payload size and improve TBT
-    return data.map(product => ({
-      id: product.id,
-      name: product.name,
-      slug: product.slug,
-      price: product.price,
-      description: product.description,
-      short_description: product.short_description,
-      sku: product.sku,
-      images: product.images?.map(img => ({
-        src: img.src,
-        alt: img.alt || product.name
-      })) || []
-    }));
+return data.map(product => ({
+  id: product.id,
+  name: product.name,
+  slug: product.slug,
+  price: product.price,
+  // Puliamo la descrizione: rimuoviamo tag script e stili se presenti
+  description: product.description
+  ? product.description
+      .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gmi, "") // Rimuove script pericolosi
+      .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gmi, "")   // Rimuove stili inline che rompono il CSS
+      .replace(//g, "")                       // Rimuove i commenti pesanti di WordPress/Gutenberg
+      .trim()
+  : "",
+  short_description: product.short_description,
+  sku: product.sku,
+  images: product.images?.map(img => ({
+    src: img.src,
+    alt: img.alt || product.name
+  })) || []
+}));
   } catch (error) {
     console.error("Error fetching WooCommerce products:", error.message);
     return [];

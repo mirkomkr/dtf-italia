@@ -33,7 +33,7 @@ const authHeader = `Basic ${btoa(`${consumerKey}:${consumerSecret}`)}`;
   // Dev mode: reduce revalidation time to see changes faster, or use 0 to disable.
   // Prod mode: default 3600 (1 hour). Can be overridden via options.revalidate.
   const isDev = process.env.NODE_ENV === 'development';
-const defaultRevalidate = process.env.NODE_ENV === 'development' ? 30 : 3600;
+const defaultRevalidate = process.env.NODE_ENV === 'development' ? 30 : 86400;
 const revalidateTime = options.revalidate !== undefined ? options.revalidate : defaultRevalidate;
 
 const fetchOptions = {

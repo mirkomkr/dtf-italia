@@ -37,7 +37,6 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
           height={400}
           quality={60}
           priority={priority}
-          loading={priority ? "eager" : "lazy"}
           sizes="(max-width: 640px) 50vw,
                  (max-width: 1024px) 33vw,
                  25vw"
@@ -56,14 +55,16 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
         </h3>
 
         {/* Prezzo */}
-        {product.price_html ? (
+        {product.price ? (
           <p
             className="text-gray-800 text-sm"
             itemProp="offers"
             itemScope
             itemType="https://schema.org/Offer"
-            dangerouslySetInnerHTML={{ __html: product.price_html }}
-          />
+          >
+            {/* Formattazione base, ideale sarebbe un formatter dedicato */}
+            € {parseFloat(product.price).toFixed(2).replace('.', ',')}
+          </p>
         ) : (
           <p className="text-gray-700 text-sm">
             Prezzo su richiesta

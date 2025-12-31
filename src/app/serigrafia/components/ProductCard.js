@@ -17,7 +17,7 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
       itemScope
       itemType="https://schema.org/Product"
     >
-      {/* Link overlay accessibile - No Prefetch to save main thread */}
+      {/* Link overlay accessibile - No Prefetch per preservare il main thread */}
       <Link
         href={`/serigrafia/${product.slug}`}
         aria-label={`Configura ${product.name}`}
@@ -36,11 +36,11 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
           width={400}
           height={400}
           quality={60}
-          priority={priority}
+          priority={priority} // Gestisce automaticamente il caricamento eager
           sizes="(max-width: 640px) 50vw,
                  (max-width: 1024px) 33vw,
                  25vw"
-          className="w-full h-auto object-cover" 
+          className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105" 
           itemProp="image"
         />
       </div>
@@ -54,22 +54,10 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
           {product.name}
         </h3>
 
-        {/* Prezzo */}
-        {product.price ? (
-          <p
-            className="text-gray-800 text-sm"
-            itemProp="offers"
-            itemScope
-            itemType="https://schema.org/Offer"
-          >
-            {/* Formattazione base, ideale sarebbe un formatter dedicato */}
-            € {parseFloat(product.price).toFixed(2).replace('.', ',')}
-          </p>
-        ) : (
-          <p className="text-gray-700 text-sm">
-            Prezzo su richiesta
-          </p>
-        )}
+        {/* Nota informativa al posto del prezzo */}
+        <p className="text-gray-500 text-xs italic">
+          Prezzo calcolato in base alla configurazione
+        </p>
 
         {/* CTA */}
         <span
@@ -77,7 +65,7 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
           aria-hidden="true"
         >
           Configura
-          <span className="ml-1">→</span>
+          <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
         </span>
       </div>
     </article>

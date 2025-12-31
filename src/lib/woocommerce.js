@@ -131,7 +131,7 @@ description: product.description
   ? product.description
       .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gmi, "")
       .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gmi, "")
-      .replace(//g, "") // Questa era la riga che dava errore
+      .replace(/<![\s\S]*?--[ \t\n\r]*>/g, "") // Versione ultra-compatibile per i commenti HTML
       .trim()
   : "",
   short_description: product.short_description,

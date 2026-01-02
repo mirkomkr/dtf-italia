@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 const DEFAULT_OPTIONS = [
     { id: 'none', label: 'Nessuna Stampa' },
@@ -7,47 +8,74 @@ const DEFAULT_OPTIONS = [
     { id: 'full_color', label: 'Full Color' },
 ];
 
+const CheckIcon = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polyline points="20 6 9 17 4 12" />
+    </svg>
+);
+
 export default function PrintOptionSelector({ 
     frontValue, 
     backValue, 
     onFrontChange, 
     onBackChange, 
-    options = DEFAULT_OPTIONS 
+    options = DEFAULT_OPTIONS,
+    showBack = true,
+    brandColor = 'indigo'
 }) {
-  return (
-    <div className="space-y-4 pt-4 border-t border-gray-100">
-       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-         <div>
-            <label htmlFor="front-print" className="block text-sm font-semibold text-gray-700 mb-2">
-               Stampa Fronte <span className="text-xs font-normal text-gray-500">(Max 28x38cm)</span>
+    const brandStyles = {
+        red: {
+          active: "border-red-600 bg-red-50/50 text-red-900 shadow-sm",
+          iconContainer: "bg-red-600",
+          hover: "hover:border-red-200 hover:bg-red-50/30"
+        },
+        indigo: {
+          active: "border-indigo-600 bg-indigo-50/50 text-indigo-900 shadow-sm",
+          iconContainer: "bg-indigo-600",
+          hover: "hover:border-indigo-200 hover:bg-indigo-50/30"
+        }
+    };
+
+    const currentStyle = brandStyles[brandColor] || brandStyles.indigo;
+
+    const renderOption = (value, onChange, label) => (
+        <div className="flex-1">
+            <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">
+                {label} <span className="text-[10px] font-bold text-gray-400 pl-1">(Max 28x38cm)</span>
             </label>
-            <select
-              id="front-print"
-              value={frontValue}
-              onChange={(e) => onFrontChange(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"
-            >
-              {options.map((opt) => (
-                <option key={opt.id} value={opt.id}>{opt.label}</option>
-              ))}
-            </select>
-         </div>
-         <div>
-            <label htmlFor="back-print" className="block text-sm font-semibold text-gray-700 mb-2">
-               Stampa Retro <span className="text-xs font-normal text-gray-500">(Max 28x38cm)</span>
-            </label>
-            <select
-              id="back-print"
-              value={backValue}
-              onChange={(e) => onBackChange(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"
-            >
-              {options.map((opt) => (
-                <option key={opt.id} value={opt.id}>{opt.label}</option>
-              ))}
-            </select>
-         </div>
-       </div>
-    </div>
-  );
+            <div className="grid grid-cols-2 gap-2">
+                {options.map((opt) => {
+                    const isSelected = value === opt.id;
+                    return (
+                        <button
+                            key={opt.id}
+                            onClick={() => onChange(opt.id)}
+                            className={cn(
+                                "relative flex items-center justify-center p-3 rounded-xl border-2 transition-all duration-200 text-left text-xs font-bold leading-tight",
+                                isSelected 
+                                    ? currentStyle.active 
+                                    : cn("border-gray-100 bg-white text-gray-500", currentStyle.hover)
+                            )}
+                        >
+                            <span className="text-center">{opt.label}</span>
+                            {isSelected && (
+                                <div className={cn("absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-white p-0.5", currentStyle.iconContainer)}>
+                                    <CheckIcon className="w-full h-full" />
+                                </div>
+                            )}
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="space-y-6 pt-6 border-t border-gray-100/50">
+            <div className="flex flex-col md:flex-row gap-6">
+                {renderOption(frontValue, onFrontChange, "Stampa Fronte")}
+                {showBack && renderOption(backValue, onBackChange, "Stampa Retro")}
+            </div>
+        </div>
+    );
 }

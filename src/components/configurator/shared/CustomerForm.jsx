@@ -25,7 +25,7 @@ export default function CustomerForm({
         : "focus:ring-indigo-500 focus:border-indigo-500";
 
     const labelClass = "block text-xs font-semibold text-gray-500 mb-1 ml-1";
-    const inputClass = cn("w-full p-3 border border-gray-300 rounded-xl text-sm transition-shadow focus:ring-2 outline-none bg-gray-50/50 focus:bg-white", focusRingClass);
+    const inputClass = cn("w-full h-12 px-4 border border-gray-300 rounded-xl text-sm transition-shadow focus:ring-2 outline-none bg-gray-50/50 focus:bg-white", focusRingClass);
 
     return (
         <div className="space-y-4">

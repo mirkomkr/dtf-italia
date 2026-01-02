@@ -39,7 +39,7 @@ export default function ShippingSelector({
                     />
                     <Truck className={cn("w-6 h-6 mb-1", selectedOption === 'shipping' ? iconClass : "text-gray-400")} />
                     <span className={cn("font-bold text-sm", selectedOption === 'shipping' ? titleClass : "text-gray-600")}>
-                        Spedizione Bartolini
+                        Spedizione Corriere
                     </span>
                     {selectedOption === 'shipping' && (
                         <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", isRed ? "bg-red-100 text-red-700" : "bg-indigo-100 text-indigo-700")}>

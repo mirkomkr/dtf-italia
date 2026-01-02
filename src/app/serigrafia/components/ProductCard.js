@@ -12,8 +12,8 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
 
   return (
     <article
-      className="group relative bg-white rounded-xl border border-gray-200 shadow-sm
-                 hover:shadow-lg transition focus-within:ring-2 focus-within:ring-[var(--brand-color)]"
+      className="group relative bg-white rounded-2xl border border-gray-100 shadow-sm
+                 hover:shadow-2xl hover:shadow-red-500/10 transition-all duration-500 focus-within:ring-4 focus-within:ring-red-600/10"
       itemScope
       itemType="https://schema.org/Product"
     >
@@ -27,45 +27,43 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
 
       {/* Immagine prodotto */}
       <div 
-        className="relative overflow-hidden rounded-t-xl"
-        style={{ backgroundColor: '#f3f4f6' }} 
+        className="relative overflow-hidden rounded-t-2xl"
+        style={{ backgroundColor: '#f8fafc' }} 
       >
         <Image
           src={imageSrc}
           alt={imageAlt}
           width={400}
           height={400}
-          quality={60}
-          priority={priority} // Gestisce automaticamente il caricamento eager
-          sizes="(max-width: 640px) 50vw,
-                 (max-width: 1024px) 33vw,
-                 25vw"
-          className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105" 
+          quality={80}
+          priority={priority} 
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110" 
           itemProp="image"
         />
       </div>
 
       {/* Contenuto */}
-      <div className="p-5 flex flex-col gap-2">
+      <div className="p-6 flex flex-col gap-2">
         <h3
-          className="text-lg font-bold text-gray-900 leading-snug"
+          className="text-lg font-black text-gray-900 leading-snug tracking-tight"
           itemProp="name"
         >
           {product.name}
         </h3>
 
-        {/* Nota informativa al posto del prezzo */}
-        <p className="text-gray-500 text-xs italic">
-          Prezzo calcolato in base alla configurazione
+        {/* Nota informativa */}
+        <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest italic">
+          Prezzo Configurabile
         </p>
 
         {/* CTA */}
         <span
-          className="mt-3 inline-flex items-center text-sm font-semibold text-[var(--brand-color)]"
+          className="mt-4 inline-flex items-center text-xs font-black uppercase tracking-[0.2em] text-red-600"
           aria-hidden="true"
         >
           Configura
-          <span className="ml-1 transition-transform group-hover:translate-x-1">→</span>
+          <span className="ml-2 transition-transform duration-300 group-hover:translate-x-2">→</span>
         </span>
       </div>
     </article>

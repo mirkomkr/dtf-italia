@@ -28,7 +28,7 @@ export default function StepNavigation({ currentStep, steps, onStepClick, isStep
     },
     indigo: {
       bg: 'bg-indigo-600 ring-indigo-100',
-      text: 'text-indigo-700'
+      text: 'text-indigo-600'
     }
   };
 
@@ -49,24 +49,25 @@ export default function StepNavigation({ currentStep, steps, onStepClick, isStep
                 onClick={() => isClickable && onStepClick && onStepClick(step.id)}
                 disabled={!isClickable}
                 className={cn(
-                  "flex flex-col items-center bg-transparent border-none p-0 transition-all focus:outline-none",
-                  isClickable ? "cursor-pointer hover:opacity-75" : "cursor-default opacity-50"
+                  "flex flex-col items-center bg-transparent border-none p-0 transition-all focus:outline-none group", // Aggiunto 'group'
+                  isClickable ? "cursor-pointer" : "cursor-default opacity-50"
                 )}
               >
-                {/* IL CERCHIO CON IL NUMERO */}
+                {/* IL CERCHIO: Il cuore della Brand Identity */}
                 <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all shadow-sm",
+                  "w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300",
                   isActive 
-                    ? `${theme.bg} text-white shadow-md ring-2` 
-                    : (isPast ? "bg-green-500 text-white" : "bg-gray-100 text-gray-400")
+                    ? `${theme.bg} text-white shadow-md ring-2 ring-offset-2 ring-offset-white` // 'ring-offset' per pulizia
+                    : (isPast ? "bg-green-500 text-white" : "bg-gray-100 text-gray-400"),
+                  isClickable && !isActive && "group-hover:scale-110" // Feedback al passaggio del mouse
                 )}>
                   {isPast ? <CheckIcon className="w-5 h-5"/> : step.id}
                 </div>
 
-                {/* LA SCRITTA SOTTO */}
+                {/* LA SCRITTA: Nota come manteniamo il nero/grigio per accessibilità */}
                 <span className={cn(
-                  "text-xs mt-1 font-medium transition-colors",
-                  isActive ? theme.text : "text-gray-500"
+                  "text-[10px] uppercase tracking-wider mt-2 font-bold transition-colors duration-300",
+                  isActive ? theme.text : "text-gray-400"
                 )}>
                   {step.label}
                 </span>

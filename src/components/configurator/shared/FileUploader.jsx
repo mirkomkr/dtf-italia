@@ -29,14 +29,14 @@ export default function FileUploader({
     // Border & Bg
     const normalClass = isRed 
         ? "border-red-200 bg-red-50/50 hover:bg-red-50" 
-        : "border-indigo-200 bg-indigo-50/50 hover:bg-indigo-50";
+        : "border-gray-200 bg-white hover:border-indigo-600 hover:bg-indigo-50/30";
     
     const dragClass = isRed 
         ? "border-red-400 bg-red-100" 
-        : "border-indigo-400 bg-indigo-100";
+        : "border-indigo-600 bg-indigo-50/50";
         
     // Text
-    const textPrimaryClass = isRed ? "text-red-900" : "text-indigo-900";
+    const textPrimaryClass = isRed ? "text-red-900" : "text-gray-900";
     const textSecondaryClass = isRed ? "text-red-600" : "text-indigo-600";
     
     // Icon
@@ -195,7 +195,10 @@ export default function FileUploader({
                 {currentFiles.length > 0 ? (
                     <div className="w-full space-y-3">
                         {currentFiles.map((f, i) => (
-                           <div key={i} className={`flex items-center justify-between bg-white p-3 rounded-lg border shadow-sm ${isRed ? 'border-red-100' : 'border-indigo-100'}`}>
+                           <div key={i} className={cn(
+                                "flex items-center justify-between bg-white p-3 rounded-xl border shadow-sm transition-all duration-200",
+                                isRed ? 'border-red-100' : 'border-gray-200 hover:border-indigo-300'
+                           )}>
                                 <div className="flex items-center gap-3 overflow-hidden w-full">
                                     <FileCheck className="w-6 h-6 md:w-8 md:h-8 text-green-500 flex-shrink-0" />
                                     <div className="min-w-0 flex-grow">

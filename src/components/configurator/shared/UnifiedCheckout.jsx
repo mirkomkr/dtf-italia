@@ -7,14 +7,15 @@ import CustomerForm from './CustomerForm';
 import PaymentActions from './PaymentActions';
 
 export default function UnifiedCheckout({
-    type, // 'serigrafia' | 'dtf'
-    priceData, // { unitPrice, totalPrice, details... }
-    productData, // { quantities, format, ... }
+    type, 
+    priceData, 
+    productData, 
     brandColor = 'indigo',
-    onSuccess, // (orderId) => void
+    onSuccess, 
     onBack,
     uploadedFileKey = null
 }) {
+    // --- Stato Locale ---
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -27,17 +28,18 @@ export default function UnifiedCheckout({
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState(null);
 
-    // Logic for shipping cost
+    // Costo spedizione semplice
     const shippingCost = shippingOption === 'pickup' ? 0.00 : 7.50; 
 
+    // --- Logica di Pagamento ---
     const handlePayment = async (paymentMethod) => {
-        // Validation
+        // Validazione Base
         if (!formData.firstName || !formData.lastName || !formData.email) {
-            alert("Compila tutti i campi obbligatori.");
+            alert("Per favore, inserisci i dati di contatto.");
             return;
         }
-        if (shippingOption === 'shipping' && (!formData.address || !formData.city || !formData.zip)) {
-            alert("Compila l'indirizzo di spedizione.");
+        if (shippingOption === 'shipping' && !formData.address) {
+            alert("Per favore, inserisci l'indirizzo di spedizione.");
             return;
         }
 
@@ -45,14 +47,10 @@ export default function UnifiedCheckout({
         setError(null);
 
         try {
-            // 1. Prepare Order Data
             const payload = {
                 type,
-                customer: { ...formData },
-                shipping: { 
-                    option: shippingOption, 
-                    cost: shippingCost 
-                },
+                customer: formData,
+                shipping: { option: shippingOption, cost: shippingCost },
                 paymentMethod,
                 items: productData,
                 uploadedFileKey, 
@@ -63,7 +61,6 @@ export default function UnifiedCheckout({
                 }
             };
 
-            // 2. Call API to Create Order
             const response = await fetch('/api/order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -73,25 +70,11 @@ export default function UnifiedCheckout({
             const result = await response.json();
 
             if (result.success && result.orderId) {
-                // S3 Link update as backup if key is present
-                if (uploadedFileKey) {
-                    await fetch('/api/order/update-s3-meta', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            orderId: result.orderId, 
-                            s3Key: uploadedFileKey 
-                        })
-                    }).catch(err => console.error("S3 Link Error:", err));
-                }
-                
                 onSuccess(result.orderId);
             } else {
-                throw new Error(result.error || "Errore sconosciuto");
+                throw new Error(result.error || "Errore durante la creazione dell'ordine");
             }
-
         } catch (err) {
-            console.error("Payment Error:", err);
             setError(err.message);
         } finally {
             setIsProcessing(false);
@@ -99,8 +82,9 @@ export default function UnifiedCheckout({
     };
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {/* Left Column: Forms */}
+        <div className="flex flex-col lg:flex-row gap-8">
+            
+            {/* PARTE SINISTRA: INPUT DATI */}
             <div className="flex-1 space-y-8">
                 {error && (
                     <div className="p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
@@ -108,8 +92,9 @@ export default function UnifiedCheckout({
                     </div>
                 )}
                 
+                {/* 1. Spedizione */}
                 <section>
-                    <h2 className="text-xl font-bold text-gray-900 mb-4">1. Metodo di Consegna</h2>
+                    <h2 className="text-xl font-bold text-gray-900 mb-4">1. Spedizione</h2>
                     <ShippingSelector 
                         selectedOption={shippingOption} 
                         onOptionChange={setShippingOption} 
@@ -117,44 +102,43 @@ export default function UnifiedCheckout({
                     />
                 </section>
 
+                {/* 2. Dati Cliente */}
                 <section>
                     <h2 className="text-xl font-bold text-gray-900 mb-4">2. I tuoi dati</h2>
                     <CustomerForm 
                         formData={formData} 
                         onChange={(e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))}
-                        onAddressSelect={(addressData) => setFormData(prev => ({ ...prev, ...addressData }))}
+                        onAddressSelect={(addr) => setFormData(prev => ({ ...prev, ...addr }))}
                         showAddress={shippingOption === 'shipping'}
                         brandColor={brandColor}
                     />
                 </section>
             </div>
 
-            {/* Right Column: Summary & Payment */}
-            <div className="lg:w-96 flex-shrink-0">
-                 <div className="sticky top-4">
-                     <OrderSummary 
-                        type={type} 
-                        priceData={priceData} 
-                        data={{ ...productData, shippingCost }} 
-                        brandColor={brandColor} 
-                     />
-                     
-                     <PaymentActions 
-                        onPaymentSelect={handlePayment} 
-                        isProcessing={isProcessing} 
-                        brandColor={brandColor}
-                     />
+            {/* PARTE DESTRA: RIEPILOGO E PAGAMENTO */}
+            <div className="w-full lg:w-96 space-y-4">
+                 <OrderSummary 
+                    type={type} 
+                    priceData={priceData} 
+                    data={{ ...productData, shippingCost }} 
+                    brandColor={brandColor} 
+                 />
+                 
+                 <PaymentActions 
+                    onPaymentSelect={handlePayment} 
+                    isProcessing={isProcessing} 
+                    brandColor={brandColor}
+                 />
 
-                     {onBack && (
-                         <button 
-                            onClick={onBack}
-                            disabled={isProcessing}
-                            className="w-full mt-4 text-sm text-gray-400 hover:text-gray-600 transition-colors"
-                         >
-                             Indietro
-                         </button>
-                     )}
-                 </div>
+                 {onBack && (
+                     <button 
+                        onClick={onBack}
+                        disabled={isProcessing}
+                        className="w-full py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                     >
+                         Torna alla configurazione
+                     </button>
+                 )}
             </div>
         </div>
     );

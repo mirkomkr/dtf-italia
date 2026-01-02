@@ -2,35 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
+html, body {
+  height: auto;
   scroll-behavior: smooth;
 }
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
-  @apply bg-gray-50;
+  @apply bg-gray-50 text-gray-900 antialiased;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-  
-  /* Animations moved to specific components or removed for performance
-  .animate-blob { ... } 
-  */
+}
+
+#main-content {
+  display: block;
+}
+
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  z-index: 40;
 }

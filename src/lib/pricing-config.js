@@ -31,7 +31,7 @@ export const PRICING_CONFIG = {
        file_check: 10.00
     },
     formats: {
-      logo_cuore: { label: 'Logo Lato Cuore / Tascabile', w: 10, h: 10 },
+      logo_cuore: { label: 'Lato Cuore / Tascabile', w: 10, h: 10 },
       manica_corta: { label: 'Manica Corta / Spalla', w: 7, h: 7 },
       cappello_front: { label: 'Cappello (Frontale)', w: 12, h: 6 },
       manica_lunga_striscia: { label: 'Manica Lunga (Striscia)', w: 6, h: 40 },

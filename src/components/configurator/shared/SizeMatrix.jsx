@@ -3,7 +3,14 @@ import { cn } from '@/lib/utils';
 
 const DEFAULT_SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 
-const SizeMatrix = memo(function SizeMatrix({ sizes = DEFAULT_SIZES, quantities, onQuantityChange, visible = true, title = "Seleziona Taglie e Quantità" }) {
+const SizeMatrix = memo(function SizeMatrix({ 
+  sizes = DEFAULT_SIZES, 
+  quantities, 
+  onQuantityChange, 
+  visible = true, 
+  title = "Seleziona Taglie e Quantità",
+  brandColor = 'indigo'
+}) {
   if (!visible) return null;
 
   return (
@@ -18,61 +25,76 @@ const SizeMatrix = memo(function SizeMatrix({ sizes = DEFAULT_SIZES, quantities,
              size={size} 
              parentValue={quantities[size]} 
              onCommit={onQuantityChange} 
+             brandColor={brandColor}
            />
         ))}
       </div>
       <p className="text-right text-xs text-gray-500 mt-2">
-        Totale Capi: <strong className="text-indigo-600">{Object.values(quantities).reduce((a, b) => a + (parseInt(b) || 0), 0)}</strong>
+        Totale Capi: <strong className={cn(
+          "font-bold",
+          brandColor === 'red' ? "text-red-600" : "text-indigo-600"
+        )}>{Object.values(quantities).reduce((a, b) => a + (parseInt(b) || 0), 0)}</strong>
       </p>
     </div>
   );
 }, (prevProps, nextProps) => {
-    // Custom comparison for performance: 
-    // re-render only if title, visible, or relevant quantity CHANGED.
-    // Deep comparison of quantities object is expensive, but it's shallow here (object reference from parent).
-    // If parent creates new object every render, memo is useless unless we check deeper or rely on parent memoization.
-    // Assuming parent (SerigrafiaContainer) handles state updates correctly.
-    // Simple prop check:
     return (
         prevProps.visible === nextProps.visible &&
         prevProps.title === nextProps.title &&
-        prevProps.quantities === nextProps.quantities // Relies on immutability
+        prevProps.brandColor === nextProps.brandColor &&
+        prevProps.quantities === nextProps.quantities 
     );
 });
 
 export default SizeMatrix;
 
-function SizeInput({ size, parentValue, onCommit }) {
-    const [localValue, setLocalValue] = React.useState(parentValue > 0 ? parentValue : '');
-
-    React.useEffect(() => {
-        setLocalValue(parentValue > 0 ? parentValue : '');
-    }, [parentValue]);
-
-    const handleBlur = () => {
-        const val = parseInt(localValue) || 0;
-        if (val !== (parseInt(parentValue) || 0)) {
-           onCommit(size, val);
+function SizeInput({ size, parentValue, onCommit, brandColor }) {
+    // Logica di stile
+    const brandStyles = {
+        red: {
+          active: "border-red-600 bg-red-50/50 text-red-900",
+          focus: "focus:ring-red-600/10 focus:border-red-600"
+        },
+        indigo: {
+          active: "border-indigo-600 bg-indigo-50/50 text-indigo-900",
+          focus: "focus:ring-indigo-600/10 focus:border-indigo-600"
         }
     };
+    const currentStyle = brandStyles[brandColor] || brandStyles.indigo;
+
+    // Mapping del valore per gestire lo zero come stringa vuota (stessa logica SingleSizeSelector)
+    const displayValue = (parentValue === 0 || !parentValue) ? '' : parentValue;
 
     return (
           <div className="flex flex-col gap-1">
-            <label htmlFor={`qty-${size}`} className="text-xs font-bold text-gray-500 uppercase text-center">{size}</label>
+            <label htmlFor={`qty-${size}`} className="text-[10px] font-bold text-gray-400 uppercase text-center">{size}</label>
             <input
               id={`qty-${size}`}
               type="number"
               min="0"
               inputMode="numeric"
-              pattern="[0-9]*"
-              value={localValue}
-              onFocus={(e) => e.target.select()}
-              onChange={(e) => setLocalValue(e.target.value)}
-              onBlur={handleBlur}
               placeholder="0"
+              value={displayValue}
+              onFocus={(e) => e.target.select()}
+              onChange={(e) => {
+                const valStr = e.target.value;
+                if (valStr === '') {
+                  onCommit(size, 0);
+                  return;
+                }
+                const val = parseInt(valStr, 10);
+                if (!isNaN(val)) {
+                  onCommit(size, val);
+                }
+              }}
               className={cn(
-                "w-full p-2 text-center border rounded-lg focus:ring-2 focus:ring-indigo-500 font-medium transition-colors",
-                (localValue > 0) ? "border-indigo-600 bg-indigo-50 text-indigo-900" : "border-gray-300 text-gray-700 hover:border-gray-400"
+                "w-full h-12 text-center border-2 rounded-xl font-bold transition-all duration-200 outline-none focus:ring-4",
+                brandColor === 'red'
+                    ? "focus:border-red-600 focus:ring-red-600/10"
+                    : "focus:border-indigo-600 focus:ring-indigo-600/10",
+                (parentValue > 0) 
+                  ? `${currentStyle.active}` 
+                  : "border-gray-200 text-gray-500 hover:border-gray-300"
               )}
             />
           </div>

@@ -1,326 +1,223 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
-import { calculatePrice } from '@/lib/pricing-engine';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
+import { calculatePrice } from '@/lib/pricing-engine';
+
+// Componenti Shared
 import StepNavigation from '../shared/StepNavigation';
-import ConfigStep from './ConfigStep'; // Assicurati che il percorso sia corretto (stessa cartella)
 import UnifiedCheckout from '../shared/UnifiedCheckout';
 import SuccessStep from '../shared/SuccessStep';
 
+// Componente Specifico
+import ConfigStep from './ConfigStep';
+
 const FileUploader = dynamic(() => import('../shared/FileUploader'), {
-  loading: () => <p className="p-10 text-center text-gray-500">Caricamento Uploader...</p>,
+  loading: () => <p className="p-10 text-center text-gray-500 italic">Preparazione caricamento...</p>,
   ssr: false
 });
-
-// ... imports ...
 
 export default function SerigrafiaContainer({ product, enableVariants = true }) {
   const searchParams = useSearchParams();
   const urlOrderId = searchParams.get('order_id');
 
-  // Steps: 1=Config, 2=Checkout, 3=Upload (Success)
+  // --- Stato Navigazione ---
   const [currentStep, setCurrentStep] = useState(1);
-  const [orderId, setOrderId] = useState(null); 
-  
-  // Recovery Mode Effect
-  React.useEffect(() => {
-      if (urlOrderId) {
-          setOrderId(urlOrderId);
-          setCurrentStep(3);
-      }
-  }, [urlOrderId]); 
-  
-  // --- Step 1 State ---
+  const [orderId, setOrderId] = useState(null);
+  const [isUploadComplete, setIsUploadComplete] = useState(false);
+
+  // --- Stato Configurazione Serigrafica ---
   const [activeGender, setActiveGender] = useState('uomo'); 
   const [selectedColor, setSelectedColor] = useState(null);
-  
-  // Multi-color & Multi-gender quantities
-  const [quantities, setQuantities] = useState({});
-
-  // Single quantity for no-variant products
-  const [singleQuantity, setSingleQuantity] = useState(0);
-
+  const [quantities, setQuantities] = useState({}); // Per prodotti con varianti
+  const [singleQuantity, setSingleQuantity] = useState(0); // Per prodotti senza varianti
   const [frontPrint, setFrontPrint] = useState('1_color');
   const [backPrint, setBackPrint] = useState('none');
   const [fileCheck, setFileCheck] = useState(false);
-  
-  // --- Step 3 (Upload) State ---
-
-  
-
-
-  // Files State
-  const [files, setFiles] = useState([]);
-  const [isUploadComplete, setIsUploadComplete] = useState(false);
-  const handleFilesChange = (newFiles) => {
-    setFiles(newFiles);
-  };
-
-  // --- Pricing State ---
   const [price, setPrice] = useState({ unitPrice: 0, totalPrice: 0 });
 
-  // --- Layout Logic ---
+  // --- Logica Layout Prodotto ---
   const genderLayout = useMemo(() => {
     const slug = product?.slug?.toLowerCase() || '';
-    if (slug.includes('cappello-con-visiera') || slug.includes('cappellino')) return 'caps';
-    if (slug.includes('shopper-in-cotone') || slug.includes('borse') || slug.includes('zaini')) return 'none';
+    if (slug.includes('cappello') || slug.includes('cappellino')) return 'caps';
+    if (slug.includes('shopper') || slug.includes('borse') || slug.includes('zaini')) return 'none';
     return 'clothing';
   }, [product]);
 
-  // Sync active gender with layout
-  React.useEffect(() => {
+  // Sync gender iniziale basato sul layout
+  useEffect(() => {
     if (genderLayout === 'caps') setActiveGender('adulto');
     if (genderLayout === 'none') setActiveGender('unico'); 
   }, [genderLayout]);
 
+  // Recovery Mode
+  useEffect(() => {
+    if (urlOrderId) {
+      setOrderId(urlOrderId);
+      setCurrentStep(3);
+    }
+  }, [urlOrderId]);
 
-  // --- Derived State with Memoization ---
-  // Helper to get total qty from current state
-  const getTotalQty = useCallback((currentQuantities, currentSingle) => {
-      return enableVariants 
-      ? Object.values(currentQuantities).reduce((accColor, colorQty) => 
-          accColor + Object.values(colorQty).reduce((accGender, genderQty) => 
-               accGender + Object.values(genderQty).reduce((a, b) => a + (parseInt(b) || 0), 0)
-          , 0)
-        , 0)
-      : parseInt(currentSingle) || 0;
+  // --- Calcolo Prezzi ---
+  const getTotalQty = useCallback((currQuantities, currSingle) => {
+    return enableVariants 
+      ? Object.values(currQuantities).reduce((accCol, colQty) => 
+          accCol + Object.values(colQty).reduce((accGen, genQty) => 
+            accGen + Object.values(genQty).reduce((a, b) => a + (parseInt(b) || 0), 0), 0), 0)
+      : parseInt(currSingle) || 0;
   }, [enableVariants]);
 
-  // Current Total
   const totalQuantity = useMemo(() => getTotalQty(quantities, singleQuantity), [quantities, singleQuantity, getTotalQty]);
 
-
-  /**
-   * ON-DEMAND Price Recalculation
-   * Replaces useEffect to avoid initial render blocking and unnecessary runs.
-   */
-  const recalculatePrice = useCallback((newQuantities, newSingle, newFront, newBack, newFileCheck) => {
-      const qty = getTotalQty(newQuantities, newSingle);
-      
-      // Optimization: if qty is 0, reset price immediately
-      if (qty === 0) {
-          setPrice({ unitPrice: 0, totalPrice: 0 });
-          return;
-      }
-
-      const result = calculatePrice('serigrafia', {
-          quantity: qty,
-          frontPrint: newFront,
-          backPrint: newBack,
-          fileCheck: newFileCheck
-      });
-      setPrice(result);
+  const updatePrice = useCallback((q, s, f, b, c) => {
+    const qty = getTotalQty(q, s);
+    if (qty === 0) {
+      setPrice({ unitPrice: 0, totalPrice: 0 });
+      return;
+    }
+    const result = calculatePrice('serigrafia', {
+      quantity: qty,
+      frontPrint: f,
+      backPrint: b,
+      fileCheck: c
+    });
+    setPrice(result);
   }, [getTotalQty]);
 
-
   // --- Handlers ---
-  const handleQuantityChange = useCallback((size, value) => {
+  const handleQuantityChange = (size, value) => {
     if (!selectedColor) return;
-    // We must update state AND recalculate price
-    // Since state update is async, we pass the *future* state to the calculator
+    const newVal = value === '' ? '' : Math.max(0, parseInt(value) || 0);
+    
     setQuantities(prev => {
-        const colorData = prev[selectedColor] || {};
-        const genderData = colorData[activeGender] || {};
-        
-        let newVal;
-        if (value === '') {
-            newVal = '';
-        } else {
-            newVal = Math.max(0, parseInt(value) || 0);
+      const newState = {
+        ...prev,
+        [selectedColor]: {
+          ...prev[selectedColor],
+          [activeGender]: { ...prev[selectedColor]?.[activeGender], [size]: newVal }
         }
-
-        const newQuantities = {
-            ...prev,
-            [selectedColor]: {
-                ...colorData,
-                [activeGender]: {
-                    ...genderData,
-                    [size]: newVal
-                }
-            }
-        };
-        
-        // Trigger price recalc with NEW quantities (treating empty as 0 for price)
-        recalculatePrice(newQuantities, singleQuantity, frontPrint, backPrint, fileCheck);
-        
-        return newQuantities;
+      };
+      updatePrice(newState, singleQuantity, frontPrint, backPrint, fileCheck);
+      return newState;
     });
-  }, [selectedColor, activeGender, singleQuantity, frontPrint, backPrint, fileCheck, recalculatePrice]);
-
-    // Wrapper for Single Quantity change (for non-variant products)
-    const handleSingleQuantityChange = useCallback((val) => {
-        let newVal;
-        if (val === '') {
-            newVal = '';
-        } else {
-            newVal = Math.max(0, parseInt(val) || 0);
-        }
-        setSingleQuantity(newVal);
-        recalculatePrice(quantities, newVal, frontPrint, backPrint, fileCheck);
-    }, [quantities, frontPrint, backPrint, fileCheck, recalculatePrice]);
-
-  // Wrappers for Option Changes
-  const handleFrontPrintChange = useCallback((val) => {
-      setFrontPrint(val);
-      recalculatePrice(quantities, singleQuantity, val, backPrint, fileCheck);
-  }, [quantities, singleQuantity, backPrint, fileCheck, recalculatePrice]);
-
-  const handleBackPrintChange = useCallback((val) => {
-      setBackPrint(val);
-      recalculatePrice(quantities, singleQuantity, frontPrint, val, fileCheck);
-  }, [quantities, singleQuantity, frontPrint, fileCheck, recalculatePrice]);
-
-  const handleFileCheckChange = useCallback((val) => {
-      setFileCheck(val);
-      recalculatePrice(quantities, singleQuantity, frontPrint, backPrint, val);
-  }, [quantities, singleQuantity, frontPrint, backPrint, recalculatePrice]);
-
-
-  const handleStepClick = useCallback((step) => {
-    if(step === 3 && !orderId) return;
-    if (step < currentStep || orderId) {
-      setCurrentStep(step);
-    }
-  }, [currentStep, orderId]);
-
-
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // --- Effects ---
-  // Replaced by direct calls in handlers.
-  // Shipping cost effect is light enough to stay or can be moved to shipping selector on change.
-  // For strictness, let's keep it but it's very cheap.
-
-
-
-  const handleOrderSuccess = (newOrderId) => {
-    setOrderId(newOrderId);
+  const handleOrderSuccess = (newId) => {
+    setOrderId(newId);
     setCurrentStep(3);
   };
 
-  // Auto-Scroll to Top on Step Change (Instant & Precise)
-  const isFirstRender = React.useRef(true);
-  
-  React.useEffect(() => {
-    // Prevent scroll on initial render
-    if (isFirstRender.current) {
-        isFirstRender.current = false;
-        return;
-    }
-
-    const timer = setTimeout(() => {
-        const topElement = document.getElementById('configurator-top');
-        if (topElement) {
-            // Calculate absolute position relative to document
-            const elementPosition = topElement.getBoundingClientRect().top + window.scrollY;
-            const offsetPosition = elementPosition - 20;
-
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-        }
-    }, 150);
-    
-    return () => clearTimeout(timer);
-  }, [currentStep, orderId]);
+  const steps = [
+    { id: 1, label: 'Configura' },
+    { id: 2, label: 'Checkout' },
+    { id: 3, label: 'Istruzioni File'},
+    { id: 4, label: 'Upload' }
+  ];
 
   return (
-    <div id="configurator-top" className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full">
-        <StepNavigation 
-            currentStep={currentStep} 
-            steps={[
-                {id: 1, label: 'Configura'},
-                {id: 2, label: 'Checkout'},
-                {id: 3, label: 'Upload'},
-            ]}
-            onStepClick={handleStepClick}
-            isStepCompleted={!!orderId}
-            brandColor="red"
-        />
-        
+    <div id="configurator-top" className="relative w-full rounded-3xl p-4 md:p-8 border border-slate-200/50 shadow-2xl overflow-visible bg-white">
+      <StepNavigation 
+        currentStep={currentStep} 
+        steps={steps}
+        onStepClick={(s) => {
+          if (s > 2 && !orderId) return;
+          if (s < currentStep || orderId) setCurrentStep(s);
+        }}
+        isStepCompleted={!!orderId}
+        brandColor="red"
+      />
+      
+      <div className="mt-8">
+        {/* STEP 1: CONFIGURAZIONE PRODOTTO */}
         {currentStep === 1 && (
-            <ConfigStep 
-                genderLayout={genderLayout}
-                enableVariants={enableVariants}
-                activeGender={activeGender}
-                setActiveGender={setActiveGender}
-                selectedColor={selectedColor}
-                setSelectedColor={setSelectedColor}
-                quantities={quantities}
-                onQuantityChange={handleQuantityChange}
-                singleQuantity={singleQuantity}
-                setSingleQuantity={handleSingleQuantityChange}
-                frontPrint={frontPrint}
-                setFrontPrint={handleFrontPrintChange}
-                backPrint={backPrint}
-                setBackPrint={handleBackPrintChange}
-                fileCheck={fileCheck}
-                setFileCheck={handleFileCheckChange}
-                price={price}
-                totalQuantity={totalQuantity}
-                onNext={() => setCurrentStep(2)}
-            />
-        )}
-        
-        {currentStep === 2 && (
-            <UnifiedCheckout 
-                type="serigrafia"
-                priceData={price}
-                productData={{
-                    quantities,
-                    singleQuantity,
-                    frontPrint,
-                    backPrint,
-                    fileCheck,
-                    totalQuantity
-                }}
-                brandColor="red"
-                onSuccess={handleOrderSuccess}
-                onBack={() => setCurrentStep(1)}
-                uploadedFileKey={null}
-            />
+          <ConfigStep 
+            genderLayout={genderLayout}
+            enableVariants={enableVariants}
+            activeGender={activeGender}
+            setActiveGender={setActiveGender}
+            selectedColor={selectedColor}
+            setSelectedColor={setSelectedColor}
+            quantities={quantities}
+            onQuantityChange={handleQuantityChange}
+            singleQuantity={singleQuantity}
+            setSingleQuantity={(val) => {
+              const n = val === '' ? '' : Math.max(0, parseInt(val) || 0);
+              setSingleQuantity(n);
+              updatePrice(quantities, n, frontPrint, backPrint, fileCheck);
+            }}
+            frontPrint={frontPrint}
+            setFrontPrint={(val) => { setFrontPrint(val); updatePrice(quantities, singleQuantity, val, backPrint, fileCheck); }}
+            backPrint={backPrint}
+            setBackPrint={(val) => { setBackPrint(val); updatePrice(quantities, singleQuantity, frontPrint, val, fileCheck); }}
+            
+            fileCheck={fileCheck}
+            setFileCheck={(val) => { setFileCheck(val); updatePrice(quantities, singleQuantity, frontPrint, backPrint, val); }}
+            price={price}
+            totalQuantity={totalQuantity}
+            onNext={() => setCurrentStep(2)}
+            brandColor="red"
+          />
         )}
 
-        {currentStep === 3 && orderId && isUploadComplete ? (
+        {/* STEP 2: CHECKOUT */}
+        {currentStep === 2 && !orderId && (
+          <UnifiedCheckout 
+            type="serigrafia"
+            priceData={price}
+            productData={{ quantities, singleQuantity, frontPrint, backPrint, fileCheck, totalQuantity }}
+            brandColor="red"
+            onSuccess={handleOrderSuccess}
+            onBack={() => setCurrentStep(1)}
+          />
+        )}
+
+        {/* STEP 3: ISTRUZIONI FILE (POST-PAGAMENTO) */}
+        {currentStep === 3 && orderId && (
+          <div className="max-w-2xl mx-auto space-y-6">
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-red-900">
+              <h3 className="font-bold mb-2 uppercase text-sm">Preparazione File Serigrafia</h3>
+              <p className="text-sm mb-4">L'upload avviene dopo la conferma dell'ordine.</p>
+              <ul className="grid grid-cols-2 gap-2 text-xs font-medium opacity-80">
+                <li>• PDF Vettoriale o AI</li>
+                <li>• Testi convertiti in tracciati</li>
+                <li>• Colori spot (Pantone) consigliati</li>
+                <li>• Risoluzione 300 DPI per raster</li>
+              </ul>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <button onClick={() => setCurrentStep(2)} className="text-gray-400 font-bold text-xs uppercase hover:text-red-600 transition-colors">
+                Indietro
+              </button>
+              <button onClick={() => setCurrentStep(4)} className="bg-red-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm">
+                Vai al caricamento
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: SUCCESS & UPLOAD */}
+        {currentStep === 4 && orderId && (
+          isUploadComplete ? (
             <SuccessStep orderId={orderId} brandColor="red" />
-        ) : (
-             currentStep === 3 && orderId && (
-                <div className="space-y-8 animate-in fade-in zoom-in duration-300">
-                    {/* Success Banner */}
-                    <div className="bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
-                        <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-                        </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Pagamento ricevuto con successo!</h2>
-                        <p className="text-green-800 font-medium">L'ordine #{orderId} è stato creato.</p>
-                    </div>
-
-                    {/* CTA / Instruction */}
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center max-w-2xl mx-auto">
-                        <p className="text-amber-900 font-bold text-lg mb-2">⚠️ Azione Richiesta</p>
-                        <p className="text-amber-800">
-                             Ora carica il tuo file di stampa qui sotto per avviare la produzione. <br/>
-                             <strong>Senza il file non potremo procedere con la stampa.</strong>
-                        </p>
-                    </div>
-                    
-                    <FileUploader 
-                        orderId={orderId}
-                        uploadMode="s3"
-                        brandColor="red"
-                        files={[]} 
-                        onUploadComplete={() => setIsUploadComplete(true)}
-                    />
-                </div>
-             )
+          ) : (
+            <div className="max-w-3xl mx-auto space-y-8 text-center">
+              <div className="bg-green-50 border border-green-200 rounded-2xl p-6 w-full">
+                <h2 className="text-2xl font-bold text-gray-900">Ordine Serigrafia #{orderId}</h2>
+                <p className="text-green-700">Pagamento confermato. Carica i file per la messa in produzione.</p>
+              </div>
+              <FileUploader 
+                orderId={orderId}
+                uploadMode="s3"
+                brandColor="red"
+                files={[]} 
+                onUploadComplete={() => setIsUploadComplete(true)}
+              />
+            </div>
+          )
         )}
+      </div>
     </div>
   );
 }

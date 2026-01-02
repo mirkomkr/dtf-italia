@@ -20,21 +20,21 @@ export const MeterProgressBar = ({ totalMeters }) => {
   const percentage = isInteger && current > 0 ? 100 : Math.round(decimalPart * 100);
 
   return (
-    <div className="w-full bg-slate-100 rounded-lg p-4 shadow-sm border border-slate-200">
-      <div className="flex justify-between items-end mb-2">
-        <span className="text-sm font-medium text-slate-600">
+    <div className="w-full bg-white rounded-2xl p-6 shadow-sm border border-slate-200 transition-all duration-300">
+      <div className="flex justify-between items-end mb-3">
+        <span className="text-sm font-bold text-slate-800 uppercase tracking-wider">
             Utilizzo Bobina
         </span>
-        <span className="text-xs text-slate-400">
+        <span className="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
            {current.toFixed(2)}m / {nextMultiple}.00m
         </span>
       </div>
       
       {/* Bar container */}
-      <div className="relative w-full h-6 bg-slate-200 rounded-full overflow-hidden">
+      <div className="relative w-full h-8 bg-slate-100 rounded-xl overflow-hidden shadow-inner border border-slate-200/50">
         {/* Fill */}
         <div 
-          className="h-full bg-indigo-500 transition-all duration-500 ease-out flex items-center justify-end pr-2"
+          className="h-full bg-indigo-600 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) flex items-center justify-end pr-3 shadow-[0_0_20px_rgba(79,70,229,0.3)]"
           style={{ width: `${percentage}%` }}
         >
             {percentage > 15 && (
@@ -71,31 +71,14 @@ export const OptimizationNudge = ({ totalMeters, piecesPerRow }) => {
   const percentageUsed = Math.round(decimalPart * 100);
   
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-3 mt-4">
-      <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+    <div className="bg-amber-50/50 border-2 border-amber-200 rounded-xl p-4 flex items-start gap-4 mt-6 transition-all hover:bg-amber-50">
+      <AlertCircle className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" />
       <div>
-        <h4 className="text-sm font-semibold text-amber-800">Ottimizza la tua stampa!</h4>
-        <p className="text-sm text-amber-700 mt-1">
-          Stai usando solo il <strong>{percentageUsed}%</strong> del metro lineare corrente. 
+        <h4 className="text-sm font-bold text-amber-900 uppercase tracking-tight">Ottimizza la tua stampa!</h4>
+        <p className="text-sm text-amber-800 mt-2 leading-relaxed">
+          Stai usando il <strong>{percentageUsed}%</strong> del metro lineare corrente. 
           {piecesPerRow > 1 ? ` La bobina è larga 58cm: prova ad aggiungere altri pezzi per riempire lo spazio vuoto e azzerare gli sprechi.` : ` Aggiungi altri pezzi per sfruttare al meglio il prezzo.`}
         </p>
-      </div>
-    </div>
-  );
-};
-
-export const TechnicalSpecsBox = () => {
-  return (
-    <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4 flex items-start gap-3 mt-4">
-      <Info className="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5" />
-      <div>
-        <h4 className="text-sm font-semibold text-indigo-900">Specifiche Tecniche</h4>
-        <ul className="text-sm text-indigo-800 mt-1 space-y-1 list-disc list-inside">
-          <li>File <strong>PDF, AI, EPS, SVG, TIFF, PNG, con sfondo trasparente</strong> (senza sfondo)</li>
-          <li>Risoluzione <strong>da 72 a 300 DPI</strong></li>
-          <li>Profilo colore <strong>CMYK</strong> (convertiamo noi se invii RGB)</li>
-          <li>Larghezza massima di stampa: <strong>58cm</strong></li>
-        </ul>
       </div>
     </div>
   );
@@ -106,7 +89,7 @@ const DTFVisualizer = ({ totalMeters, piecesPerRow }) => {
     <div className="w-full">
       <MeterProgressBar totalMeters={totalMeters} />
       <OptimizationNudge totalMeters={totalMeters} piecesPerRow={piecesPerRow} />
-      <TechnicalSpecsBox />
+
     </div>
   );
 };

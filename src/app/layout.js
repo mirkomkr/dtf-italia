@@ -16,16 +16,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="it" className="scroll-smooth" suppressHydrationWarning>
 
-      <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased`}>
-
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-white focus:text-indigo-600 focus:rounded-md focus:shadow-lg"
-        >
-          Salta al contenuto principale
-        </a>
+      <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col`}>
         <Header />
-        <main id="main-content" className="min-h-screen pt-20">
+        <main id="main-content" className="relative flex-1 pt-20 flex flex-col">
           {children}
         </main>
         <Footer />

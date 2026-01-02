@@ -2,41 +2,27 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-// import Check from 'lucide-react/dist/esm/icons/check'; // REMOVED
-// import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right'; // REMOVED
 import { formatCurrency } from '@/lib/pricing-engine';
 import { SHIRT_COLORS, SHIRT_SIZES } from './constants';
 import dynamic from 'next/dynamic';
 
+// Icone Semplificate
 const CheckIcon = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
         <polyline points="20 6 9 17 4 12" />
     </svg>
 );
 
 const ArrowRightIcon = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <line x1="5" y1="12" x2="19" y2="12" />
-        <polyline points="12 5 19 12 12 19" />
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
     </svg>
 );
 
-
-// Dynamic imports for heavy UI components
-const SizeMatrix = dynamic(() => import('../shared/SizeMatrix'), {
-  loading: () => <div className="h-40 bg-gray-50 rounded-xl animate-pulse" />,
-  ssr: false
-});
-
-const SingleSizeSelector = dynamic(() => import('../shared/SingleSizeSelector'), {
-    loading: () => <div className="h-20 bg-gray-50 rounded-xl animate-pulse" />,
-    ssr: false
-});
-
-const PrintOptionSelector = dynamic(() => import('../shared/PrintOptionSelector'), {
-    loading: () => <div className="h-32 bg-gray-50 rounded-xl animate-pulse" />,
-    ssr: false
-});
+// Import dinamici
+const SizeMatrix = dynamic(() => import('../shared/SizeMatrix'), { ssr: false });
+const SingleSizeSelector = dynamic(() => import('../shared/SingleSizeSelector'), { ssr: false });
+const PrintOptionSelector = dynamic(() => import('../shared/PrintOptionSelector'), { ssr: false });
 
 export default function ConfigStep({
   genderLayout = 'clothing',
@@ -57,90 +43,86 @@ export default function ConfigStep({
   setFileCheck,
   price,
   totalQuantity,
-  onNext
+  onNext,
+  brandColor = 'red'
 }) {
   
-  // Helper to count items per color (for badges)
   const getColorTotal = (colorId) => {
       const colorData = quantities[colorId];
       if(!colorData) return 0;
-      // Sum all genders, all sizes
       return Object.values(colorData).reduce((accG, gQty) => 
           accG + Object.values(gQty).reduce((a, b) => a + (parseInt(b) || 0), 0) 
       , 0);
   };
 
-  // Helper to get quantities for current view (current color + gender)
   const getCurrentViewQuantities = () => {
       if(!selectedColor) return {};
       return quantities[selectedColor]?.[activeGender] || {};
   };
 
-  // Determine which options to show
-  const genderOptions = genderLayout === 'caps' 
-    ? ['adulto', 'bambino'] 
-    : ['uomo', 'donna', 'bambino'];
-  
+  const genderOptions = genderLayout === 'caps' ? ['adulto', 'bambino'] : ['uomo', 'donna', 'bambino'];
   const showGenderSelector = enableVariants && genderLayout !== 'none';
 
   return (
-    <div className="flex-grow flex flex-col space-y-6">
-        <div>
-            <h2 className="text-2xl font-bold text-gray-900">Configura Prodotto</h2>
-            <p className="text-sm text-gray-500">Scegli taglie e colori. Puoi abbinare più colori nello stesso ordine.</p>
-        </div>
+    <div className="space-y-8">
+        {/* Intestazione */}
+        <header>
+            <h2 className="text-2xl font-bold text-gray-900">Configura il tuo prodotto</h2>
+            <p className="text-sm text-gray-500 font-medium">Seleziona i colori e inserisci le quantità desiderate.</p>
+        </header>
 
-        {/* Gender Selection - ONLY if variants enabled and layout is not 'none' */}
+        {/* 1. Selezione Genere/Modello */}
         {showGenderSelector && (
-            <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">Modello</label>
-                <div className="grid grid-cols-3 gap-3">
+            <section className="space-y-3" aria-label="Selezione Modello">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">1. Scegli il Modello</label>
+                <div className="grid grid-cols-3 gap-2">
                     {genderOptions.map(gender => (
                         <button
                             key={gender}
                             onClick={() => setActiveGender(gender)}
                             className={cn(
-                            "p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 capitalize",
-                            activeGender === gender 
-                                ? "border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-600" 
-                                : "border-gray-200 text-gray-600 hover:border-indigo-200 hover:bg-gray-50"
+                                "py-3 rounded-xl border-2 font-bold capitalize transition-colors",
+                                activeGender === gender 
+                                    ? "border-red-600 bg-red-50 text-red-900" 
+                                    : "border-gray-100 text-gray-400 hover:bg-gray-50 bg-white"
                             )}
                         >
-                            <span className="font-bold text-base sm:text-lg">{gender}</span>
+                            {gender}
                         </button>
                     ))}
                 </div>
-            </div>
+            </section>
         )}
 
-        {/* Colors */}
-         <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Colore</label>
+        {/* 2. Selezione Colore */}
+         <section className="space-y-3" aria-label="Selezione Colore">
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">2. Scegli il Colore</label>
             <div className="flex flex-wrap gap-3">
             {SHIRT_COLORS.map((color) => {
                 const isSelected = selectedColor === color.id;
-                const isDimmed = selectedColor !== null && !isSelected;
                 const itemsInColor = getColorTotal(color.id);
 
                 return (
                 <button
                     key={color.id}
                     onClick={() => setSelectedColor(color.id)}
+                    aria-pressed={isSelected}
                     className={cn(
-                    "w-10 h-10 rounded-full border-2 transition-all duration-300 shadow-sm flex items-center justify-center relative group",
-                    isSelected && "border-indigo-600 ring-4 ring-indigo-100 scale-125 z-10 opacity-100",
-                    isDimmed && "border-transparent opacity-30 grayscale hover:opacity-100 hover:grayscale-0 hover:scale-110",
-                    selectedColor === null && "border-transparent hover:scale-110 scale-100 opacity-100",
-                    color.border && !isSelected ? "border-gray-200" : ""
+                        "w-10 h-10 rounded-full border-2 transition-all relative",
+                        isSelected 
+                            ? "border-red-600 ring-4 ring-red-50" 
+                            : "border-gray-200 opacity-60 hover:opacity-100"
                     )}
                     style={{ backgroundColor: color.hex }}
                     title={color.label}
                 >
                     {isSelected && (
-                        <CheckIcon className={cn("w-5 h-5", color.id === 'bianco' ? "text-black" : "text-white")} />
+                        <div className="flex items-center justify-center h-full">
+                            <CheckIcon className={color.id === 'bianco' ? "text-black" : "text-white"} />
+                        </div>
                     )}
                     {itemsInColor > 0 && !isSelected && (
-                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-green-500 text-[10px] text-white ring-2 ring-white">
+                        <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white border-2 border-white bg-red-600">
                             {itemsInColor}
                         </span>
                     )}
@@ -148,84 +130,88 @@ export default function ConfigStep({
                 );
             })}
             </div>
-        </div>
+        </section>
 
+        {/* 3. Selezione Quantità */}
+        <section className="bg-gray-50 rounded-2xl p-4 md:p-6 border border-gray-100" aria-label="Inserimento Quantità">
+            {enableVariants && genderLayout === 'clothing' ? (
+                <SizeMatrix 
+                    brandColor="red"
+                    sizes={SHIRT_SIZES}
+                    quantities={getCurrentViewQuantities()}
+                    onQuantityChange={onQuantityChange}
+                    visible={!!selectedColor}
+                    title={`Quantità ${activeGender} - ${selectedColor || 'Seleziona colore'}`}
+                />
+            ) : (
+                <div className="space-y-3">
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">3. Quantità</label>
+                    <SingleSizeSelector 
+                        brandColor="red"
+                        quantity={genderLayout === 'caps' ? (getCurrentViewQuantities()['UNICA'] || 0) : singleQuantity}
+                        onQuantityChange={genderLayout === 'caps' ? (val) => onQuantityChange('UNICA', val) : setSingleQuantity}
+                        visible={!!selectedColor}
+                    />
+                </div>
+            )}
+        </section>
 
-
-
-{/* Quantity Input */}
-{enableVariants && genderLayout === 'clothing' ? (
-    <SizeMatrix 
-        sizes={SHIRT_SIZES}
-        quantities={getCurrentViewQuantities()}
-        onQuantityChange={onQuantityChange}
-        visible={!!selectedColor}
-        title={`Taglie ${activeGender} (${selectedColor ? SHIRT_COLORS.find(c => c.id === selectedColor)?.label : 'Seleziona colore'})`}
-    />
-) : (
-    /* Questo blocco ora gestisce sia SHOPPER (layout 'none') che CAPPELLI (layout 'caps') */
-    <div className="mt-4">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-            {genderLayout === 'caps' 
-                ? `Quantità per modello ${activeGender === 'adulto' ? 'ADULTO' : 'BAMBINO'}` 
-                : 'Quantità Totale'}
-        </label>
-        <SingleSizeSelector 
-            quantity={genderLayout === 'caps' ? (getCurrentViewQuantities()['UNICA'] || 0) : singleQuantity}
-            onQuantityChange={genderLayout === 'caps' ? (val) => onQuantityChange('UNICA', val) : setSingleQuantity}
-            visible={!!selectedColor}
-        />
-    </div>
-)}
-
-        {/* Print Options */}
-        <PrintOptionSelector 
-            frontValue={frontPrint}
-            backValue={backPrint}
-            onFrontChange={setFrontPrint}
-            onBackChange={setBackPrint}
-        />
-
-        {/* Extras */}
-        <div className="mb-4 p-4 bg-indigo-50 border border-indigo-100 rounded-lg">
-            <label htmlFor="file-check" className="flex items-start gap-3 cursor-pointer">
-            <input 
-                id="file-check"
-                type="checkbox" 
-                checked={fileCheck}
-                onChange={(e) => setFileCheck(e.target.checked)}
-                className="mt-1 w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+        {/* 4. Opzioni Stampa */}
+        <section aria-label="Configurazione Stampa">
+            <PrintOptionSelector 
+                brandColor="red"
+                frontValue={frontPrint}
+                backValue={backPrint}
+                onFrontChange={setFrontPrint}
+                onBackChange={setBackPrint}
+                showBack={genderLayout !== 'caps'}
             />
-            <div className="text-sm">
-                <span className="font-bold text-indigo-900 block">Verifica File Professionale (+€10.00)</span>
-                <span className="text-indigo-700">Controllo da esperto: risoluzione, tracciati e setup colori.</span>
-            </div>
-            </label>
-        </div>
+        </section>
 
-        <div className="mt-auto pt-6">
-             {/* Price Display */}
-             <div className="flex justify-between items-center mb-6">
-                 <div>
-                   <p className="text-sm text-gray-500">Totale stimato</p>
-                   {/* Prevent Hydration Mismatch with Client Only rendering for price */}
-                   <p className="text-3xl font-bold text-indigo-600">{formatCurrency(price.totalPrice)}</p>
-                 </div>
-                 <div className="text-right">
-                    <p className="text-sm text-gray-500">Cad.</p>
-                    <p className="font-semibold text-gray-700">{formatCurrency(price.unitPrice)}</p>
-                 </div>
-              </div>
+        {/* 5. Extra: Controllo Professionale */}
+        <section aria-label="Servizi Extra">
+            <div 
+                onClick={() => setFileCheck(!fileCheck)}
+                className={cn(
+                    "p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center gap-4",
+                    fileCheck 
+                        ? "bg-red-50 border-red-600" 
+                        : "bg-white border-gray-100 hover:border-gray-200"
+                )}
+            >
+                <input 
+                    type="checkbox" 
+                    checked={fileCheck}
+                    readOnly
+                    className="w-5 h-5 rounded border-gray-300 text-red-600"
+                />
+                <div className="text-sm">
+                    <p className="font-bold text-gray-900">Verifica File Professionale (+€10.00)</p>
+                    <p className="text-gray-500">Controllo manuale risoluzione e setup colori.</p>
+                </div>
+            </div>
+        </section>
+
+        {/* Footer: Prezzo e Procedi */}
+        <footer className="pt-6 border-t border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
+             <div className="flex items-baseline gap-4" aria-live="polite">
+                <span className="text-4xl font-black text-gray-900">
+                    {formatCurrency(price.totalPrice)}
+                </span>
+                <span className="text-sm font-bold text-gray-400 uppercase">
+                    {formatCurrency(price.unitPrice)} / cad.
+                </span>
+             </div>
 
               <button 
                 onClick={onNext}
                 disabled={totalQuantity === 0}
-                className="w-full py-4 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="py-4 px-10 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-30 uppercase tracking-widest shadow-lg bg-red-600 hover:bg-red-700 shadow-red-100"
               >
-                Procedi all'Ordine
-                <ArrowRightIcon className="w-5 h-5" />
+                Configura Spedizione
+                <ArrowRightIcon />
               </button>
-        </div>
+        </footer>
     </div>
   );
 }

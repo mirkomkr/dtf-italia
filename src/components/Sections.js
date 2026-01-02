@@ -4,14 +4,14 @@ import { Truck, ShieldCheck, Zap, HelpCircle } from 'lucide-react';
  * HowItWorks - Componente dinamico per spiegare il processo di stampa.
  * @param {Object} props
  * @param {Array} props.steps - Array di step { num, title, desc }
- * @param {string} props.titoloTecnica - Nome della tecnica per la SEO (es. "DTF", "Serigrafia")
+ * @param {string} props.sectionTitle - Titolo personalizzato della sezione
  */
-export function HowItWorks({ steps = [], titoloTecnica = "Stampa" }) {
+export function HowItWorks({ steps = [], sectionTitle = "Come Funziona" }) {
   return (
     <section id="how-it-works" className="py-20 bg-white" aria-labelledby="how-it-works-title">
       <div className="container mx-auto px-4">
         <h2 id="how-it-works-title" className="text-3xl md:text-4xl font-bold text-center mb-16 text-gray-900">
-          Come Funziona {titoloTecnica} a Roma
+          {sectionTitle}
         </h2>
         <ol className="grid md:grid-cols-3 gap-8">
           {steps.map((step, i) => (
@@ -33,14 +33,14 @@ export function HowItWorks({ steps = [], titoloTecnica = "Stampa" }) {
  * Benefits - Componente dinamico per i vantaggi del servizio.
  * @param {Object} props
  * @param {Array} props.benefits - Array di vantaggi { icon, title, desc }
- * @param {string} props.titoloTecnica - Nome della tecnica
+ * @param {string} props.sectionTitle - Titolo personalizzato della sezione
  */
-export function Benefits({ benefits = [], titoloTecnica = "Servizio" }) {
+export function Benefits({ benefits = [], sectionTitle = "Perché Scegliere Noi" }) {
   return (
     <section className="py-20 bg-gray-900 text-white" aria-labelledby="benefits-title" style={{ contentVisibility: 'auto' }}>
       <div className="container mx-auto px-4">
         <h2 id="benefits-title" className="text-3xl md:text-4xl font-bold text-center mb-16">
-          Perché Scegliere il nostro {titoloTecnica} a Roma
+          {sectionTitle}
         </h2>
         <ul className="grid md:grid-cols-3 gap-8">
           {benefits.map((benefit, i) => (
@@ -62,14 +62,14 @@ export function Benefits({ benefits = [], titoloTecnica = "Servizio" }) {
  * FAQ - Componente dinamico per le domande frequenti.
  * @param {Object} props
  * @param {Array} props.faqs - Array di FAQ { q, a }
- * @param {string} props.titoloTecnica - Nome della tecnica
+ * @param {string} props.sectionTitle - Titolo personalizzato della sezione
  */
-export function FAQ({ faqs = [], titoloTecnica = "Stampa" }) {
+export function FAQ({ faqs = [], sectionTitle = "Domande Frequenti" }) {
   return (
     <section className="py-20 bg-gray-50" aria-labelledby="faq-title" style={{ contentVisibility: 'auto' }}>
       <div className="container mx-auto px-4 max-w-3xl">
         <h2 id="faq-title" className="text-3xl md:text-4xl font-bold text-center mb-16 text-gray-900">
-          Domande Frequenti {titoloTecnica} Roma
+          {sectionTitle}
         </h2>
         <ul className="space-y-4">
           {faqs.map((faq, i) => (

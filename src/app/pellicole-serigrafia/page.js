@@ -12,51 +12,51 @@ export default function PellicolePage() {
   const pellicoleSteps = [
     {
       num: '01',
-      title: 'Nero Pieno',
-      desc: 'Utilizziamo inchiostri specifici per ottenere pellicole con una densità del nero assoluta (Dmax > 4.0).',
+      title: 'Analisi Grafica',
+      desc: 'Verifichiamo la saturazione del nero nei tuoi file per assicurare uno stop alla luce ultravioletta perfetto.',
     },
     {
       num: '02',
-      title: 'Stampa di Precisione',
-      desc: 'La calibrazione dei nostri sistemi Inkjet garantisce registri perfetti anche per i micro-dettagli a Roma.',
+      title: 'Stampa Alta Densità',
+      desc: 'Utilizziamo sistemi inkjet calibrati per raggiungere una densità ottica superiore a 4.0.',
     },
     {
       num: '03',
-      title: 'Verifica Qualità',
-      desc: 'Ogni set di pellicole viene controllato al lentino per assicurare l\'assenza di imperfezioni prima della consegna.',
+      title: 'Stabilità Dimensionale',
+      desc: 'Stampiamo su supporti resistenti al calore che garantiscono registri costanti per ogni telaio inciso.',
     },
   ];
 
   const pellicoleBenefits = [
     {
       icon: <Zap className="w-6 h-6 text-yellow-500" aria-hidden="true" />,
-      title: 'Opacità Garantita',
-      desc: 'Il miglior contrasto possibile a Roma per un\'esposizione perfetta dei tuoi telai serigrafici.',
+      title: 'Contrasto Assoluto',
+      desc: 'Un nero profondo che permette tempi di esposizione precisi senza velature indesiderate.',
     },
     {
       icon: <ShieldCheck className="w-6 h-6 text-green-500" aria-hidden="true" />,
-      title: 'Precisione Micro-Dettaglio',
-      desc: 'Ideale per mezzetinte e linee sottili che richiedono una stabilità dimensionale superiore.',
+      title: 'Registro Perfetto',
+      desc: 'Le nostre pellicole inkjet non subiscono dilatazioni termiche, ideali per la serigrafia a più colori a Roma.',
     },
     {
       icon: <Truck className="w-6 h-6 text-blue-500" aria-hidden="true" />,
-      title: 'Pronta Consegna',
-      desc: 'Disponiamo sempre di scorte a Roma per garantirti pellicole inkjet/laser in tempi record.',
+      title: 'Service Roma Express',
+      desc: 'Fornitura rapida nel nostro punto vendita di Roma per non fermare mai la tua produzione.',
     },
   ];
 
   const pellicoleFaqs = [
     {
-      q: 'Qual è la densità UV delle vostre pellicole?',
-      a: 'Le nostre pellicole professionali a Roma superano una densità UV di 4.0, bloccando completamente la luce espotrice.',
+      q: 'Qual è il Dmax garantito?',
+      a: 'Le nostre pellicole inkjet raggiungono costantemente un Dmax di 4.0 o superiore, bloccando il 99.9% degli UV.',
     },
     {
-      q: 'Sono compatibili con stampanti Inkjet standard?',
-      a: 'Sì, ma per risultati professionali a Roma consigliamo l\'uso di software RIP e inchiostri specifici.',
+      q: 'Posso usarle con bromografi a LED?',
+      a: 'Assolutamente sì, sono state testate con successo sia su lampade classiche che su nuovi sistemi LED a Roma.',
     },
     {
-      q: 'Offrite anche il servizio di incisione telai?',
-      a: 'Attualmente a Roma ci concentriamo sulla fornitura di pellicole di alta qualità per i tuoi impianti.',
+      q: 'Offrite campionature di prova?',
+      a: 'Sì, è possibile richiedere un test di stampa per verificare la compatibilità con il tuo processo di incisione.',
     },
   ];
 
@@ -72,9 +72,9 @@ export default function PellicolePage() {
         </div>
       </main>
 
-      <HowItWorks steps={pellicoleSteps} titoloTecnica="Pellicole" />
-      <Benefits benefits={pellicoleBenefits} titoloTecnica="Pellicole" />
-      <FAQ faqs={pellicoleFaqs} titoloTecnica="Pellicole" />
+      <HowItWorks steps={pellicoleSteps} sectionTitle="Precisione micrometrica: dalla tua grafica alla pellicola" />
+      <Benefits benefits={pellicoleBenefits} sectionTitle="Pellicole Inkjet ad alta densità: lo standard per i laboratori romani" />
+      <FAQ faqs={pellicoleFaqs} sectionTitle="Dettagli tecnici sulle nostre pellicole professionali" />
     </>
   );
 }

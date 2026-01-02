@@ -12,51 +12,51 @@ export default function CalendariPage() {
   const calendariSteps = [
     {
       num: '01',
-      title: 'Scelta Template',
-      desc: 'Scegli tra i nostri template pronti per il 2026 o inviaci la tua grafica personalizzata a Roma.',
+      title: 'Visione 2026',
+      desc: 'Scegli il formato e il layout più adatto per il tuo brand, con spazio dedicato a loghi e contatti ben visibili.',
     },
     {
       num: '02',
       title: 'Personalizzazione',
-      desc: 'Inserisci il tuo logo, i tuoi contatti e le tue immagini aziendali per un marketing efficace tutto l\'anno.',
+      desc: 'Integriamo le tue foto aziendali o grafiche personalizzate per creare un oggetto utile e di design.',
     },
     {
       num: '03',
-      title: 'Stampa Offset HD',
-      desc: 'Stampiamo i tuoi calendari con tecnologie offset di alta qualità per colori brillanti e testi nitidi.',
+      title: 'Stampa e Finitura',
+      desc: 'Utilizziamo carte premium per una resa tattile e visiva che accompagni i tuoi clienti giorno dopo giorno.',
     },
   ];
 
   const calendariBenefits = [
     {
       icon: <Zap className="w-6 h-6 text-yellow-500" aria-hidden="true" />,
-      title: 'Marketing 365 Giorni',
-      desc: 'Il miglior modo per far ricordare il tuo brand ai tuoi clienti di Roma per tutto l\'anno.',
+      title: 'Promozione Continua',
+      desc: 'Il tuo logo sotto gli occhi dei clienti per tutto l\'anno: il miglior investimento marketing di Roma.',
     },
     {
       icon: <ShieldCheck className="w-6 h-6 text-green-500" aria-hidden="true" />,
-      title: 'Qualità Carta',
-      desc: 'Utilizziamo solo carte patinate di alto spessore per un feeling premium e professionale.',
+      title: 'Qualità Sensoriale',
+      desc: 'Carte patinate e finiture di pregio che trasmettono professionalità e cura del dettaglio.',
     },
     {
       icon: <Truck className="w-6 h-6 text-blue-500" aria-hidden="true" />,
-      title: 'Template Pronti',
-      desc: 'Ti forniamo template gratuiti per velocizzare la creazione del tuo calendario 2026.',
+      title: 'Logistica Puntuale',
+      desc: 'Siamo organizzati per gestire le tue urgenze di fine anno con consegne rapide su tutta Roma.',
     },
   ];
 
   const calendariFaqs = [
     {
-      q: 'Esistono diversi formati di calendari?',
-      a: 'Certamente! A Roma offriamo calendari da muro (A3/A4), olandesi, da scrivania e tascabili.',
+      q: 'Quali sono i formati più richiesti?',
+      a: 'Dai classici olandesi da muro ai pratici trittici, fino ai modelli da scrivania perfetti per ogni ufficio romano.',
     },
     {
-      q: 'Quali sono i tempi di consegna?',
-      a: 'Data la stagionalità, i tempi medi a Roma sono di 7-10 giorni lavorativi dall\'approvazione bozza.',
+      q: 'Posso fornire la mia grafica completa?',
+      a: 'Certamente, forniamo i tracciati di fustella così potrai creare il tuo progetto senza margini di errore.',
     },
     {
-      q: 'Posso richiedere un preventivo per grandi quantità?',
-      a: 'Sì, offriamo sconti scalabili molto vantaggiosi per ordini superiori ai 100 pezzi.',
+      q: 'Quali sono i tempi medi di produzione?',
+      a: 'Per garantire la massima qualità a Roma, i tempi variano dai 5 ai 10 giorni lavorativi a seconda della complessità.',
     },
   ];
 
@@ -72,9 +72,9 @@ export default function CalendariPage() {
         </div>
       </main>
 
-      <HowItWorks steps={calendariSteps} titoloTecnica="Calendari" />
-      <Benefits benefits={calendariBenefits} titoloTecnica="Calendari" />
-      <FAQ faqs={calendariFaqs} titoloTecnica="Calendari" />
+      <HowItWorks steps={calendariSteps} sectionTitle="Pianifica il tuo successo: come creiamo i tuoi calendari" />
+      <Benefits benefits={calendariBenefits} sectionTitle="Il modo più efficace per promuovere il tuo brand a Roma tutto l'anno" />
+      <FAQ faqs={calendariFaqs} sectionTitle="Info su grafiche, formati e tempi di consegna calendari" />
     </>
   );
 }

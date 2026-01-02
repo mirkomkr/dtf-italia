@@ -12,51 +12,51 @@ export default function SublimationPage() {
   const sublimazioneSteps = [
     {
       num: '01',
-      title: 'Grafica HD',
-      desc: 'Prepariamo il tuo design in alta definizione per una stampa sublimatica perfetta a Roma.',
+      title: 'Design Creativo',
+      desc: 'Dacci la tua idea: trasformiamo grafiche e foto in un layout pronto per brillare su ogni oggetto.',
     },
     {
       num: '02',
-      title: 'Trasferimento Termico',
-      desc: 'Il calore trasforma l\'inchiostro in gas, facendolo fondere direttamente con le fibre del tessuto.',
+      title: 'Saturazione Colore',
+      desc: 'In questa fase il calore fonde il colore direttamente nel materiale, creando un legame indissolubile.',
     },
     {
       num: '03',
-      title: 'Resa Indelebile',
-      desc: 'Il risultato è una stampa impalpabile, traspirante e che non sbiadirà mai col tempo.',
+      title: 'Effetto WOW',
+      desc: 'Il risultato finale è un prodotto unico con colori saturi e una definizione che lascia senza parole.',
     },
   ];
 
   const sublimazioneBenefits = [
     {
       icon: <Zap className="w-6 h-6 text-yellow-500" aria-hidden="true" />,
-      title: 'Resa Fotografica',
-      desc: 'Colori brillanti e sfumature perfette per i tuoi capi sportivi a Roma.',
+      title: 'Brillantezza Eterna',
+      desc: 'I colori non sbiadiscono mai perché diventano parte integrante del materiale stesso.',
     },
     {
       icon: <ShieldCheck className="w-6 h-6 text-green-500" aria-hidden="true" />,
-      title: 'Stampa Impalpabile',
-      desc: 'La stampa entra nel tessuto: non si sente al tatto e lascia traspirare la pelle.',
+      title: 'Personalizzazione Totale',
+      desc: 'Crea gadget unici nel nostro centro specializzato di Roma, anche per singoli pezzi o campionature.',
     },
     {
       icon: <Truck className="w-6 h-6 text-blue-500" aria-hidden="true" />,
-      title: 'Durata Infinita',
-      desc: 'Garantiamo che la stampa sublimatica non si screpola e non si stacca mai.',
+      title: 'Consegna Versatile',
+      desc: 'Spediamo i tuoi regali o il tuo merchandising ovunque in tempi brevissimi con cura artigianale.',
     },
   ];
 
   const sublimazioneFaqs = [
     {
-      q: 'Su quali materiali funziona la sublimazione?',
-      a: 'La sublimazione a Roma è perfetta su tessuti con almeno il 60% di poliestere e su superfici rigide pre-trattate.',
+      q: 'Quali oggetti posso personalizzare?',
+      a: 'Dalle tazze alle maglie tecniche, dai tappetini mouse alle borracce: praticamente tutto ciò che ha un fondo in poliestere.',
     },
     {
-      q: 'I colori sbiadiscono con il sudore o il sole?',
-      a: 'Assolutamente no, è la tecnica ideale per abbigliamento tecnico sportivo usato all\'aperto.',
+      q: 'La stampa si sente al tatto?',
+      a: 'Assolutamente no. La sublimazione è impercettibile, rendendo i tessuti traspiranti e morbidissimi.',
     },
     {
-      q: 'Posso stampare su tessuti neri?',
-      a: 'No, la sublimazione richiede tessuti bianchi o molto chiari per rendere i colori visibili.',
+      q: 'È possibile stampare fotografie?',
+      a: 'Certamente! È la tecnica regina per la resa fotografica, ideale per regali personalizzati a Roma.',
     },
   ];
 
@@ -72,9 +72,9 @@ export default function SublimationPage() {
         </div>
       </main>
 
-      <HowItWorks steps={sublimazioneSteps} titoloTecnica="Sublimazione" />
-      <Benefits benefits={sublimazioneBenefits} titoloTecnica="Sublimazione" />
-      <FAQ faqs={sublimazioneFaqs} titoloTecnica="Sublimazione" />
+      <HowItWorks steps={sublimazioneSteps} sectionTitle="Come trasformiamo le tue idee in oggetti unici" />
+      <Benefits benefits={sublimazioneBenefits} sectionTitle="Massima resa cromatica per i tuoi gadget a Roma" />
+      <FAQ faqs={sublimazioneFaqs} sectionTitle="Domande comuni sulla personalizzazione sublimatica" />
     </>
   );
 }

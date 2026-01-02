@@ -81,50 +81,50 @@ export default async function Home() {
     {
       num: '01',
       title: 'Carica il File',
-      desc: 'Carica il tuo design in formato PNG o PDF. Il nostro sistema verificherà automaticamente la qualità per la stampa DTF a Roma.',
+      desc: 'Trascina il tuo design in formato PNG o PDF. Il nostro sistema verificherà all\'istante se è pronto per la stampa.',
     },
     {
       num: '02',
-      title: 'Stampa DTF Premium',
-      desc: 'Stampiamo il tuo design su pellicola tecnica con bianco ultra-coprente e polveri poliuretaniche di alta qualità.',
+      title: 'Stampa Express',
+      desc: 'Stampiamo il tuo design in giornata con inchiostri premium, garantendo colori brillanti e un bianco coprente.',
     },
     {
       num: '03',
-      title: 'Ritiro o Spedizione',
-      desc: 'Ritira il tuo ordine presso la nostra sede di Roma o ricevi la spedizione in 24h in tutta Italia.',
+      title: 'Pronto per te',
+      desc: 'Ricevi la tua stampa DTF in 24h oppure passa a ritirarla direttamente nel nostro punto vendita di Roma.',
     },
   ];
 
   const dtfBenefits = [
     {
       icon: <Zap className="w-6 h-6 text-yellow-500" aria-hidden="true" />,
-      title: 'Bianco Ultra-Coprente',
-      desc: 'Utilizziamo inchiostri premium per massimizzare la resa su tessuti scuri.',
+      title: 'Semplicità Totale',
+      desc: 'Un processo d\'ordine fluido pensato per farti risparmiare tempo prezioso ogni giorno.',
     },
     {
       icon: <ShieldCheck className="w-6 h-6 text-green-500" aria-hidden="true" />,
-      title: 'Qualità Garantita',
-      desc: 'Siamo l\'unico service DTF a Roma che garantisce una durata superiore ai 50 lavaggi.',
+      title: 'Affidabilità Roma',
+      desc: 'Siamo il partner tecnico di centinaia di professionisti romani che richiedono puntualità e qualità.',
     },
     {
       icon: <Truck className="w-6 h-6 text-blue-500" aria-hidden="true" />,
-      title: 'Spedizione 24h',
-      desc: 'Consegna rapidissima a Roma e provincia per tutte le tue urgenze di stampa.',
+      title: 'Consegna Rapidissima',
+      desc: 'Grazie alla nostra logistica ottimizzata, garantiamo consegne lampo su tutta Roma e provincia.',
     },
   ];
 
   const dtfFaqs = [
     {
-      q: 'Come devono essere i file per la stampa DTF?',
-      a: 'Consigliamo file PNG a 300 DPI con sfondo trasparente o PDF vettoriali per la massima definizione.',
+      q: 'Di che tipo di file ho bisogno per il DTF?',
+      a: 'L\'ideale è un PNG con sfondo trasparente a 300 DPI, ma accettiamo anche PDF vettoriali per risultati definiti.',
     },
     {
-      q: 'Quanto resistono i lavaggi?',
-      a: 'Le nostre stampe sono testate per resistere oltre 50 lavaggi a 40°C senza perdere brillantezza.',
+      q: 'Come posso applicare le stampe sui tessuti?',
+      a: 'È semplicissimo: bastano 15 secondi a 160°C con una termopressa. Una soluzione versatile per ogni materiale.',
     },
     {
-      q: 'Posso ritirare in sede a Roma?',
-      a: 'Certamente! Puoi selezionare il ritiro gratuito presso il nostro laboratorio di Pomezia.',
+      q: 'Quali sono i tempi di ritiro a Roma?',
+      a: 'Se scegli il ritiro in sede, solitamente il tuo ordine è pronto in poche ore lavorative dalla conferma.',
     },
   ];
 
@@ -144,9 +144,9 @@ export default async function Home() {
         style={{ '--brand-color': '#4f46e5' }}
       >
         <Hero product={dtfProduct} /> 
-        <HowItWorks steps={dtfSteps} titoloTecnica="DTF" />
-        <Benefits benefits={dtfBenefits} titoloTecnica="DTF" />
-        <FAQ faqs={dtfFaqs} titoloTecnica="DTF" />
+        <HowItWorks steps={dtfSteps} sectionTitle="Il tuo ordine DTF pronto in 3 semplici passaggi" />
+        <Benefits benefits={dtfBenefits} sectionTitle="Perché i professionisti di Roma scelgono il nostro DTF" />
+        <FAQ faqs={dtfFaqs} sectionTitle="Tutto quello che devi sapere sulla stampa DTF" />
       </div>
     </>
   );

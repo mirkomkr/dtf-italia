@@ -79,51 +79,51 @@ export default async function SerigrafiaPage() {
   const serigrafiaSteps = [
     {
       num: '01',
-      title: 'Creazione Telai',
-      desc: 'Incisione professionale dei telai serigrafici con emulsioni di alta qualità per dettagli nitidi a Roma.',
+      title: 'Fotoincisione',
+      desc: 'Prepariamo le matrici serigrafiche con emulsioni di alta gamma per catturare ogni minimo dettaglio del tuo logo.',
     },
     {
       num: '02',
-      title: 'Inchiostrazione a Mano',
-      desc: 'Applicazione degli inchiostri (Plastisol o Water-based) per una coprenza perfetta e colori vibranti.',
+      title: 'Stampa Manuale',
+      desc: 'Regoliamo la pressione e l\'ANGOLO di stampa a mano per assicurare una stesura dell\'inchiostro omogenea e coprente.',
     },
     {
       num: '03',
-      title: 'Asciugatura in Forno',
-      desc: 'Fissaggio termico professionale per garantire la massima resistenza ai lavaggi nel tempo.',
+      title: 'Controllo Qualità',
+      desc: 'Ogni pezzo viene verificato manualmente nel nostro laboratorio di Roma prima di passare al fissaggio termico.',
     },
   ];
 
   const serigrafiaBenefits = [
     {
       icon: <Zap className="w-6 h-6 text-yellow-500" aria-hidden="true" />,
-      title: 'Prezzi Imbattibili',
-      desc: 'La soluzione più economica a Roma per grandi tirature di magliette e felpe.',
+      title: 'Resa Incantevole',
+      desc: 'L\'inchiostro penetra nelle fibre regalando una brillantezza e una morbidezza uniche nel loro genere.',
     },
     {
       icon: <ShieldCheck className="w-6 h-6 text-green-500" aria-hidden="true" />,
-      title: 'Resistenza Estrema',
-      desc: 'Stampe che durano anni, ideali per abbigliamento da lavoro e merchandising.',
+      title: 'Durata Senza Pari',
+      desc: 'La tecnica perfetta per capi da lavoro e merchandising che devono resistere a infiniti cicli di lavaggio.',
     },
     {
       icon: <Truck className="w-6 h-6 text-blue-500" aria-hidden="true" />,
-      title: 'Colori Pantone',
-      desc: 'Garantiamo la fedeltà cromatica dei tuoi loghi aziendali con il sistema Pantone.',
+      title: 'Tradizione e Innovazione',
+      desc: 'Uniamo l\'esperienza artigianale romana alle migliori tecnologie di asciugatura per un risultato impeccabile.',
     },
   ];
 
   const serigrafiaFaqs = [
     {
-      q: 'Qual è il minimo d\'ordine per la serigrafia?',
-      a: 'Per la serigrafia tradizionale a Roma consigliamo un minimo di 20-30 pezzi per ammortizzare i costi d\'impianto.',
+      q: 'Quanti colori posso stampare in serigrafia?',
+      a: 'Gestiamo fino a 6 colori spot, garantendo una fedeltà cromatica assoluta e una coprenza perfetta anche su fondi scuri.',
     },
     {
-      q: 'Posso stampare su qualsiasi tessuto?',
-      a: 'Sì, la serigrafia è estremamente versatile: cotone, poliestere, nylon e misti.',
+      q: 'È adatta per piccole quantità?',
+      a: 'A causa dei costi di impianto telaio, a Roma la consigliamo solitamente per ordini superiori ai 30-50 pezzi.',
     },
     {
-      q: 'Quanto tempo occorre per la produzione?',
-      a: 'Solitamente i tempi di consegna a Roma variano dai 5 ai 7 giorni lavorativi in base al carico del laboratorio.',
+      q: 'Quali inchiostri utilizzate?',
+      a: 'Utilizziamo solo inchiostri eco-compatibili e plastisol ad alta densità per una finitura professionale e duratura.',
     },
   ];
 
@@ -162,9 +162,9 @@ export default async function SerigrafiaPage() {
         </div>
       </main>
 
-      <HowItWorks steps={serigrafiaSteps} titoloTecnica="Serigrafia" />
-      <Benefits benefits={serigrafiaBenefits} titoloTecnica="Serigrafia" />
-      <FAQ faqs={serigrafiaFaqs} titoloTecnica="Serigrafia" />
+      <HowItWorks steps={serigrafiaSteps} sectionTitle="Dalla bozza al telaio: il nostro processo artigianale" />
+      <Benefits benefits={serigrafiaBenefits} sectionTitle="I vantaggi della serigrafia professionale nel nostro laboratorio" />
+      <FAQ faqs={serigrafiaFaqs} sectionTitle="Consigli tecnici e dubbi sulla stampa serigrafica" />
     </>
   );
 }

@@ -25,10 +25,9 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
         prefetch={false}
       />
 
-      {/* Immagine prodotto */}
+      {/* Immagine prodotto - aspect-square previene CLS */}
       <div 
-        className="relative overflow-hidden rounded-t-2xl"
-        style={{ backgroundColor: '#f8fafc' }} 
+        className="relative overflow-hidden rounded-t-2xl aspect-square bg-slate-50"
       >
         <Image
           src={imageSrc}

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 // Componenti Shared
 import StepNavigation from '../shared/StepNavigation';
@@ -90,9 +91,15 @@ export default function DTFContainer({ product }) {
                 />
                 <div className="flex justify-end">
                     <button
-                        onClick={() => setCurrentStep(2)}
-                        disabled={!config.price}
-                        className="bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-700 transition-colors uppercase tracking-widest text-sm disabled:opacity-50"
+                        onClick={() => config.price && setCurrentStep(2)}
+                        aria-disabled={!config.price}
+                        className={cn(
+                            "bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold transition-all uppercase tracking-widest text-sm",
+                            "focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2",
+                            !config.price 
+                                ? "opacity-50 cursor-not-allowed" 
+                                : "hover:bg-indigo-700"
+                        )}
                     >
                         Procedi al Checkout
                     </button>

@@ -10,10 +10,12 @@ export default function Footer() {
           <div>
           <Link 
             href="/" 
-            className="inline-block text-2xl font-black text-white tracking-tighter cursor-pointer hover:opacity-80 transition-opacity"
-            aria-label="Torna alla Home"
+            className="inline-block text-2xl font-black text-white tracking-tighter cursor-pointer hover:opacity-80 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-md px-1"
+            aria-label="DTF Italia - Torna alla Home"
           >
-            DTF_<span className="text-green-600">IT</span><span className="text-white">AL</span><span className="text-red-600">IA</span>
+            <span aria-hidden="true">
+              DTF_<span className="text-green-600">IT</span><span className="text-white">AL</span><span className="text-red-600">IA</span>
+            </span>
           </Link>
             <p className="text-sm">
               Il servizio di stampa DTF professionale per creativi e aziende.
@@ -23,27 +25,27 @@ export default function Footer() {
           <nav aria-label="Link Servizio">
             <h4 className="text-white font-bold mb-4">Servizio</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="hover:text-white transition-colors">Ordina Ora</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Listino Prezzi</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Tempi di Spedizione</Link></li>
+              <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Ordina Ora</Link></li>
+              <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Listino Prezzi</Link></li>
+              <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Tempi di Spedizione</Link></li>
             </ul>
           </nav>
 
           <nav aria-label="Link Supporto">
             <h4 className="text-white font-bold mb-4">Supporto</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="hover:text-white transition-colors">Contattaci</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">FAQ</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Guida ai File</Link></li>
+              <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Contattaci</Link></li>
+              <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">FAQ</Link></li>
+              <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Guida ai File</Link></li>
             </ul>
           </nav>
 
           <nav aria-label="Link Legali">
             <h4 className="text-white font-bold mb-4">Legale</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Termini e Condizioni</Link></li>
-              <li><Link href="/credits" className="hover:text-white transition-colors">Credits Immagini</Link></li>
+              <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Privacy Policy</Link></li>
+              <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Termini e Condizioni</Link></li>
+              <li><Link href="/credits" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Credits Immagini</Link></li>
             </ul>
           </nav>
         </div>

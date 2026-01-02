@@ -139,7 +139,12 @@ export default function DTFConfigStep({
                     aria-checked={extras.isFullService}
                     tabIndex={0}
                     onClick={() => setExtras(p => ({...p, isFullService: !p.isFullService}))}
-                    onKeyDown={(e) => e.key === ' ' && setExtras(p => ({...p, isFullService: !p.isFullService}))}
+                    onKeyDown={(e) => {
+                        if (e.key === ' ' || e.key === 'Enter') {
+                            e.preventDefault();
+                            setExtras(p => ({...p, isFullService: !p.isFullService}));
+                        }
+                    }}
                     className={cn(
                         "p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center gap-4 outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
                         extras.isFullService 
@@ -166,7 +171,12 @@ export default function DTFConfigStep({
                     aria-checked={extras.isFlashOrder}
                     tabIndex={0}
                     onClick={() => setExtras(p => ({...p, isFlashOrder: !p.isFlashOrder}))}
-                    onKeyDown={(e) => e.key === ' ' && setExtras(p => ({...p, isFlashOrder: !p.isFlashOrder}))}
+                    onKeyDown={(e) => {
+                        if (e.key === ' ' || e.key === 'Enter') {
+                            e.preventDefault();
+                            setExtras(p => ({...p, isFlashOrder: !p.isFlashOrder}));
+                        }
+                    }}
                     className={cn(
                         "p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center gap-4 outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
                         extras.isFlashOrder 

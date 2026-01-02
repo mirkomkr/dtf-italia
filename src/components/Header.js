@@ -46,6 +46,7 @@ export default function Header() {
 
   const navLinks = [
     { href: "#how-it-works", label: "Come Funziona" },
+    { href: "/", label: "DTF" },
     { href: "/serigrafia", label: "Serigrafia" },
     { href: "/sublimazione", label: "Sublimazione" },
     { href: "/calendari", label: "Calendari" },
@@ -83,7 +84,7 @@ export default function Header() {
             <Link 
               key={link.label}
               href={link.href} 
-              className="hover:text-white transition-colors focus:text-white focus:outline-none focus:underline underline-offset-4"
+              className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-sm"
             >
               {link.label}
             </Link>
@@ -92,23 +93,24 @@ export default function Header() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden z-50 relative p-2 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white rounded-md"
+          className="md:hidden z-50 relative p-2 text-gray-300 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-md"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-expanded={isMobileMenuOpen}
-          aria-label="Toggle menu"
+          aria-controls="mobile-menu"
+          aria-label={isMobileMenuOpen ? "Chiudi menu di navigazione" : "Apri menu di navigazione"}
         >
           {isMobileMenuOpen ? <XIcon size={28} /> : <MenuIcon size={28} />}
         </button>
 
         {/* Mobile Navigation Overlay */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 bg-gray-900 z-40 flex flex-col justify-center items-center md:hidden">
-            <nav className="flex flex-col gap-8 text-center text-xl font-semibold text-gray-300">
+          <div id="mobile-menu" className="fixed inset-0 bg-gray-900 z-40 flex flex-col justify-center items-center md:hidden">
+            <nav className="flex flex-col gap-8 text-center text-xl font-semibold text-gray-300" aria-label="Navigazione Mobile">
               {navLinks.map((link) => (
                 <Link 
                   key={link.label}
                   href={link.href} 
-                  className="hover:text-white transition-colors py-2"
+                  className="hover:text-white transition-all duration-200 py-2 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-md px-4"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}

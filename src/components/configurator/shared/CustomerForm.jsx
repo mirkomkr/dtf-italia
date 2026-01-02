@@ -19,13 +19,18 @@ export default function CustomerForm({
     const [scriptLoaded, setScriptLoaded] = useState(false);
     const isRed = brandColor === 'red';
     
-    // Focus ring color
+    // Focus ring with brand colors (focus-visible for keyboard-only)
     const focusRingClass = isRed 
-        ? "focus:ring-red-500 focus:border-red-500" 
-        : "focus:ring-indigo-500 focus:border-indigo-500";
+        ? "focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:border-red-500" 
+        : "focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500";
 
     const labelClass = "block text-xs font-semibold text-gray-500 mb-1 ml-1";
-    const inputClass = cn("w-full h-12 px-4 border border-gray-300 rounded-xl text-sm transition-shadow focus:ring-2 outline-none bg-gray-50/50 focus:bg-white", focusRingClass);
+    const inputClass = cn(
+        "w-full h-12 px-4 border border-gray-300 rounded-xl text-sm bg-gray-50/50",
+        "transition-all duration-200 outline-none",
+        "focus-visible:bg-white",
+        focusRingClass
+    );
 
     return (
         <div className="space-y-4">
@@ -33,48 +38,63 @@ export default function CustomerForm({
             
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className={labelClass}>Nome</label>
+                    <label htmlFor="firstName" className={labelClass}>
+                        Nome <span className="text-red-500" aria-hidden="true">*</span>
+                    </label>
                     <input 
+                        id="firstName"
                         type="text" 
                         name="firstName" 
                         placeholder="Mario" 
                         value={formData.firstName} 
                         onChange={onChange} 
                         className={inputClass}
+                        autoComplete="given-name"
                         required
+                        aria-required="true"
                     />
                 </div>
                 <div>
-                    <label className={labelClass}>Cognome</label>
+                    <label htmlFor="lastName" className={labelClass}>
+                        Cognome <span className="text-red-500" aria-hidden="true">*</span>
+                    </label>
                     <input 
+                        id="lastName"
                         type="text" 
                         name="lastName" 
                         placeholder="Rossi" 
                         value={formData.lastName} 
                         onChange={onChange} 
                         className={inputClass}
+                        autoComplete="family-name"
                         required
+                        aria-required="true"
                     />
                 </div>
             </div>
 
             <div>
-                <label className={labelClass}>Email</label>
+                <label htmlFor="email" className={labelClass}>
+                    Email <span className="text-red-500" aria-hidden="true">*</span>
+                </label>
                 <input 
+                    id="email"
                     type="email" 
                     name="email" 
                     placeholder="esempio@email.com" 
                     value={formData.email} 
                     onChange={onChange} 
                     className={inputClass}
+                    autoComplete="email"
                     required
+                    aria-required="true"
                 />
             </div>
 
             {showAddress && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2 pt-2">
                     <div>
-                        <label className={labelClass}>Indirizzo di Spedizione</label>
+                        <label htmlFor="address" className={labelClass}>Indirizzo di Spedizione</label>
                         
                         {scriptLoaded ? (
                             <GoogleAddressInput 
@@ -104,27 +124,37 @@ export default function CustomerForm({
                     
                     <div className="grid grid-cols-3 gap-4">
                         <div className="col-span-2">
-                            <label className={labelClass}>Città</label>
+                            <label htmlFor="city" className={labelClass}>
+                                Città <span className="text-red-500" aria-hidden="true">*</span>
+                            </label>
                             <input 
+                                id="city"
                                 type="text" 
                                 name="city" 
                                 placeholder="Roma" 
                                 value={formData.city} 
                                 onChange={onChange} 
                                 className={inputClass}
+                                autoComplete="address-level2"
                                 required
+                                aria-required="true"
                             />
                         </div>
                         <div>
-                            <label className={labelClass}>CAP</label>
+                            <label htmlFor="zip" className={labelClass}>
+                                CAP <span className="text-red-500" aria-hidden="true">*</span>
+                            </label>
                             <input 
+                                id="zip"
                                 type="text" 
                                 name="zip" 
                                 placeholder="00100" 
                                 value={formData.zip} 
                                 onChange={onChange} 
                                 className={inputClass}
+                                autoComplete="postal-code"
                                 required
+                                aria-required="true"
                             />
                         </div>
                     </div>

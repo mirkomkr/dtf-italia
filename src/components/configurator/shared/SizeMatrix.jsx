@@ -14,10 +14,10 @@ const SizeMatrix = memo(function SizeMatrix({
   if (!visible) return null;
 
   return (
-    <div className="transition-all duration-500 overflow-hidden animate-in fade-in slide-in-from-top-2">
-      <label className="block text-sm font-semibold text-gray-700 mb-3">
+    <fieldset className="transition-all duration-500 overflow-hidden animate-in fade-in slide-in-from-top-2">
+      <legend className="block text-sm font-semibold text-gray-700 mb-3">
         {title}
-      </label>
+      </legend>
       <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
         {sizes.map((size) => (
            <SizeInput 
@@ -29,13 +29,13 @@ const SizeMatrix = memo(function SizeMatrix({
            />
         ))}
       </div>
-      <p className="text-right text-xs text-gray-500 mt-2">
+      <p className="text-right text-xs text-gray-500 mt-2" aria-live="polite">
         Totale Capi: <strong className={cn(
           "font-bold",
           brandColor === 'red' ? "text-red-600" : "text-indigo-600"
         )}>{Object.values(quantities).reduce((a, b) => a + (parseInt(b) || 0), 0)}</strong>
       </p>
-    </div>
+    </fieldset>
   );
 }, (prevProps, nextProps) => {
     return (
@@ -88,14 +88,16 @@ function SizeInput({ size, parentValue, onCommit, brandColor }) {
                 }
               }}
               className={cn(
-                "w-full h-12 text-center border-2 rounded-xl font-bold transition-all duration-200 outline-none focus:ring-4",
+                "w-full h-12 text-center border-2 rounded-xl font-bold transition-all duration-200 outline-none",
+                "focus-visible:ring-4",
                 brandColor === 'red'
-                    ? "focus:border-red-600 focus:ring-red-600/10"
-                    : "focus:border-indigo-600 focus:ring-indigo-600/10",
+                    ? "focus-visible:border-red-600 focus-visible:ring-red-600/10"
+                    : "focus-visible:border-indigo-600 focus-visible:ring-indigo-600/10",
                 (parentValue > 0) 
                   ? `${currentStyle.active}` 
                   : "border-gray-200 text-gray-500 hover:border-gray-300"
               )}
+              aria-label={`Quantita per taglia ${size}`}
             />
           </div>
     );

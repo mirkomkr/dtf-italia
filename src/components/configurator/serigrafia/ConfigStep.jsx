@@ -204,9 +204,15 @@ export default function ConfigStep({
              </div>
 
               <button 
-                onClick={onNext}
-                disabled={totalQuantity === 0}
-                className="py-4 px-10 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-30 uppercase tracking-widest shadow-lg bg-red-600 hover:bg-red-700 shadow-red-100"
+                onClick={() => totalQuantity > 0 && onNext()}
+                aria-disabled={totalQuantity === 0}
+                className={cn(
+                    "py-4 px-10 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-widest shadow-lg bg-red-600 shadow-red-100",
+                    "focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
+                    totalQuantity === 0 
+                        ? "opacity-30 cursor-not-allowed" 
+                        : "hover:bg-red-700"
+                )}
               >
                 Configura Spedizione
                 <ArrowRightIcon />

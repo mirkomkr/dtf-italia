@@ -3,6 +3,7 @@ import Hero from "@/app/dtf/components/HeroDTF";
 // import { HowItWorks, Benefits, FAQ } from "@/components/Sections";
 import dynamic from 'next/dynamic';
 import { getWooCommerceProducts } from "@/lib/woocommerce"; // Import for server fetching
+import { Zap, ShieldCheck, Truck } from 'lucide-react';
 
 const HowItWorks = dynamic(() => import('@/components/Sections').then(mod => mod.HowItWorks), { ssr: true });
 const Benefits = dynamic(() => import('@/components/Sections').then(mod => mod.Benefits), { ssr: true });
@@ -76,6 +77,57 @@ export default async function Home() {
     },
   };
 
+  const dtfSteps = [
+    {
+      num: '01',
+      title: 'Carica il File',
+      desc: 'Carica il tuo design in formato PNG o PDF. Il nostro sistema verificherà automaticamente la qualità per la stampa DTF a Roma.',
+    },
+    {
+      num: '02',
+      title: 'Stampa DTF Premium',
+      desc: 'Stampiamo il tuo design su pellicola tecnica con bianco ultra-coprente e polveri poliuretaniche di alta qualità.',
+    },
+    {
+      num: '03',
+      title: 'Ritiro o Spedizione',
+      desc: 'Ritira il tuo ordine presso la nostra sede di Roma o ricevi la spedizione in 24h in tutta Italia.',
+    },
+  ];
+
+  const dtfBenefits = [
+    {
+      icon: <Zap className="w-6 h-6 text-yellow-500" aria-hidden="true" />,
+      title: 'Bianco Ultra-Coprente',
+      desc: 'Utilizziamo inchiostri premium per massimizzare la resa su tessuti scuri.',
+    },
+    {
+      icon: <ShieldCheck className="w-6 h-6 text-green-500" aria-hidden="true" />,
+      title: 'Qualità Garantita',
+      desc: 'Siamo l\'unico service DTF a Roma che garantisce una durata superiore ai 50 lavaggi.',
+    },
+    {
+      icon: <Truck className="w-6 h-6 text-blue-500" aria-hidden="true" />,
+      title: 'Spedizione 24h',
+      desc: 'Consegna rapidissima a Roma e provincia per tutte le tue urgenze di stampa.',
+    },
+  ];
+
+  const dtfFaqs = [
+    {
+      q: 'Come devono essere i file per la stampa DTF?',
+      a: 'Consigliamo file PNG a 300 DPI con sfondo trasparente o PDF vettoriali per la massima definizione.',
+    },
+    {
+      q: 'Quanto resistono i lavaggi?',
+      a: 'Le nostre stampe sono testate per resistere oltre 50 lavaggi a 40°C senza perdere brillantezza.',
+    },
+    {
+      q: 'Posso ritirare in sede a Roma?',
+      a: 'Certamente! Puoi selezionare il ritiro gratuito presso il nostro laboratorio di Pomezia.',
+    },
+  ];
+
   return (
     <>
       {/* JSON-LD Schema */}
@@ -92,9 +144,9 @@ export default async function Home() {
         style={{ '--brand-color': '#4f46e5' }}
       >
         <Hero product={dtfProduct} /> 
-        <HowItWorks />
-        <Benefits />
-        <FAQ />
+        <HowItWorks steps={dtfSteps} titoloTecnica="DTF" />
+        <Benefits benefits={dtfBenefits} titoloTecnica="DTF" />
+        <FAQ faqs={dtfFaqs} titoloTecnica="DTF" />
       </div>
     </>
   );

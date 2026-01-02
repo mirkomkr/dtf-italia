@@ -4,6 +4,7 @@ import ProductCard from "./components/ProductCard";
 // import { HowItWorks, Benefits, FAQ } from "@/components/Sections";
 import { getWooCommerceProducts } from "@/lib/woocommerce";
 import dynamic from 'next/dynamic';
+import { Zap, ShieldCheck, Truck } from 'lucide-react';
 
 const HowItWorks = dynamic(() => import('@/components/Sections').then(mod => mod.HowItWorks), { ssr: true });
 const Benefits = dynamic(() => import('@/components/Sections').then(mod => mod.Benefits), { ssr: true });
@@ -43,6 +44,7 @@ export default async function SerigrafiaPage() {
   let products = await getWooCommerceProducts({ 
     category: categorySlug,
     perPage: 50, // Limit high enough for this page
+
   });
 
   // Schema JSON-LD derivato dai prodotti
@@ -73,6 +75,57 @@ export default async function SerigrafiaPage() {
       ...schemaProducts
     ]
   };
+
+  const serigrafiaSteps = [
+    {
+      num: '01',
+      title: 'Creazione Telai',
+      desc: 'Incisione professionale dei telai serigrafici con emulsioni di alta qualità per dettagli nitidi a Roma.',
+    },
+    {
+      num: '02',
+      title: 'Inchiostrazione a Mano',
+      desc: 'Applicazione degli inchiostri (Plastisol o Water-based) per una coprenza perfetta e colori vibranti.',
+    },
+    {
+      num: '03',
+      title: 'Asciugatura in Forno',
+      desc: 'Fissaggio termico professionale per garantire la massima resistenza ai lavaggi nel tempo.',
+    },
+  ];
+
+  const serigrafiaBenefits = [
+    {
+      icon: <Zap className="w-6 h-6 text-yellow-500" aria-hidden="true" />,
+      title: 'Prezzi Imbattibili',
+      desc: 'La soluzione più economica a Roma per grandi tirature di magliette e felpe.',
+    },
+    {
+      icon: <ShieldCheck className="w-6 h-6 text-green-500" aria-hidden="true" />,
+      title: 'Resistenza Estrema',
+      desc: 'Stampe che durano anni, ideali per abbigliamento da lavoro e merchandising.',
+    },
+    {
+      icon: <Truck className="w-6 h-6 text-blue-500" aria-hidden="true" />,
+      title: 'Colori Pantone',
+      desc: 'Garantiamo la fedeltà cromatica dei tuoi loghi aziendali con il sistema Pantone.',
+    },
+  ];
+
+  const serigrafiaFaqs = [
+    {
+      q: 'Qual è il minimo d\'ordine per la serigrafia?',
+      a: 'Per la serigrafia tradizionale a Roma consigliamo un minimo di 20-30 pezzi per ammortizzare i costi d\'impianto.',
+    },
+    {
+      q: 'Posso stampare su qualsiasi tessuto?',
+      a: 'Sì, la serigrafia è estremamente versatile: cotone, poliestere, nylon e misti.',
+    },
+    {
+      q: 'Quanto tempo occorre per la produzione?',
+      a: 'Solitamente i tempi di consegna a Roma variano dai 5 ai 7 giorni lavorativi in base al carico del laboratorio.',
+    },
+  ];
 
   return (
     <>
@@ -109,9 +162,9 @@ export default async function SerigrafiaPage() {
         </div>
       </main>
 
-      <HowItWorks />
-      <Benefits />
-      <FAQ />
+      <HowItWorks steps={serigrafiaSteps} titoloTecnica="Serigrafia" />
+      <Benefits benefits={serigrafiaBenefits} titoloTecnica="Serigrafia" />
+      <FAQ faqs={serigrafiaFaqs} titoloTecnica="Serigrafia" />
     </>
   );
 }

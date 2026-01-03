@@ -86,6 +86,7 @@ export async function POST(request) {
             payment_method,
             payment_method_title,
             set_paid,
+            currency: 'EUR',
             billing: {
                 first_name: customer.firstName || 'Cliente',
                 last_name: customer.lastName || 'Guest',

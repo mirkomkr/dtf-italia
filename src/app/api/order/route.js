@@ -43,9 +43,11 @@ export async function POST(request) {
         
         // Costruiamo i meta_data base
         const meta_data = [
-            { key: 'Front Print', value: items.frontPrint || 'N/A' },
-            { key: 'Back Print', value: items.backPrint || 'N/A' }
-        ];
+    { key: 'Front Print', value: items.frontPrint || 'No' },
+    { key: 'Back Print', value: items.backPrint || 'No' },
+    { key: 'Format', value: items.format || 'custom' },
+    { key: 'Dimensions', value: items.dimensions || 'N/D' }
+];
 
         // SE ABBIAMO LA CHIAVE S3, LA AGGIUNGIAMO SUBITO QUI!
 if (uploadedFileKey) {

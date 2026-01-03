@@ -142,9 +142,9 @@ export default async function SerigrafiaPage() {
         style={{ '--brand-color': '#dc2626' }}
       >
       <div className="container mx-auto px-4 py-20">
-        <h1 className="text-4xl font-bold mb-8 text-gray-900">Stampa Serigrafica</h1>
+        <h2 className="text-4xl font-bold mb-8 text-gray-900">Stampa Serigrafica</h2>
 
-        <h2 className="sr-only">I nostri prodotti</h2>
+        <h3 className="sr-only">I nostri prodotti</h3>
 
         {products.length === 0 ? (
           <p className="text-center text-gray-700">Nessun prodotto disponibile al momento.</p>

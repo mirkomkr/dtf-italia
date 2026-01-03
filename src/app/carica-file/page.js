@@ -22,7 +22,7 @@ function UploadPageContent() {
                 <div className="w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-6">
                     <AlertTriangle className="w-10 h-10" />
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">ID Ordine Mancante</h1>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">ID Ordine Mancante</h2>
                 <p className="text-gray-600 max-w-md">
                     Non siamo riusciti a identificare il tuo ordine. Assicurati di aver utilizzato il link corretto ricevuto via email.
                 </p>
@@ -36,7 +36,7 @@ function UploadPageContent() {
                 <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-green-100">
                     <FileCheck className="w-10 h-10" />
                 </div>
-                <h1 className="text-3xl font-bold text-green-900 mb-4">File Caricato con Successo!</h1>
+                <h2 className="text-3xl font-bold text-green-900 mb-4">File Caricato con Successo!</h2>
                 <p className="text-green-700 text-lg max-w-md mb-8">
                     Il tuo ordine <strong>#{orderId}</strong> è ora in lavorazione. <br/>
                     Riceverai una notifica appena la produzione sarà avviata.

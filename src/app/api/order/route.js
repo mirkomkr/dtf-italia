@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createWooCommerceOrder } from '@/lib/woocommerce';
+import { IS_DEV_MODE } from '@/lib/config';
 
 export async function POST(request) {
     try {
@@ -13,7 +14,8 @@ export async function POST(request) {
             paymentMethod = 'bacs', 
             items = {}, 
             pricing = { totalPrice: 0 },
-            uploadedFileKey = null // <--- Riceviamo la chiave qui!
+            uploadedFileKey = null,
+            skipFiles = false
         } = body;
 
         // 1. Map Payment Method
@@ -29,6 +31,10 @@ export async function POST(request) {
              payment_method = 'paypal';
              payment_method_title = 'PayPal';
              set_paid = true;
+        } else if (paymentMethod === 'dev' && IS_DEV_MODE) {
+            payment_method = 'bacs';
+            payment_method_title = 'Bonifico Bancario (Dev Test)';
+            set_paid = true;
         }
 
         // 2. Map Line Items con check di sicurezza
@@ -51,6 +57,14 @@ export async function POST(request) {
                 key: '_s3_file_key',
                 value: uploadedFileKey
             });
+        }
+
+        // METADATI TEST (SOLO SE IS_DEV_MODE)
+        if (paymentMethod === 'dev' && IS_DEV_MODE) {
+            meta_data.push({ key: '_is_dev_test', value: 'yes' });
+            if (skipFiles) {
+                meta_data.push({ key: '_skip_files', value: 'yes' });
+            }
         }
 
         line_items.push({

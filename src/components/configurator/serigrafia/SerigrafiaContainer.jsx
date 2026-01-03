@@ -103,9 +103,14 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     });
   };
 
-  const handleOrderSuccess = (newId) => {
+  const handleOrderSuccess = (newId, meta = {}) => {
     setOrderId(newId);
-    setCurrentStep(3);
+    if (meta.skipFiles) {
+      setIsUploadComplete(true);
+      setCurrentStep(4);
+    } else {
+      setCurrentStep(3);
+    }
   };
 
   const steps = [

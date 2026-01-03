@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { IS_DEV_MODE } from '@/lib/config';
 import OrderSummary from './OrderSummary';
 import ShippingSelector from './ShippingSelector';
 import CustomerForm from './CustomerForm';
@@ -32,7 +33,7 @@ export default function UnifiedCheckout({
     const shippingCost = shippingOption === 'pickup' ? 0.00 : 7.50; 
 
     // --- Logica di Pagamento ---
-    const handlePayment = async (paymentMethod) => {
+    const handlePayment = async (paymentMethod, skipFiles = false) => {
         // Validazione Base
         if (!formData.firstName || !formData.lastName || !formData.email) {
             alert("Per favore, inserisci i dati di contatto.");
@@ -52,6 +53,7 @@ export default function UnifiedCheckout({
                 customer: formData,
                 shipping: { option: shippingOption, cost: shippingCost },
                 paymentMethod,
+                skipFiles,
                 items: productData,
                 uploadedFileKey, 
                 pricing: {
@@ -70,7 +72,7 @@ export default function UnifiedCheckout({
             const result = await response.json();
 
             if (result.success && result.orderId) {
-                onSuccess(result.orderId);
+                onSuccess(result.orderId, { skipFiles });
             } else {
                 throw new Error(result.error || "Errore durante la creazione dell'ordine");
             }

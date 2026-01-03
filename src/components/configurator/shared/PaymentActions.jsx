@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { CreditCard } from 'lucide-react';
+import { IS_DEV_MODE } from '@/lib/config';
 
 export default function PaymentActions({ 
     onPaymentSelect, 
@@ -37,6 +38,29 @@ export default function PaymentActions({
                     PayPal
                 </button>
             </div>
+
+            {/* DEV/TEST MODE BUTTONS */}
+            {IS_DEV_MODE && (
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                    <div className="col-span-full text-[10px] font-bold text-amber-600 uppercase tracking-widest text-center px-2 py-1 bg-amber-100 rounded-md">
+                        🛠️ Area Test Attiva
+                    </div>
+                    <button 
+                        onClick={() => onPaymentSelect('dev', false)}
+                        disabled={isProcessing}
+                        className="py-3 px-3 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center justify-center gap-2"
+                    >
+                        Ordine Test (Vai a S3)
+                    </button>
+                    <button 
+                        onClick={() => onPaymentSelect('dev', true)}
+                        disabled={isProcessing}
+                        className="py-3 px-3 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center justify-center gap-2"
+                    >
+                        Ordine Test (Fine Diretta)
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

@@ -54,9 +54,14 @@ export default function DTFContainer({ product }) {
     setConfig(prev => ({ ...prev, ...newConfig }));
   };
 
-  const handleOrderSuccess = (newOrderId) => {
+  const handleOrderSuccess = (newOrderId, meta = {}) => {
     setOrderId(newOrderId);
-    setCurrentStep(3);
+    if (meta.skipFiles) {
+      setIsUploadComplete(true);
+      setCurrentStep(4);
+    } else {
+      setCurrentStep(3);
+    }
   };
 
   const steps = [

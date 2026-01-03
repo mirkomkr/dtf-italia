@@ -49,19 +49,23 @@ export default function UnifiedCheckout({
 
         try {
             const payload = {
-                type,
-                customer: formData,
-                shipping: { option: shippingOption, cost: shippingCost },
-                paymentMethod,
-                skipFiles,
-                items: productData,
-                uploadedFileKey: skipFiles ? null : uploadedFileKey, 
-                pricing: {
-                    ...priceData,
-                    shippingCost,
-                    finalTotal: Number((priceData.totalPrice + shippingCost).toFixed(2))
-                }
-            };
+    type,
+    customer: formData,
+    shipping: { option: shippingOption, cost: shippingCost },
+    paymentMethod,
+    skipFiles,
+    // Mappiamo correttamente detailedQuantities per la route.js
+    items: {
+        ...productData,
+        detailedQuantities: productData.quantities // Forza il nome che la API si aspetta
+    },
+    uploadedFileKey: skipFiles ? null : uploadedFileKey, 
+    pricing: {
+        ...priceData,
+        shippingCost,
+        finalTotal: Number((priceData.totalPrice + shippingCost).toFixed(2))
+    }
+};
 
             const response = await fetch('/api/order', {
                 method: 'POST',

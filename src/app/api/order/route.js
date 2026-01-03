@@ -57,6 +57,15 @@ export async function POST(request) {
                 key: '_s3_file_key',
                 value: uploadedFileKey
             });
+            meta_data.push({
+                key: '_file_uploaded_to_s3',
+                value: 'yes'
+            });
+        } else {
+            meta_data.push({
+                key: '_file_uploaded_to_s3',
+                value: 'no'
+            });
         }
 
         // METADATI TEST (SOLO SE IS_DEV_MODE)

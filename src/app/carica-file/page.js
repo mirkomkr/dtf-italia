@@ -80,7 +80,27 @@ function UploadPageContent() {
                     orderId={orderId}
                     uploadMode="s3"
                     brandColor="indigo"
-                    onUploadComplete={() => setIsUploadComplete(true)}
+                    onUploadComplete={async () => {
+                        // 1. Notifica WooCommerce che il file ora esiste
+                        try {
+                            await fetch('/api/order/update-metadata', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ 
+                                    orderId: orderId, 
+                                    metaData: { 
+                                        _s3_file_key: 'uploaded_via_page',
+                                        _file_uploaded_to_s3: 'yes'
+                                    }
+                                })
+                            });
+                        } catch (err) {
+                            console.error("Errore aggiornamento meta:", err);
+                        }
+                        
+                        // 2. Mostra successo
+                        setIsUploadComplete(true);
+                    }}
                 />
             </div>
         </div>

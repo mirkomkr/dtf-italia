@@ -79,10 +79,17 @@ export default function FileUploader({
              setUploadProgress(prev => ({ ...prev, [fileToUpload.name]: 100 }));
 
              // 3. Sync with WooCommerce (Fire & Forget)
-             fetch('/api/order/update-s3-meta', {
+             fetch('/api/order/update-metadata', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ orderId, s3Key: key })
+                body: JSON.stringify({ 
+                    orderId, 
+                    metaData: { 
+                        _s3_file_key: key,
+                        s3_download_url: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`,
+                        _file_uploaded_to_s3: 'yes'
+                    }
+                })
              }).catch(console.error);
 
              return key;

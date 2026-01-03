@@ -55,11 +55,11 @@ export default function UnifiedCheckout({
                 paymentMethod,
                 skipFiles,
                 items: productData,
-                uploadedFileKey, 
+                uploadedFileKey: skipFiles ? null : uploadedFileKey, 
                 pricing: {
                     ...priceData,
                     shippingCost,
-                    finalTotal: priceData.totalPrice + shippingCost
+                    finalTotal: Number((priceData.totalPrice + shippingCost).toFixed(2))
                 }
             };
 

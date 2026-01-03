@@ -58,7 +58,7 @@ export default function StepNavigation({ currentStep, steps, onStepClick, isStep
                   "w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300",
                   isActive 
                     ? `${theme.bg} text-white shadow-md ring-2 ring-offset-2 ring-offset-white` // 'ring-offset' per pulizia
-                    : (isPast ? "bg-green-500 text-white" : "bg-gray-100 text-gray-400"),
+                    : (isPast ? "bg-green-500 text-white" : "bg-gray-100 text-gray-600"),
                   isClickable && !isActive && "group-hover:scale-110" // Feedback al passaggio del mouse
                 )}>
                   {isPast ? <CheckIcon className="w-5 h-5"/> : step.id}
@@ -67,7 +67,7 @@ export default function StepNavigation({ currentStep, steps, onStepClick, isStep
                 {/* LA SCRITTA: Nota come manteniamo il nero/grigio per accessibilità */}
                 <span className={cn(
                   "text-[10px] uppercase tracking-wider mt-2 font-bold transition-colors duration-300",
-                  isActive ? theme.text : "text-gray-400"
+                  isActive ? theme.text : "text-gray-600"
                 )}>
                   {step.label}
                 </span>

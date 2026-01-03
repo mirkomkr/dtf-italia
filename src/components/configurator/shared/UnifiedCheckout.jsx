@@ -131,10 +131,10 @@ export default function UnifiedCheckout({
                  />
 
                  {onBack && (
-                     <button 
+                         <button 
                         onClick={onBack}
                         disabled={isProcessing}
-                        className="w-full py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                        className="w-full py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
                      >
                          Torna alla configurazione
                      </button>

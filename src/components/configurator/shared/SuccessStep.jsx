@@ -24,10 +24,10 @@ export default function SuccessStep({
 
             <div className="space-y-2">
                 <h2 className="text-4xl font-black text-slate-900 tracking-tight">Grazie!</h2>
-                <div className="text-slate-500 font-bold text-lg flex flex-col gap-2">
-                     <span className="text-xs uppercase tracking-[0.2em] text-slate-400">Ordine Ricevuto</span>
+                <div className="text-slate-600 font-bold text-lg flex flex-col gap-2">
+                     <span className="text-xs uppercase tracking-[0.2em] text-slate-600">Ordine Ricevuto</span>
                      <span className="font-mono text-5xl font-black text-slate-900 tracking-tighter">#{orderId}</span>
-                     <span className="text-[10px] text-slate-400 mt-1 font-bold">Conserva questo codice per la tua assistenza.</span>
+                     <span className="text-[10px] text-slate-600 mt-1 font-bold">Conserva questo codice per la tua assistenza.</span>
                 </div>
             </div>
 

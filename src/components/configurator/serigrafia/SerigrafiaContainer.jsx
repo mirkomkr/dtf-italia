@@ -14,7 +14,7 @@ import SuccessStep from '../shared/SuccessStep';
 import ConfigStep from './ConfigStep';
 
 const FileUploader = dynamic(() => import('../shared/FileUploader'), {
-  loading: () => <p className="p-10 text-center text-gray-500 italic">Preparazione caricamento...</p>,
+  loading: () => <p className="p-10 text-center text-gray-600 italic">Preparazione caricamento...</p>,
   ssr: false
 });
 
@@ -187,7 +187,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             </div>
 
             <div className="flex justify-between items-center">
-              <button onClick={() => setCurrentStep(2)} className="text-gray-400 font-bold text-xs uppercase hover:text-red-600 transition-colors">
+              <button onClick={() => setCurrentStep(2)} className="text-gray-600 font-bold text-xs uppercase hover:text-red-600 transition-colors">
                 Indietro
               </button>
               <button onClick={() => setCurrentStep(4)} className="bg-red-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm">

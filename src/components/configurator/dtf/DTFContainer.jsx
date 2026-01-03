@@ -15,7 +15,7 @@ import DTFConfigStep from './DTFConfigStep';
 
 // Uploader caricato dinamicamente (no SSR)
 const FileUploader = dynamic(() => import('../shared/FileUploader'), {
-  loading: () => <p className="p-10 text-center text-gray-500 italic">Preparazione caricamento...</p>,
+  loading: () => <p className="p-10 text-center text-gray-600 italic">Preparazione caricamento...</p>,
   ssr: false
 });
 
@@ -136,7 +136,7 @@ export default function DTFContainer({ product }) {
                 </div>
 
                 <div className="flex justify-between items-center">
-                    <button onClick={() => setCurrentStep(2)} className="text-gray-400 font-bold text-xs uppercase hover:text-indigo-600 transition-colors">
+                    <button onClick={() => setCurrentStep(2)} className="text-gray-600 font-bold text-xs uppercase hover:text-indigo-600 transition-colors">
                         Indietro
                     </button>
                     <button onClick={() => setCurrentStep(4)} className="bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-700 transition-colors uppercase tracking-widest text-sm">

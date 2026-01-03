@@ -29,7 +29,7 @@ return (
         {label}
       </label>
       <input 
-      id="single-quantity"
+      id="single-qty"
       type="number"
       placeholder="0"
       value={quantity === 0 ? '' : quantity}

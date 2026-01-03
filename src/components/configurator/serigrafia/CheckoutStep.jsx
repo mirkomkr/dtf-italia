@@ -118,7 +118,7 @@ export default function CheckoutStep({
                         PayPal
                     </button>
                 </div>
-                <button onClick={onBack} className="w-full mt-3 text-sm text-gray-400 hover:text-gray-600">Indietro</button>
+                <button onClick={onBack} className="w-full mt-3 text-sm text-gray-600 hover:text-gray-800">Indietro</button>
             </div>
       </div>
   );

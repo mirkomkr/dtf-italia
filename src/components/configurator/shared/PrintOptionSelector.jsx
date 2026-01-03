@@ -60,7 +60,7 @@ export default function PrintOptionSelector({
     const renderOption = (value, onChange, legendText, groupId) => (
         <fieldset className="flex-1">
             <legend className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">
-                {legendText} <span className="text-[10px] font-bold text-gray-400 pl-1">(Max 28x38cm)</span>
+                {legendText} <span className="text-[10px] font-bold text-gray-600 pl-1">(Max 28x38cm)</span>
             </legend>
             <div className="grid grid-cols-2 gap-2" role="group" aria-label={legendText}>
                 {options.map((opt) => {

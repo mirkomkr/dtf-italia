@@ -52,7 +52,7 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
         </h3>
 
         {/* Nota informativa */}
-        <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest italic">
+        <p className="text-gray-600 text-[10px] uppercase font-bold tracking-widest italic">
           Prezzo Configurabile
         </p>
 

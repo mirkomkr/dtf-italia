@@ -36,7 +36,7 @@ export default function HeroSublimazione() {
           <div className="flex-1 text-center lg:text-left">
 
             {/* Badge */}
-            <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-violet-500/20 border border-violet-300/30 text-violet-200 text-sm font-semibold backdrop-blur-sm">
+            <div className="inline-block px-3 py-1 mb-6 rounded-full bg-black/25 border border-white/10 text-white text-sm font-bold backdrop-blur-sm">
               ✨ Stampa Sublimazione Professionale
             </div>
 
@@ -49,7 +49,7 @@ export default function HeroSublimazione() {
             </h1>
 
             {/* Description */}
-            <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+            <p className="text-lg md:text-xl text-white mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
               Ideale per abbigliamento sportivo, gadget e tessuti sintetici.
               Stampa fotografica ad alta definizione con risultati che resistono
               al tempo e ai lavaggi.
@@ -64,7 +64,7 @@ export default function HeroSublimazione() {
               ].map((item, i) => (
                 <li
                   key={i}
-                  className="flex items-center gap-2 text-gray-200 bg-white/5 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10"
+                  className="flex items-center gap-2 text-white bg-black/40 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/10 font-medium"
                 >
                   <CheckIcon className="w-5 h-5 text-green-400" />
                   <span>{item}</span>
@@ -77,7 +77,7 @@ export default function HeroSublimazione() {
               {/* Primary CTA */}
               <a
                 href="#prodotti-sublimazione"
-                className="inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-base font-semibold text-violet-700 transition-all duration-200 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2"
+                className="px-8 py-4 bg-white text-violet-700 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all shadow-lg shadow-violet-600/25 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2"
               >
                 Scopri i prodotti
               </a>
@@ -85,7 +85,7 @@ export default function HeroSublimazione() {
               {/* Secondary CTA */}
               <a
                 href="#come-funziona-sublimazione"
-                className="inline-flex items-center justify-center rounded-lg border border-white/70 px-6 py-3 text-base font-semibold text-white transition-all duration-200 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2"
+                className="px-8 py-4 bg-black/25 text-white border-2 border-white/10 rounded-xl font-bold text-lg hover:bg-black/40 transition-all flex items-center justify-center backdrop-blur-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2"
               >
                 Come funziona
               </a>

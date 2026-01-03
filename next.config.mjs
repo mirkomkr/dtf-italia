@@ -22,12 +22,6 @@ const nextConfig = {
         hostname: "wp.dtfitalia.it",
         pathname: "/wp-content/uploads/**",
       },
-      // 🔹 WordPress produzione (Mantieni se ti serve dtfpro)
-      {
-        protocol: "https",
-        hostname: "dtfpro.it",
-        pathname: "/wp-content/uploads/**",
-      },
       // 🔹 Sito Live (Puoi lasciarlo per sicurezza durante la transizione)
       {
         protocol: "https",
@@ -35,6 +29,20 @@ const nextConfig = {
         pathname: "/wp-content/uploads/**",
       },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: '/wp-admin',
+        destination: 'https://wp.dtfitalia.it/wp-admin',
+        permanent: true,
+      },
+      {
+        source: '/wp-login.php',
+        destination: 'https://wp.dtfitalia.it/wp-login.php',
+        permanent: true,
+      },
+    ]
   },
 };
 

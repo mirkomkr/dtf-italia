@@ -74,7 +74,7 @@ export default function ConfigStep({
         {/* 1. Selezione Genere/Modello */}
         {showGenderSelector && (
             <section className="space-y-3" aria-label="Selezione Modello">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">1. Scegli il Modello</label>
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">1. Scegli il Modello</label>
                 <div className="grid grid-cols-3 gap-2">
                     {genderOptions.map(gender => (
                         <button
@@ -84,7 +84,7 @@ export default function ConfigStep({
                                 "py-3 rounded-xl border-2 font-bold capitalize transition-colors",
                                 activeGender === gender 
                                     ? "border-red-600 bg-red-50 text-red-900" 
-                                    : "border-gray-100 text-gray-400 hover:bg-gray-50 bg-white"
+                                    : "border-gray-100 text-gray-600 hover:bg-gray-50 bg-white"
                             )}
                         >
                             {gender}
@@ -96,7 +96,7 @@ export default function ConfigStep({
 
         {/* 2. Selezione Colore */}
          <section className="space-y-3" aria-label="Selezione Colore">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">2. Scegli il Colore</label>
+            <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">2. Scegli il Colore</label>
             <div className="flex flex-wrap gap-3">
             {SHIRT_COLORS.map((color) => {
                 const isSelected = selectedColor === color.id;
@@ -145,7 +145,7 @@ export default function ConfigStep({
                 />
             ) : (
                 <div className="space-y-3">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">3. Quantità</label>
+                    <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">3. Quantità</label>
                     <SingleSizeSelector 
                         brandColor="red"
                         quantity={genderLayout === 'caps' ? (getCurrentViewQuantities()['UNICA'] || 0) : singleQuantity}
@@ -180,15 +180,17 @@ export default function ConfigStep({
                 )}
             >
                 <input 
+                    id="extra-file-check"
                     type="checkbox" 
                     checked={fileCheck}
                     readOnly
-                    className="w-5 h-5 rounded border-gray-300 text-red-600"
+                    className="w-5 h-5 rounded border-gray-300 text-red-600 pointer-events-none"
+                    aria-labelledby="file-check-label"
                 />
-                <div className="text-sm">
+                <label id="file-check-label" htmlFor="extra-file-check" className="text-sm cursor-pointer">
                     <p className="font-bold text-gray-900">Verifica File Professionale (+€10.00)</p>
                     <p className="text-gray-500">Controllo manuale risoluzione e setup colori.</p>
-                </div>
+                </label>
             </div>
         </section>
 
@@ -198,7 +200,7 @@ export default function ConfigStep({
                 <span className="text-4xl font-black text-gray-900">
                     {formatCurrency(price.totalPrice)}
                 </span>
-                <span className="text-sm font-bold text-gray-400 uppercase">
+                <span className="text-sm font-bold text-gray-600 uppercase">
                     {formatCurrency(price.unitPrice)} / cad.
                 </span>
              </div>

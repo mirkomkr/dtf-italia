@@ -88,13 +88,13 @@ export default function OrderSummary({
 
                     {data.isFullService && (
                          <div className={cn("flex justify-between items-center p-2 rounded-lg bg-white/50", isRed ? "text-red-700" : "text-indigo-700")}>
-                            <span className="font-medium flex items-center gap-1"><Package size={14}/> Pensa a tutto DTF Italia</span>
+                            <span className="font-medium flex items-center gap-1"><Package size={14} aria-hidden="true" /> Pensa a tutto DTF Italia</span>
                             <span>+10%</span>
                         </div>
                     )}
                     {data.isFlashOrder && (
                          <div className="flex justify-between items-center text-amber-600 p-2 rounded-lg bg-white/50">
-                            <span className="font-medium flex items-center gap-1"><Zap size={14}/> Ordine Flash</span>
+                            <span className="font-medium flex items-center gap-1"><Zap size={14} aria-hidden="true" /> Ordine Flash</span>
                             <span>+10%</span>
                         </div>
                     )}

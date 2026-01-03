@@ -24,7 +24,7 @@ export default function CustomerForm({
         ? "focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:border-red-500" 
         : "focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500";
 
-    const labelClass = "block text-xs font-semibold text-gray-500 mb-1 ml-1";
+    const labelClass = "block text-xs font-semibold text-gray-600 mb-1 ml-1";
     const inputClass = cn(
         "w-full h-12 px-4 border border-gray-300 rounded-xl text-sm bg-gray-50/50",
         "transition-all duration-200 outline-none",
@@ -116,8 +116,8 @@ export default function CustomerForm({
                         )}
 
                         <div className="flex justify-end mt-1">
-                            <span className="text-[10px] text-gray-400 font-medium bg-white px-2 py-0.5 rounded border border-gray-100 shadow-sm flex items-center gap-1">
-                                Powered by <span className="font-bold text-gray-500">Google</span>
+                            <span className="text-[10px] text-gray-600 font-medium bg-white px-2 py-0.5 rounded border border-gray-100 shadow-sm flex items-center gap-1">
+                                Powered by <span className="font-bold text-gray-700">Google</span>
                             </span>
                         </div>
                     </div>

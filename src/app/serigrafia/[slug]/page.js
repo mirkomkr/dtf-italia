@@ -9,7 +9,7 @@ const UniversalContainer = dynamic(() => import('@/app/serigrafia/components/Con
   ssr: false,
   loading: () => (
     <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full flex items-center justify-center">
-        <div className="animate-pulse text-slate-400 font-medium">Inizializzazione configuratore...</div>
+        <div className="animate-pulse text-slate-600 font-medium">Inizializzazione configuratore...</div>
     </div>
   )
 });
@@ -99,7 +99,7 @@ export default async function ProductPage({ params }) {
     >
       <div className=" container mx-auto px-4 py-12">
       {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-gray-500">
+      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-gray-700">
         <ol className="flex gap-1 flex-wrap">
           <li><a href="/" className="hover:underline">Home</a></li>
           <li>/</li>
@@ -123,7 +123,7 @@ export default async function ProductPage({ params }) {
         {/* Lazy Loaded Configurator with Intersection Observer */}
         <LazyLoader placeholder={
            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full flex items-center justify-center">
-                <div className="animate-pulse text-slate-400 font-medium">Inizializzazione configuratore...</div>
+                <div className="animate-pulse text-slate-600 font-medium">Inizializzazione configuratore...</div>
            </div>
         }>
           <UniversalContainer 

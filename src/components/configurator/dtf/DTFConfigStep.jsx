@@ -53,7 +53,7 @@ export default function DTFConfigStep({
         
         {/* 1. Selezione Formato */}
         <section className="space-y-3" aria-label="Selezione Formato Stampa">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">1. Scegli il Formato</h3>
+            <h3 className="text-xs font-bold text-gray-600 uppercase tracking-widest">1. Scegli il Formato</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3" role="group">
                 {Object.entries(DTF_FORMATS).map(([key, value]) => {
                     const isSelected = selectedFormat === key;
@@ -66,11 +66,11 @@ export default function DTFConfigStep({
                                 "relative p-4 rounded-xl border-2 text-left transition-all h-full min-h-[80px] flex flex-col justify-center",
                                 isSelected 
                                     ? (brandColor === 'red' ? "border-red-600 bg-red-50 text-red-900" : "border-indigo-600 bg-indigo-50 text-indigo-900")
-                                    : "border-gray-100 text-gray-400 hover:bg-gray-50 bg-white"
+                                    : "border-gray-100 text-gray-600 hover:bg-gray-50 bg-white"
                             )}
                         >
                             <span className="block text-sm font-bold leading-tight mb-1">{value.label}</span>
-                            <span className="block text-[10px] font-mono opacity-60">
+                            <span className="block text-[10px] font-mono font-bold text-gray-500">
                                 {value.isCustom ? 'MISURA PERSONALIZZATA' : `${value.w}x${value.h} cm`}
                             </span>
                             {isSelected && (
@@ -91,7 +91,7 @@ export default function DTFConfigStep({
                 <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 space-y-4 animate-in fade-in slide-in-from-top-2">
                     <div className="flex flex-col sm:flex-row gap-4 items-end">
                         <div className="flex-1 space-y-2">
-                            <label htmlFor="width-input" className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Larghezza (max 58cm)</label>
+                            <label htmlFor="width-input" className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Larghezza (max 58cm)</label>
                             <input 
                                 id="width-input"
                                 type="number" 
@@ -110,7 +110,7 @@ export default function DTFConfigStep({
                         </div>
                         <div className="hidden sm:block pb-3 text-gray-300 font-bold" aria-hidden="true">×</div>
                         <div className="flex-1 space-y-2">
-                            <label htmlFor="height-input" className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Altezza (cm)</label>
+                            <label htmlFor="height-input" className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Altezza (cm)</label>
                             <input 
                                 id="height-input"
                                 type="number" 
@@ -131,12 +131,13 @@ export default function DTFConfigStep({
 
         {/* 2. Servizi Aggiuntivi */}
         <section className="space-y-3" aria-label="Servizi Aggiuntivi">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">2. Servizi Aggiuntivi</h3>
+            <h3 className="text-xs font-bold text-gray-600 uppercase tracking-widest">2. Servizi Aggiuntivi</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Checkbox personalizzate con aria-checked */}
                 <div 
                     role="checkbox"
                     aria-checked={extras.isFullService}
+                    aria-label="Servizio Revisione File (Full Service)"
                     tabIndex={0}
                     onClick={() => setExtras(p => ({...p, isFullService: !p.isFullService}))}
                     onKeyDown={(e) => {
@@ -169,6 +170,7 @@ export default function DTFConfigStep({
                 <div 
                     role="checkbox"
                     aria-checked={extras.isFlashOrder}
+                    aria-label="Ordine Flash (Produzione 24h)"
                     tabIndex={0}
                     onClick={() => setExtras(p => ({...p, isFlashOrder: !p.isFlashOrder}))}
                     onKeyDown={(e) => {
@@ -201,7 +203,7 @@ export default function DTFConfigStep({
         {/* 3. Quantità e Prezzo */}
         <section className="bg-gray-50 rounded-2xl p-4 md:p-6 border border-gray-100" aria-label="Riepilogo Quantità e Prezzo">
             <div className="space-y-3">
-                <label htmlFor="qty-main" className="text-xs font-bold text-gray-400 uppercase tracking-widest">3. Quantità</label>
+                <label htmlFor="qty-main" className="text-xs font-bold text-gray-600 uppercase tracking-widest">3. Quantità</label>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <input 
                         id="qty-main"
@@ -226,16 +228,16 @@ export default function DTFConfigStep({
                                     <span className="text-4xl font-black text-gray-900 tracking-tight">
                                         {formatCurrency(priceData.totalPrice)}
                                     </span>
-                                    <span className="text-sm font-bold text-gray-400 uppercase">
+                                    <span className="text-sm font-bold text-gray-600 uppercase">
                                         {formatCurrency(priceData.unitPrice)} / cad.
                                     </span>
                                 </div>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                                <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mt-1">
                                     Totale Stimato (IVA escl.)
                                 </p>
                             </>
                         ) : (
-                            <p className="text-sm font-medium text-gray-400 italic">
+                            <p className="text-sm font-medium text-gray-600 italic">
                                 Inserisci i dati per il prezzo
                             </p>
                         )}

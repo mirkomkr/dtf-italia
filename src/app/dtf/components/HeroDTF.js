@@ -9,7 +9,7 @@ const UniversalContainer = dynamic(() => import('@/components/configurator/dtf/D
   ssr: false,
   loading: () => (
     <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full flex items-center justify-center">
-        <div className="animate-pulse text-slate-400 font-medium">Inizializzazione configuratore...</div>
+        <div className="animate-pulse text-slate-600 font-medium">Inizializzazione configuratore...</div>
     </div>
   )
 });
@@ -42,7 +42,7 @@ export default function Hero({ product }) {
                     
                     {/* Left: Copy & Value Props */}
                     <div className="space-y-8 text-center lg:text-left">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-400/20 text-indigo-300 text-sm font-bold mb-6 backdrop-blur-sm">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/25 border border-white/10 text-white text-sm font-bold mb-6 backdrop-blur-sm">
                             <span className="relative flex h-2 w-2">
                               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                               <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
@@ -68,7 +68,7 @@ export default function Hero({ product }) {
                             </button>
                             <Link 
                                 href="/serigrafia"
-                                className="px-8 py-4 bg-white/10 text-white border-2 border-white/10 rounded-xl font-bold text-lg hover:bg-white/20 transition-all flex items-center justify-center backdrop-blur-sm"
+                                className="px-8 py-4 bg-black/25 text-white border-2 border-white/10 rounded-xl font-bold text-lg hover:bg-black/40 transition-all flex items-center justify-center backdrop-blur-sm"
                             >
                                 Scopri Catalogo
                             </Link>

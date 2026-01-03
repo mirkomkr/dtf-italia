@@ -67,7 +67,7 @@ function SizeInput({ size, parentValue, onCommit, brandColor }) {
 
     return (
           <div className="flex flex-col gap-1">
-            <label htmlFor={`qty-${size}`} className="text-[10px] font-bold text-gray-400 uppercase text-center">{size}</label>
+            <label htmlFor={`qty-${size}`} className="text-[10px] font-bold text-gray-600 uppercase text-center">{size}</label>
             <input
               id={`qty-${size}`}
               type="number"

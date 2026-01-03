@@ -49,7 +49,7 @@ export function Benefits({ benefits = [], sectionTitle = "Perché Scegliere Noi"
                 {benefit.icon}
               </div>
               <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
-              <p className="text-gray-400">{benefit.desc}</p>
+              <p className="text-gray-300">{benefit.desc}</p>
             </li>
           ))}
         </ul>

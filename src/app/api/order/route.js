@@ -48,25 +48,18 @@ export async function POST(request) {
         ];
 
         // SE ABBIAMO LA CHIAVE S3, LA AGGIUNGIAMO SUBITO QUI!
-        if (uploadedFileKey) {
-            meta_data.push({
-                key: 's3_download_url',
-                value: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_REGION}.amazonaws.com/${uploadedFileKey}`
-            });
-            meta_data.push({
-                key: '_s3_file_key',
-                value: uploadedFileKey
-            });
-            meta_data.push({
-                key: '_file_uploaded_to_s3',
-                value: 'yes'
-            });
-        } else {
-            meta_data.push({
-                key: '_file_uploaded_to_s3',
-                value: 'no'
-            });
-        }
+if (uploadedFileKey) {
+    meta_data.push({ key: 's3_download_url', value: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_REGION}.amazonaws.com/${uploadedFileKey}` });
+    meta_data.push({ key: '_s3_file_key', value: uploadedFileKey });
+    meta_data.push({ key: '_file_uploaded_to_s3', value: 'yes' });
+} else if (skipFiles === true) {
+    // Il salvavita si attiva SOLO se l'utente ha scelto esplicitamente di saltare l'upload
+    meta_data.push({ key: '_file_uploaded_to_s3', value: 'no' });
+} else {
+    // In tutti gli altri casi (es. sta andando verso la pagina S3), non scriviamo 'no'
+    // così lo snippet PHP non troverà nulla e non mostrerà il box nella mail.
+    meta_data.push({ key: '_file_uploaded_to_s3', value: 'pending' }); 
+}
 
         // METADATI TEST (SOLO SE IS_DEV_MODE)
         if (paymentMethod === 'dev' && IS_DEV_MODE) {

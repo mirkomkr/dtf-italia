@@ -4,8 +4,11 @@ if (!process.env.S3_REGION || !process.env.S3_ACCESS_KEY || !process.env.S3_SECR
     console.warn("Missing S3 Environment Variables. Uploads may fail.");
 }
 
+export const S3_REGION = process.env.S3_REGION || "eu-south-1";
+export const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
+
 export const s3Client = new S3Client({
-  region: process.env.S3_REGION || "eu-south-1",
+  region: S3_REGION,
   credentials: {
     accessKeyId: process.env.S3_ACCESS_KEY || "",
     secretAccessKey: process.env.S3_SECRET_KEY || "",

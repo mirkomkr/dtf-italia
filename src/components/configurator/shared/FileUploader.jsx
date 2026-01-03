@@ -47,8 +47,6 @@ export default function FileUploader({
 
     const handleS3Upload = async (fileToUpload) => {
         try {
-             if (!orderId) throw new Error("Order ID mancante per upload S3");
-             
              setUploadProgress(prev => ({ ...prev, [fileToUpload.name]: 10 }));
 
              // 1. Get Presigned URL
@@ -58,7 +56,7 @@ export default function FileUploader({
                  body: JSON.stringify({ 
                      filename: fileToUpload.name, 
                      contentType: fileToUpload.type,
-                     orderId 
+                     orderId // Optional: if null, backend uses 'temp' prefix
                  })
              });
 
@@ -77,20 +75,6 @@ export default function FileUploader({
              if (!uploadRes.ok) throw new Error("Errore S3 PUT");
 
              setUploadProgress(prev => ({ ...prev, [fileToUpload.name]: 100 }));
-
-             // 3. Sync with WooCommerce (Fire & Forget)
-             fetch('/api/order/update-metadata', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ 
-                    orderId, 
-                    metaData: { 
-                        _s3_file_key: key,
-                        s3_download_url: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`,
-                        _file_uploaded_to_s3: 'yes'
-                    }
-                })
-             }).catch(console.error);
 
              return key;
 
@@ -134,12 +118,13 @@ export default function FileUploader({
         }
 
         // Trigger S3 Upload
-        if (uploadMode === 's3' && orderId) {
+        if (uploadMode === 's3') {
+            let lastKey = null;
             for(const f of validFiles) {
-                await handleS3Upload(f);
+                lastKey = await handleS3Upload(f);
             }
             if (onUploadComplete) {
-                setTimeout(onUploadComplete, 1000); // Small delay for UX
+                onUploadComplete(lastKey);
             }
         }
     };

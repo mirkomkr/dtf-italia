@@ -7,11 +7,13 @@ export async function POST(request) {
   try {
     const { filename, contentType, orderId } = await request.json();
 
-    if (!filename || !orderId) {
-      return NextResponse.json({ error: 'Missing filename or orderId' }, { status: 400 });
+    if (!filename) {
+      return NextResponse.json({ error: 'Missing filename' }, { status: 400 });
     }
 
-    const key = `uploads/${orderId}/${Date.now()}-${filename.replace(/\s+/g, '_')}`;
+    const key = orderId 
+      ? `uploads/${orderId}/${Date.now()}-${filename.replace(/\s+/g, '_')}`
+      : `uploads/temp/${Date.now()}-${filename.replace(/\s+/g, '_')}`;
     
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,

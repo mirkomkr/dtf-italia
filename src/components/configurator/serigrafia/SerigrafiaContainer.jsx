@@ -26,6 +26,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   const [currentStep, setCurrentStep] = useState(1);
   const [orderId, setOrderId] = useState(null);
   const [isUploadComplete, setIsUploadComplete] = useState(false);
+  const [uploadedFileKey, setUploadedFileKey] = useState(null);
 
   // --- Stato Configurazione Serigrafica ---
   const [activeGender, setActiveGender] = useState('uomo'); 
@@ -105,19 +106,14 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
   const handleOrderSuccess = (newId, meta = {}) => {
     setOrderId(newId);
-    if (meta.skipFiles) {
-      setIsUploadComplete(true);
-      setCurrentStep(4);
-    } else {
-      setCurrentStep(3);
-    }
+    setCurrentStep(4);
   };
 
   const steps = [
     { id: 1, label: 'Configura' },
-    { id: 2, label: 'Checkout' },
-    { id: 3, label: 'Istruzioni File'},
-    { id: 4, label: 'Upload' }
+    { id: 2, label: 'Upload' },
+    { id: 3, label: 'Checkout' },
+    { id: 4, label: 'Completato' }
   ];
 
   return (
@@ -126,8 +122,8 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
         currentStep={currentStep} 
         steps={steps}
         onStepClick={(s) => {
-          if (s > 2 && !orderId) return;
-          if (s < currentStep || orderId) setCurrentStep(s);
+          if (s > currentStep && s > 1 && !selectedColor) return; // Basic validation
+          if (s < currentStep) setCurrentStep(s);
         }}
         isStepCompleted={!!orderId}
         brandColor="red"
@@ -165,62 +161,46 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
           />
         )}
 
-        {/* STEP 2: CHECKOUT */}
-        {currentStep === 2 && !orderId && (
-          <UnifiedCheckout 
-            type="serigrafia"
-            priceData={price}
-            productData={{ quantities, singleQuantity, frontPrint, backPrint, fileCheck, totalQuantity }}
-            brandColor="red"
-            onSuccess={handleOrderSuccess}
-            onBack={() => setCurrentStep(1)}
-          />
-        )}
-
-        {/* STEP 3: ISTRUZIONI FILE (POST-PAGAMENTO) */}
-        {currentStep === 3 && orderId && (
-          <div className="max-w-2xl mx-auto space-y-6">
-            <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-red-900">
-              <h3 className="font-bold mb-2 uppercase text-sm">Preparazione File Serigrafia</h3>
-              <p className="text-sm mb-4">L'upload avviene dopo la conferma dell'ordine.</p>
-              <ul className="grid grid-cols-2 gap-2 text-xs font-medium opacity-80">
-                <li>• PDF Vettoriale o AI</li>
-                <li>• Testi convertiti in tracciati</li>
-                <li>• Colori spot (Pantone) consigliati</li>
-                <li>• Risoluzione 300 DPI per raster</li>
-              </ul>
+        {/* STEP 2: CARICAMENTO FILE (PRE-PAGAMENTO) */}
+        {currentStep === 2 && (
+          <div className="max-w-3xl mx-auto space-y-8 text-center">
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-red-900 text-left">
+              <h3 className="font-bold mb-2 uppercase text-sm">Caricamento File Serigrafia</h3>
+              <p className="text-sm mb-4">Carica il tuo file per procedere al checkout. Formati accettati: PDF, AI, EPS, SVG.</p>
             </div>
-
-            <div className="flex justify-between items-center">
-              <button onClick={() => setCurrentStep(2)} className="text-gray-600 font-bold text-xs uppercase hover:text-red-600 transition-colors">
+            <FileUploader 
+              uploadMode="s3"
+              brandColor="red"
+              file={null}
+              onUploadComplete={(key) => {
+                setUploadedFileKey(key);
+                setCurrentStep(3);
+              }}
+            />
+            <div className="flex justify-start">
+              <button onClick={() => setCurrentStep(1)} className="text-gray-600 font-bold text-xs uppercase hover:text-red-600 transition-colors">
                 Indietro
-              </button>
-              <button onClick={() => setCurrentStep(4)} className="bg-red-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-red-700 transition-colors uppercase tracking-widest text-sm">
-                Vai al caricamento
               </button>
             </div>
           </div>
         )}
 
-        {/* STEP 4: SUCCESS & UPLOAD */}
+        {/* STEP 3: CHECKOUT */}
+        {currentStep === 3 && !orderId && (
+          <UnifiedCheckout 
+            type="serigrafia"
+            priceData={price}
+            productData={{ quantities, singleQuantity, frontPrint, backPrint, fileCheck, totalQuantity }}
+            uploadedFileKey={uploadedFileKey}
+            brandColor="red"
+            onSuccess={handleOrderSuccess}
+            onBack={() => setCurrentStep(2)}
+          />
+        )}
+
+        {/* STEP 4: SUCCESS */}
         {currentStep === 4 && orderId && (
-          isUploadComplete ? (
-            <SuccessStep orderId={orderId} brandColor="red" />
-          ) : (
-            <div className="max-w-3xl mx-auto space-y-8 text-center">
-              <div className="bg-green-50 border border-green-200 rounded-2xl p-6 w-full">
-                <h2 className="text-2xl font-bold text-gray-900">Ordine Serigrafia #{orderId}</h2>
-                <p className="text-green-700">Pagamento confermato. Carica i file per la messa in produzione.</p>
-              </div>
-              <FileUploader 
-                orderId={orderId}
-                uploadMode="s3"
-                brandColor="red"
-                files={[]} 
-                onUploadComplete={() => setIsUploadComplete(true)}
-              />
-            </div>
-          )
+          <SuccessStep orderId={orderId} brandColor="red" />
         )}
       </div>
     </div>

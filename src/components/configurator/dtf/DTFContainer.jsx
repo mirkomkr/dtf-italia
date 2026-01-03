@@ -29,6 +29,7 @@ export default function DTFContainer({ product }) {
   const [orderId, setOrderId] = useState(null);
   const [isUploadComplete, setIsUploadComplete] = useState(false);
   const [files, setFiles] = useState([]);
+  const [uploadedFileKey, setUploadedFileKey] = useState(null);
 
   // --- Stato Configurazione ---
   const [config, setConfig] = useState({
@@ -56,19 +57,14 @@ export default function DTFContainer({ product }) {
 
   const handleOrderSuccess = (newOrderId, meta = {}) => {
     setOrderId(newOrderId);
-    if (meta.skipFiles) {
-      setIsUploadComplete(true);
-      setCurrentStep(4);
-    } else {
-      setCurrentStep(3);
-    }
+    setCurrentStep(4);
   };
 
   const steps = [
     { id: 1, label: 'Configura' },
-    { id: 2, label: 'Checkout' },
-    { id: 3, label: 'Istruzioni File'},
-    { id: 4, label: 'Upload' }
+    { id: 2, label: 'Upload' },
+    { id: 3, label: 'Checkout' },
+    { id: 4, label: 'Completato' }
   ];
 
   return (
@@ -79,8 +75,8 @@ export default function DTFContainer({ product }) {
         currentStep={currentStep} 
         steps={steps}
         onStepClick={(step) => {
-            if (step > 2 && !orderId) return;
-            if (step < currentStep || orderId) setCurrentStep(step);
+            if (step > currentStep && step > 1 && !config.price) return;
+            if (step < currentStep) setCurrentStep(step);
         }}
         isStepCompleted={!!orderId} 
       />
@@ -112,68 +108,53 @@ export default function DTFContainer({ product }) {
             </div>
         )}
 
-        {/* STEP 2: CHECKOUT (PRIMA DEL PAGAMENTO) */}
-        {currentStep === 2 && !orderId && (
-            <UnifiedCheckout 
-                type="dtf"
-                priceData={config.price}
-                productData={{ ...config }}
-                brandColor="indigo"
-                onSuccess={handleOrderSuccess}
-                onBack={() => setCurrentStep(1)}
-            />
-        )}
-
-        {/* STEP 3: ISTRUZIONI FILE (POST-PAGAMENTO) */}
-        {currentStep === 3 && orderId && (
-            <div className="max-w-2xl mx-auto space-y-6">
-                <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6">
-                    <h3 className="font-bold text-indigo-900 mb-2 uppercase text-sm tracking-wider">Istruzioni File</h3>
+        {/* STEP 2: CARICAMENTO FILE */}
+        {currentStep === 2 && (
+            <div className="max-w-3xl mx-auto space-y-8 text-center">
+                <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 text-left">
+                    <h3 className="font-bold text-indigo-900 mb-2 uppercase text-sm tracking-wider">Caricamento File DTF</h3>
                     <p className="text-indigo-800 text-sm mb-4">
-                        Il caricamento dei file avviene <strong>dopo il pagamento</strong>.
+                        Il caricamento dei file ora avviene <strong>prima del pagamento</strong>.
                     </p>
-                    <ul className="grid grid-cols-2 gap-2 text-indigo-700 text-xs font-medium">
-                        <li>• PDF, PNG, TIFF, AI</li>
-                        <li>• Risoluzione 300 DPI</li>
-                        <li>• Sfondo Trasparente</li>
-                        <li>• Metodo CMYK</li>
-                    </ul>
                 </div>
+                
+                <FileUploader 
+                    files={files}
+                    onFilesChange={setFiles}
+                    maxSize={100 * 1024 * 1024}
+                    // accept={{ 'image/*': ['.png', '.tif', '.tiff'], 'application/pdf': ['.pdf'], 'application/postscript': ['.ai', '.eps'], 'image/svg+xml': ['.svg'] }}
+                    uploadMode="s3"
+                    brandColor="indigo"
+                    onUploadComplete={(key) => {
+                        setUploadedFileKey(key);
+                        setCurrentStep(3);
+                    }}
+                />
 
-                <div className="flex justify-between items-center">
-                    <button onClick={() => setCurrentStep(2)} className="text-gray-600 font-bold text-xs uppercase hover:text-indigo-600 transition-colors">
+                <div className="flex justify-start">
+                    <button onClick={() => setCurrentStep(1)} className="text-gray-600 font-bold text-xs uppercase hover:text-indigo-600 transition-colors">
                         Indietro
-                    </button>
-                    <button onClick={() => setCurrentStep(4)} className="bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-700 transition-colors uppercase tracking-widest text-sm">
-                        Vai al caricamento
                     </button>
                 </div>
             </div>
         )}
 
+        {/* STEP 3: CHECKOUT */}
+        {currentStep === 3 && !orderId && (
+            <UnifiedCheckout 
+                type="dtf"
+                priceData={config.price}
+                productData={{ ...config }}
+                uploadedFileKey={uploadedFileKey}
+                brandColor="indigo"
+                onSuccess={handleOrderSuccess}
+                onBack={() => setCurrentStep(2)}
+            />
+        )}
+
         {/* STEP 4: CARICAMENTO FILE */}
         {currentStep === 4 && orderId && (
-            isUploadComplete ? (
-                <SuccessStep orderId={orderId} brandColor="indigo" />
-            ) : (
-                <div className="max-w-3xl mx-auto space-y-8 text-center">
-                    <div className="bg-green-50 border border-green-200 rounded-2xl p-6 inline-block w-full">
-                        <h2 className="text-2xl font-bold text-gray-900">Ordine #{orderId} Confermato!</h2>
-                        <p className="text-green-700">Paga completato. Ora carica i tuoi file qui sotto.</p>
-                    </div>
-                    
-                    <FileUploader 
-                        files={files}
-                        onFilesChange={setFiles}
-                        maxSize={100 * 1024 * 1024}
-                        accept={{ 'image/*': ['.png', '.tif', '.tiff'], 'application/pdf': ['.pdf'], 'application/postscript': ['.ai', '.eps'], 'image/svg+xml': ['.svg'] }}
-                        uploadMode="s3"
-                        orderId={orderId}
-                        brandColor="indigo"
-                        onUploadComplete={() => setIsUploadComplete(true)}
-                    />
-                </div>
-            )
+            <SuccessStep orderId={orderId} brandColor="indigo" />
         )}
       </div>
     </div>

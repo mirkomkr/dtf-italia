@@ -33,7 +33,7 @@ export default function UnifiedCheckout({
     const shippingCost = shippingOption === 'pickup' ? 0.00 : 7.50; 
 
     // --- Logica di Pagamento ---
-    const handlePayment = async (paymentMethod, skipFiles = false) => {
+    const handlePayment = async (paymentMethod) => {
         // Validazione Base
         if (!formData.firstName || !formData.lastName || !formData.email) {
             alert("Per favore, inserisci i dati di contatto.");
@@ -49,23 +49,21 @@ export default function UnifiedCheckout({
 
         try {
             const payload = {
-    type,
-    customer: formData,
-    shipping: { option: shippingOption, cost: shippingCost },
-    paymentMethod,
-    skipFiles,
-    // Mappiamo correttamente detailedQuantities per la route.js
-    items: {
-        ...productData,
-        detailedQuantities: productData.quantities // Forza il nome che la API si aspetta
-    },
-    uploadedFileKey: skipFiles ? null : uploadedFileKey, 
-    pricing: {
-        ...priceData,
-        shippingCost,
-        finalTotal: Number((priceData.totalPrice + shippingCost).toFixed(2))
-    }
-};
+                type,
+                customer: formData,
+                shipping: { option: shippingOption, cost: shippingCost },
+                paymentMethod,
+                items: {
+                    ...productData,
+                    detailedQuantities: productData.quantities 
+                },
+                uploadedFileKey: uploadedFileKey, 
+                pricing: {
+                    ...priceData,
+                    shippingCost,
+                    finalTotal: Number((priceData.totalPrice + shippingCost).toFixed(2))
+                }
+            };
 
             const response = await fetch('/api/order', {
                 method: 'POST',
@@ -76,7 +74,7 @@ export default function UnifiedCheckout({
             const result = await response.json();
 
             if (result.success && result.orderId) {
-                onSuccess(result.orderId, { skipFiles });
+                onSuccess(result.orderId);
             } else {
                 throw new Error(result.error || "Errore durante la creazione dell'ordine");
             }

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
-import { createWooCommerceOrder } from '@/lib/woocommerce';
+import { createWooCommerceOrder, updateWooCommerceOrder } from '@/lib/woocommerce';
 import { IS_DEV_MODE } from '@/lib/config';
+import { CopyObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { s3Client, S3_REGION, S3_BUCKET_NAME } from '@/lib/s3-client';
 
 export async function POST(request) {
     try {
@@ -57,18 +59,14 @@ const meta_data = [
 if (uploadedFileKey) {
     meta_data.push({ key: '_file_uploaded_to_s3', value: 'yes' });
     meta_data.push({ key: '_s3_file_key', value: uploadedFileKey });
-} else if (skipFiles === true) {
-    meta_data.push({ key: '_file_uploaded_to_s3', value: 'no' });
 } else {
-    meta_data.push({ key: '_file_uploaded_to_s3', value: 'pending' }); 
+    meta_data.push({ key: '_file_uploaded_to_s3', value: 'no' }); 
 }
+
  // METADATI TEST (SOLO SE IS_DEV_MODE)
-        if (paymentMethod === 'dev' && IS_DEV_MODE) {
-            meta_data.push({ key: '_is_dev_test', value: 'yes' });
-            if (skipFiles) {
-                meta_data.push({ key: '_skip_files', value: 'yes' });
-            }
-        }
+if (paymentMethod === 'dev' && IS_DEV_MODE) {
+    meta_data.push({ key: '_is_dev_test', value: 'yes' });
+}
 
         line_items.push({
             product_id: items.productId || defaultId,
@@ -113,11 +111,51 @@ if (uploadedFileKey) {
         };
         
         const wcResponse = await createWooCommerceOrder(orderData);
+        const orderId = wcResponse.id;
+
+        // --- NUOVA LOGICA: SPOSTAMENTO FILE S3 ---
+        let finalFileKey = uploadedFileKey;
+        if (uploadedFileKey && uploadedFileKey.startsWith('uploads/temp/')) {
+            try {
+                const fileName = uploadedFileKey.split('/').pop();
+                const newKey = `uploads/orders/${orderId}_${fileName}`;
+                
+                // 1. Copy Object with Public Read ACL
+                await s3Client.send(new CopyObjectCommand({
+                    Bucket: S3_BUCKET_NAME,
+                    CopySource: `${S3_BUCKET_NAME}/${uploadedFileKey}`,
+                    Key: newKey,
+                    ACL: 'public-read'
+                }));
+
+                // 2. Delete Temp Object
+                await s3Client.send(new DeleteObjectCommand({
+                    Bucket: S3_BUCKET_NAME,
+                    Key: uploadedFileKey
+                }));
+
+                finalFileKey = newKey;
+
+                // 3. Modifica Metadati WooCommerce con il link definitivo (Chiamata Diretta)
+                await updateWooCommerceOrder(orderId, {
+                    meta_data: [
+                        { key: '_file_uploaded_to_s3', value: 'yes' },
+                        { key: '_s3_file_key', value: finalFileKey },
+                        { key: 's3_download_url', value: `https://${S3_BUCKET_NAME}.s3.${S3_REGION}.amazonaws.com/${finalFileKey}` }
+                    ]
+                });
+
+            } catch (s3Error) {
+                console.error("S3 Move or Metadata Update Error:", s3Error);
+                // Keep success: true even if S3/Metadata fails, as order exists
+            }
+        }
         
         return NextResponse.json({ 
             success: true, 
-            orderId: wcResponse.id,
-            total: wcResponse.total
+            orderId: orderId,
+            total: wcResponse.total,
+            finalFileKey
         });
 
     } catch (error) {

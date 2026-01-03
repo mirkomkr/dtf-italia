@@ -41,25 +41,38 @@ export async function POST(request) {
         const line_items = [];
         const defaultId = type === 'serigrafia' ? 240 : 488;
         
-        // Costruiamo i meta_data base
-        const meta_data = [
-    { key: 'Front Print', value: items.frontPrint || 'No' },
-    { key: 'Back Print', value: items.backPrint || 'No' },
+const meta_data = [
+    // --- DATI DI STAMPA ---
+    { key: 'Front Print', value: items.frontPrint || 'Nessuna stampa fronte' },
+    { key: 'Back Print', value: items.backPrint || 'Nessuna stampa retro' },
     { key: 'Format', value: items.format || 'custom' },
-    { key: 'Dimensions', value: items.dimensions || 'N/D' }
+    { key: 'Dimensions', value: items.dimensions || 'N/D' },
+    
+    // --- TAGLIE E QUANTITÀ (Fondamentali per Serigrafia) ---
+    { key: 'Detailed Quantities', value: JSON.stringify(items.detailedQuantities || {}) },
+    
+    // --- DATI SPECIFICI DTF ---
+    { key: 'Meters', value: items.meters || '0' },
+    
+    // --- OPZIONI EXTRA ---
+    { key: 'Full Service', value: items.fullService ? 'Si' : 'No' },
+    { key: 'Flash Order', value: items.flashOrder ? 'Si' : 'No' },
+    
+    // --- LOGICA S3 (Quella che abbiamo sistemato per il pending) ---
+    { key: '_file_uploaded_to_s3', value: uploadedFileKey ? 'Si' : (skipFiles ? 'No' : 'Pending') }
 ];
 
-        // SE ABBIAMO LA CHIAVE S3, LA AGGIUNGIAMO SUBITO QUI!
+// --- LOGICA STATO S3 E SALVAVITA ---
 if (uploadedFileKey) {
+    // CASO A: Il file è già presente (raro in fase di creazione ordine, ma possibile)
     meta_data.push({ key: 's3_download_url', value: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_REGION}.amazonaws.com/${uploadedFileKey}` });
     meta_data.push({ key: '_s3_file_key', value: uploadedFileKey });
     meta_data.push({ key: '_file_uploaded_to_s3', value: 'yes' });
 } else if (skipFiles === true) {
-    // Il salvavita si attiva SOLO se l'utente ha scelto esplicitamente di saltare l'upload
+    // CASO B: L'utente ha premuto "Fine Diretta" -> SI attiva il tasto blu nelle email
     meta_data.push({ key: '_file_uploaded_to_s3', value: 'no' });
 } else {
-    // In tutti gli altri casi (es. sta andando verso la pagina S3), non scriviamo 'no'
-    // così lo snippet PHP non troverà nulla e non mostrerà il box nella mail.
+    // CASO C: L'utente ha premuto "Vai a S3" -> NON si deve attivare il tasto blu ora
     meta_data.push({ key: '_file_uploaded_to_s3', value: 'pending' }); 
 }
 

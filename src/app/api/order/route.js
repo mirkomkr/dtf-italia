@@ -17,7 +17,8 @@ export async function POST(request) {
             items = {}, 
             pricing = { totalPrice: 0 },
             uploadedFileKey = null,
-            skipFiles = false
+            skipFiles = false,
+            testOptions = { skipS3: false }
         } = body;
 
         // 1. Map Payment Method
@@ -56,7 +57,9 @@ const meta_data = [
 ];
 
 // --- LOGICA STATO S3 (APPEND) ---
-if (uploadedFileKey) {
+const hasFile = !!uploadedFileKey && !testOptions.skipS3;
+
+if (hasFile) {
     meta_data.push({ key: '_file_uploaded_to_s3', value: 'yes' });
     meta_data.push({ key: '_s3_file_key', value: uploadedFileKey });
 } else {
@@ -115,7 +118,9 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
 
         // --- NUOVA LOGICA: SPOSTAMENTO FILE S3 ---
         let finalFileKey = uploadedFileKey;
-        if (uploadedFileKey && uploadedFileKey.startsWith('uploads/temp/')) {
+        const shouldMoveFile = uploadedFileKey && !testOptions.skipS3 && uploadedFileKey.startsWith('uploads/temp/');
+
+        if (shouldMoveFile) {
             try {
                 const fileName = uploadedFileKey.split('/').pop();
                 const newKey = `uploads/orders/${orderId}_${fileName}`;

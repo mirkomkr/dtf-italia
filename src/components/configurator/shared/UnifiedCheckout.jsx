@@ -33,7 +33,7 @@ export default function UnifiedCheckout({
     const shippingCost = shippingOption === 'pickup' ? 0.00 : 7.50; 
 
     // --- Logica di Pagamento ---
-    const handlePayment = async (paymentMethod) => {
+    const handlePayment = async (paymentMethod, skipS3 = false) => {
         // Validazione Base
         if (!formData.firstName || !formData.lastName || !formData.email) {
             alert("Per favore, inserisci i dati di contatto.");
@@ -57,7 +57,8 @@ export default function UnifiedCheckout({
                     ...productData,
                     detailedQuantities: productData.quantities 
                 },
-                uploadedFileKey: uploadedFileKey, 
+                uploadedFileKey: skipS3 ? null : uploadedFileKey,
+                testOptions: { skipS3 }, 
                 pricing: {
                     ...priceData,
                     shippingCost,

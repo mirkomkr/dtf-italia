@@ -8,7 +8,6 @@ export async function POST(request) {
     try {
         const body = await request.json();
         
-        // Destructure con valori di default per evitare Errori 500
         const { 
             type = 'dtf',
             customer = {}, 
@@ -17,7 +16,6 @@ export async function POST(request) {
             items = {}, 
             pricing = { totalPrice: 0 },
             uploadedFileKey = null,
-            skipFiles = false,
             testOptions = { skipS3: false }
         } = body;
 
@@ -40,53 +38,40 @@ export async function POST(request) {
             set_paid = true;
         }
 
-        // 2. Map Line Items con check di sicurezza
-        const line_items = [];
-        const defaultId = type === 'serigrafia' ? 240 : 488;
-        
-// 2. Costruzione METADATI UNIFICATA
-const meta_data = [
-    { key: 'Front Print', value: items.frontPrint || 'Nessuna stampa fronte' },
-    { key: 'Back Print', value: items.backPrint || 'Nessuna stampa retro' },
-    { key: 'Format', value: items.format || 'custom' },
-    { key: 'Dimensions', value: items.dimensions || 'N/D' },
-    { key: 'Detailed Quantities', value: JSON.stringify(items.detailedQuantities || {}) },
-    { key: 'Meters', value: items.meters || '0' },
-    { key: 'Full Service', value: items.fullService ? 'Si' : 'No' },
-    { key: 'Flash Order', value: items.flashOrder ? 'Si' : 'No' }
-];
+        // 2. Costruzione METADATI UNIFICATA
+        const meta_data = [
+            { key: 'Front Print', value: items?.frontPrint || 'Nessuna stampa fronte' },
+            { key: 'Back Print', value: items?.backPrint || 'Nessuna stampa retro' },
+            { key: 'Format', value: items?.format || 'custom' },
+            { key: 'Dimensions', value: items?.dimensions || 'N/D' },
+            { key: 'Detailed Quantities', value: JSON.stringify(items?.detailedQuantities || {}) },
+            { key: 'Meters', value: items?.meters || '0' },
+            { key: 'Full Service', value: items?.fullService ? 'Si' : 'No' },
+            { key: 'Flash Order', value: items?.flashOrder ? 'Si' : 'No' }
+        ];
 
-// --- LOGICA STATO S3 (PER ORDINE E ITEM) ---
-const hasFile = !!uploadedFileKey && !testOptions.skipS3;
-const s3_meta = [];
+        // --- LOGICA STATO S3 (PER ORDINE E ITEM) ---
+        const hasFile = !!uploadedFileKey && !testOptions?.skipS3;
+        const s3_meta = [];
 
-if (hasFile) {
-    s3_meta.push({ key: '_file_uploaded_to_s3', value: 'yes' });
-    s3_meta.push({ key: '_s3_file_key', value: uploadedFileKey });
-} else {
-    s3_meta.push({ key: '_file_uploaded_to_s3', value: 'no' }); 
-}
+        if (hasFile) {
+            s3_meta.push({ key: '_file_uploaded_to_s3', value: 'yes' });
+            s3_meta.push({ key: '_s3_file_key', value: uploadedFileKey });
+        } else {
+            s3_meta.push({ key: '_file_uploaded_to_s3', value: 'no' }); 
+        }
 
-// Aggiungiamo i tech meta all'item per compatibilità
-meta_data.push(...s3_meta);
+        meta_data.push(...s3_meta);
 
- // METADATI TEST (SOLO SE IS_DEV_MODE)
-if (paymentMethod === 'dev' && IS_DEV_MODE) {
-    meta_data.push({ key: '_is_dev_test', value: 'yes' });
-}
+        if (paymentMethod === 'dev' && IS_DEV_MODE) {
+            meta_data.push({ key: '_is_dev_test', value: 'yes' });
+        }
 
-        line_items.push({
-            product_id: items.productId || defaultId,
-            quantity: items.quantity || items.totalQuantity || 1,
-            total: String(pricing.totalPrice || "0.00"),
+        const line_items = [{
+            product_id: items?.productId || (type === 'serigrafia' ? 240 : 488),
+            quantity: items?.quantity || items?.totalQuantity || 1,
+            total: String(pricing?.totalPrice || "0.00"),
             meta_data: meta_data
-        });
-
-        // 3. Map Shipping
-        const shipping_lines = [{
-            method_id: shipping.option === 'pickup' ? 'local_pickup' : 'flat_rate',
-            method_title: shipping.option === 'pickup' ? 'Ritiro in Sede' : 'Spedizione Standard',
-            total: String(shipping.cost || "0")
         }];
 
         // 4. Construct Order Data
@@ -96,55 +81,53 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
             set_paid,
             currency: 'EUR',
             billing: {
-                first_name: customer.firstName || 'Cliente',
-                last_name: customer.lastName || 'Guest',
-                address_1: customer.address || '',
-                city: customer.city || '',
-                postcode: customer.zip || '',
-                email: customer.email || 'info@dtfitalia.it',
+                first_name: customer?.firstName || 'Cliente',
+                last_name: customer?.lastName || 'Guest',
+                address_1: customer?.address || '',
+                city: customer?.city || '',
+                postcode: customer?.zip || '',
+                email: customer?.email || 'info@dtfitalia.it',
                 country: 'IT',
-                phone: customer.phone || ''
+                phone: customer?.phone || ''
             },
             shipping: {
-                first_name: customer.firstName || 'Cliente',
-                last_name: customer.lastName || 'Guest',
-                address_1: shipping.option === 'shipping' ? (customer.address || '') : 'Via dei Castelli Romani, 22',
-                city: shipping.option === 'shipping' ? (customer.city || '') : 'Pomezia',
-                postcode: shipping.option === 'shipping' ? (customer.zip || '') : '00071',
+                first_name: customer?.firstName || 'Cliente',
+                last_name: customer?.lastName || 'Guest',
+                address_1: shipping?.option === 'shipping' ? (customer?.address || '') : 'Via dei Castelli Romani, 22',
+                city: shipping?.option === 'shipping' ? (customer?.city || '') : 'Pomezia',
+                postcode: shipping?.option === 'shipping' ? (customer?.zip || '') : '00071',
                 country: 'IT'
             },
             line_items,
-            shipping_lines,
-            meta_data: s3_meta // AGGIUNTO AL LIVELLO ORDINE
+            shipping_lines: [{
+                method_id: shipping?.option === 'pickup' ? 'local_pickup' : 'flat_rate',
+                method_title: shipping?.option === 'pickup' ? 'Ritiro in Sede' : 'Spedizione Standard',
+                total: String(shipping?.cost || "0")
+            }],
+            meta_data: s3_meta
         };
         
         const wcResponse = await createWooCommerceOrder(orderData);
         const orderId = wcResponse.id;
 
-        // --- NUOVA LOGICA: SPOSTAMENTO FILE S3 ---
+        // --- LOGICA SPOSTAMENTO FILE S3 ---
         let finalFileKey = uploadedFileKey;
-        
-        // 1. Normalizziamo il percorso rimuovendo lo slash iniziale se presente
         const cleanKey = uploadedFileKey ? uploadedFileKey.replace(/^\//, '') : null;
-
-        // 2. Controllo più flessibile: basta che contenga "temp/"
-        const shouldMoveFile = cleanKey && !testOptions.skipS3 && cleanKey.includes('temp/');
+        const shouldMoveFile = cleanKey && !testOptions?.skipS3 && cleanKey.includes('temp/');
 
         if (shouldMoveFile) {
             try {
-                // 3. ESTRAZIONE NOME FILE E CREAZIONE NUOVO PERCORSO
-                // Prendiamo solo il nome del file (es: 123456-immagine.png)
                 const fileName = cleanKey.split('/').pop(); 
-                
-                // Creiamo il percorso con la cartella ordine (es: uploads/orders/67/123456-immagine.png)
                 const newKey = `uploads/orders/${orderId}/${fileName}`;
-                const source = `${S3_BUCKET_NAME}/${cleanKey}`;
+                
+                // IMPORTANTE: CopySource richiede il formato "bucket/percorso/file" URL-encoded
+                const sourcePath = `${S3_BUCKET_NAME}/${cleanKey}`;
 
-                console.log(`[DEBUG] Moving to order folder: ${newKey}`);
+                console.log(`[DEBUG] S3 Copy: ${sourcePath} -> ${newKey}`);
 
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: S3_BUCKET_NAME,
-                    CopySource: source,
+                    CopySource: encodeURI(sourcePath), 
                     Key: newKey
                 }));
 
@@ -155,30 +138,18 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
 
                 finalFileKey = newKey;
 
-                // 4. AGGIORNAMENTO METADATI (Aggiorniamo WC con il percorso cartolarizzato)
+                // Aggiornamento Metadati su WC
                 await updateWooCommerceOrder(orderId, {
                     meta_data: [
-                        { 
-                            key: '_s3_file_key', 
-                            value: finalFileKey // Sarà: uploads/orders/67/nome-file.png
-                        },
-                        { 
-                            key: '_file_uploaded_to_s3', 
-                            value: 'yes' 
-                        }
+                        { key: '_s3_file_key', value: finalFileKey },
+                        { key: '_file_uploaded_to_s3', value: 'yes' }
                     ]
                 });
             } catch (s3Error) {
-                console.error("S3 Move or Metadata Update Error:", s3Error);
-                // Feedback in WooCommerce Error Handling
-                try {
-                    const errorMsg = `ERRORE SISTEMA: Spostamento S3 fallito. File: ${uploadedFileKey}. Errore: ${s3Error.message} (${s3Error.code || 'NoCode'})`;
-                    await updateWooCommerceOrder(orderId, {
-                        customer_note: errorMsg
-                    });
-                } catch (wcNoteError) {
-                    console.error("Failed to add error note to WC:", wcNoteError);
-                }
+                console.error("S3 Move Error:", s3Error);
+                await updateWooCommerceOrder(orderId, {
+                    customer_note: `Errore S3: Il file è rimasto in temp. Path: ${uploadedFileKey}`
+                });
             }
         }
         
@@ -193,8 +164,7 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
         console.error("Order API Error:", error);
         return NextResponse.json({ 
             success: false, 
-            error: error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+            error: error.message 
         }, { status: 500 });
     }
 }

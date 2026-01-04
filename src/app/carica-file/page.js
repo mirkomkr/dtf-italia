@@ -75,33 +75,46 @@ function UploadPageContent() {
                 </div>
 
                 <FileUploader 
-                    files={files}
-                    onFilesChange={setFiles}
-                    orderId={orderId}
-                    uploadMode="s3"
-                    brandColor="indigo"
-                    onUploadComplete={async () => {
-                        // 1. Notifica WooCommerce che il file ora esiste
-                        try {
-                            await fetch('/api/order/update-metadata', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ 
-                                    orderId: orderId, 
-                                    metaData: { 
-                                        _s3_file_key: 'uploaded_via_page',
-                                        _file_uploaded_to_s3: 'yes'
-                                    }
-                                })
-                            });
-                        } catch (err) {
-                            console.error("Errore aggiornamento meta:", err);
-                        }
-                        
-                        // 2. Mostra successo
-                        setIsUploadComplete(true);
-                    }}
-                />
+    files={files}
+    onFilesChange={setFiles}
+    orderId={orderId}
+    uploadMode="s3"
+    brandColor="indigo"
+    onUploadComplete={async (result) => {
+    // 1. Identifichiamo la key. 
+    // Se 'result' è un array (nuova versione), prendiamo il primo elemento.
+    // Se 'result' è una stringa (vecchia versione), usiamo direttamente quella.
+    const fileKey = Array.isArray(result) ? (result[0]?.key || result[0]?.s3Key) : result;
+
+    console.log("FileKey individuata per l'ordine:", fileKey);
+
+    if (fileKey && fileKey !== 'uploaded_via_page') {
+        try {
+            const response = await fetch('/api/order/update-metadata', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    orderId: orderId, 
+                    metaData: { 
+                        _s3_file_key: fileKey,
+                        _file_uploaded_to_s3: 'yes'
+                    }
+                })
+            });
+
+            if (!response.ok) throw new Error("Errore risposta server WordPress");
+            
+            console.log("Metadati aggiornati con successo su WooCommerce.");
+        } catch (err) {
+            console.error("Errore critico aggiornamento meta:", err);
+        }
+    } else {
+        console.error("Attenzione: fileKey mancante o errata!", result);
+    }
+    
+    setIsUploadComplete(true);
+}}
+/>
             </div>
         </div>
     );

@@ -119,14 +119,22 @@ export default function FileUploader({
 
         // Trigger S3 Upload
         if (uploadMode === 's3') {
-            let lastKey = null;
-            for(const f of validFiles) {
-                lastKey = await handleS3Upload(f);
-            }
-            if (onUploadComplete) {
-                onUploadComplete(lastKey);
-            }
+    const uploadedResults = []; // Creiamo un array di risultati
+    for(const f of validFiles) {
+        const key = await handleS3Upload(f);
+        if (key) {
+            uploadedResults.push({
+                name: f.name,
+                key: key,   // La key reale di S3
+                s3Key: key  // Doppia sicurezza
+            });
         }
+    }
+    if (onUploadComplete) {
+        // Inviamo l'array di oggetti, così la pagina trova .key
+        onUploadComplete(uploadedResults); 
+    }
+}
     };
 
     const handleFileChange = (event) => {

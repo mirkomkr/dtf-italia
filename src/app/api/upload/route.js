@@ -12,8 +12,8 @@ export async function POST(request) {
     }
 
     const key = orderId 
-      ? `uploads/${orderId}/${Date.now()}-${filename.replace(/\s+/g, '_')}`
-      : `uploads/temp/${Date.now()}-${filename.replace(/\s+/g, '_')}`;
+  ? `uploads/orders/${orderId}/${Date.now()}-${filename.replace(/\s+/g, '_')}`
+  : `uploads/temp/${Date.now()}-${filename.replace(/\s+/g, '_')}`;
     
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,

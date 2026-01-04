@@ -132,11 +132,15 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
 
         if (shouldMoveFile) {
             try {
-                // 3. Sostituzione precisa della cartella
-                const newKey = cleanKey.replace('temp/', 'orders/');
+                // 3. ESTRAZIONE NOME FILE E CREAZIONE NUOVO PERCORSO
+                // Prendiamo solo il nome del file (es: 123456-immagine.png)
+                const fileName = cleanKey.split('/').pop(); 
+                
+                // Creiamo il percorso con la cartella ordine (es: uploads/orders/67/123456-immagine.png)
+                const newKey = `uploads/orders/${orderId}/${fileName}`;
                 const source = `${S3_BUCKET_NAME}/${cleanKey}`;
 
-                console.log(`[DEBUG] Moving from ${source} to ${newKey}`);
+                console.log(`[DEBUG] Moving to order folder: ${newKey}`);
 
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: S3_BUCKET_NAME,
@@ -151,19 +155,19 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
 
                 finalFileKey = newKey;
 
-                // 4. Aggiornamento Metadati (Fondamentale per i tuoi snippet a Roma)
+                // 4. AGGIORNAMENTO METADATI (Aggiorniamo WC con il percorso cartolarizzato)
                 await updateWooCommerceOrder(orderId, {
-    meta_data: [
-        { 
-            key: '_s3_file_key', 
-            value: finalFileKey 
-        },
-        { 
-            key: '_file_uploaded_to_s3', 
-            value: 'yes' 
-        }
-    ]
-});
+                    meta_data: [
+                        { 
+                            key: '_s3_file_key', 
+                            value: finalFileKey // Sarà: uploads/orders/67/nome-file.png
+                        },
+                        { 
+                            key: '_file_uploaded_to_s3', 
+                            value: 'yes' 
+                        }
+                    ]
+                });
             } catch (s3Error) {
                 console.error("S3 Move or Metadata Update Error:", s3Error);
                 // Feedback in WooCommerce Error Handling

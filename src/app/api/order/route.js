@@ -54,7 +54,7 @@ export async function POST(request) {
                 // COMANDO DI COPIA
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: S3_BUCKET_NAME,
-                    CopySource: `${S3_BUCKET_NAME}/${cleanKey}`, // Niente encode, solo stringa piana
+                    CopySource: `/${S3_BUCKET_NAME}/${cleanKey}`, // Niente encode, solo stringa piana
                     Key: newKey
                 }));
 

@@ -5,15 +5,23 @@ import { s3Client } from '@/lib/s3-client';
 
 export async function POST(request) {
   try {
-    const { filename, contentType, orderId } = await request.json();
+    const body = await request.json();
+    const { filename, contentType, orderId } = body;
 
-    if (!filename) {
-      return NextResponse.json({ error: 'Missing filename' }, { status: 400 });
+    // 1. Controllo rigoroso: filename deve esistere ed essere una stringa
+    if (!filename || typeof filename !== 'string') {
+      console.error("Errore: filename mancante o formato non valido", { filename });
+      return NextResponse.json({ error: 'Nome file non valido o mancante' }, { status: 400 });
     }
 
+    // 2. Pulizia del nome file (sicura perché ora sappiamo che è una stringa)
+    const safeFilename = filename.replace(/\s+/g, '_');
+    const timestamp = Date.now();
+
+    // 3. Generazione Key con la nuova struttura cartelle
     const key = orderId 
-  ? `uploads/orders/${orderId}/${Date.now()}-${filename.replace(/\s+/g, '_')}`
-  : `uploads/temp/${Date.now()}-${filename.replace(/\s+/g, '_')}`;
+      ? `uploads/orders/${orderId}/${timestamp}-${safeFilename}`
+      : `uploads/temp/${timestamp}-${safeFilename}`;
     
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,
@@ -32,7 +40,7 @@ export async function POST(request) {
   } catch (error) {
     console.error("Presign error:", error);
     return NextResponse.json(
-      { error: 'Failed to generate upload URL' },
+      { error: 'Failed to generate upload URL', details: error.message },
       { status: 500 }
     );
   }

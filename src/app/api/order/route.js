@@ -51,26 +51,27 @@ export async function POST(request) {
                 const fileName = cleanKey.split('/').pop();
                 const newKey = `uploads/orders/${orderId}/${fileName}`;
 
-                // COMANDO DI COPIA
+                console.log(`Tentativo copia S3 da: /${S3_BUCKET_NAME}/${cleanKey}`);
+
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: S3_BUCKET_NAME,
-                    CopySource: `/${S3_BUCKET_NAME}/${cleanKey}`, // Niente encode, solo stringa piana
+                    CopySource: `/${S3_BUCKET_NAME}/${cleanKey}`, // Aggiunto lo slash iniziale
                     Key: newKey
                 }));
 
-                // ELIMINAZIONE ORIGINALE
                 await s3Client.send(new DeleteObjectCommand({
                     Bucket: S3_BUCKET_NAME,
                     Key: cleanKey
                 }));
 
-                // AGGIORNAMENTO WC CON NUOVA KEY
                 await updateWooCommerceOrder(orderId, {
                     meta_data: [{ key: '_s3_file_key', value: newKey }]
                 });
 
+                console.log("Spostamento completato con successo!");
+
             } catch (s3Error) {
-                console.error("Errore S3 (ma ordine creato):", s3Error);
+                console.error("Errore specifico S3:", s3Error.name, s3Error.message);
             }
         }
 

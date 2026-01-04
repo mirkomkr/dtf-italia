@@ -2,175 +2,82 @@ import { NextResponse } from 'next/server';
 import { createWooCommerceOrder, updateWooCommerceOrder } from '@/lib/woocommerce';
 import { IS_DEV_MODE } from '@/lib/config';
 import { CopyObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { s3Client, S3_REGION, S3_BUCKET_NAME } from '@/lib/s3-client';
+import { s3Client, S3_BUCKET_NAME } from '@/lib/s3-client';
 
 export async function POST(request) {
     try {
         const body = await request.json();
-        
         const { 
-            type = 'dtf',
             customer = {}, 
-            shipping = { option: 'pickup', cost: 0 }, 
-            paymentMethod = 'bacs', 
             items = {}, 
             pricing = { totalPrice: 0 },
             uploadedFileKey = null,
-            testOptions = { skipS3: false }
+            paymentMethod = 'bacs'
         } = body;
 
-        // 1. Map Payment Method
-        let payment_method = 'bacs';
-        let payment_method_title = 'Bonifico Bancario';
-        let set_paid = false;
-
-        if (paymentMethod === 'stripe') {
-            payment_method = 'stripe';
-            payment_method_title = 'Carta di Credito (Stripe)';
-            set_paid = true;
-        } else if (paymentMethod === 'paypal') {
-             payment_method = 'paypal';
-             payment_method_title = 'PayPal';
-             set_paid = true;
-        } else if (paymentMethod === 'dev' && IS_DEV_MODE) {
-            payment_method = 'bacs';
-            payment_method_title = 'Bonifico Bancario (Dev Test)';
-            set_paid = true;
-        }
-
-        // 2. Costruzione METADATI UNIFICATA
+        // 1. Prepariamo i metadati base
         const meta_data = [
-            { key: 'Front Print', value: items?.frontPrint || 'Nessuna stampa fronte' },
-            { key: 'Back Print', value: items?.backPrint || 'Nessuna stampa retro' },
-            { key: 'Format', value: items?.format || 'custom' },
-            { key: 'Dimensions', value: items?.dimensions || 'N/D' },
-            { key: 'Detailed Quantities', value: JSON.stringify(items?.detailedQuantities || {}) },
-            { key: 'Meters', value: items?.meters || '0' },
-            { key: 'Full Service', value: items?.fullService ? 'Si' : 'No' },
-            { key: 'Flash Order', value: items?.flashOrder ? 'Si' : 'No' }
+            { key: '_file_uploaded_to_s3', value: uploadedFileKey ? 'yes' : 'no' },
+            { key: '_s3_file_key', value: uploadedFileKey || '' },
+            { key: 'Format', value: items?.format || 'custom' }
         ];
 
-        // --- LOGICA STATO S3 (PER ORDINE E ITEM) ---
-        const hasFile = !!uploadedFileKey && !testOptions?.skipS3;
-        const s3_meta = [];
-
-        if (hasFile) {
-            s3_meta.push({ key: '_file_uploaded_to_s3', value: 'yes' });
-            s3_meta.push({ key: '_s3_file_key', value: uploadedFileKey });
-        } else {
-            s3_meta.push({ key: '_file_uploaded_to_s3', value: 'no' }); 
-        }
-
-        meta_data.push(...s3_meta);
-
-        if (paymentMethod === 'dev' && IS_DEV_MODE) {
-            meta_data.push({ key: '_is_dev_test', value: 'yes' });
-        }
-
-        const line_items = [{
-            product_id: items?.productId || (type === 'serigrafia' ? 240 : 488),
-            quantity: items?.quantity || items?.totalQuantity || 1,
-            total: String(pricing?.totalPrice || "0.00"),
-            meta_data: meta_data
-        }];
-
-        // 4. Construct Order Data
+        // 2. Creiamo l'ordine su WooCommerce
         const orderData = {
-            payment_method,
-            payment_method_title,
-            set_paid,
-            currency: 'EUR',
+            payment_method: paymentMethod,
+            payment_method_title: paymentMethod === 'bacs' ? 'Bonifico' : 'Pagamento Online',
+            set_paid: paymentMethod !== 'bacs',
             billing: {
                 first_name: customer?.firstName || 'Cliente',
                 last_name: customer?.lastName || 'Guest',
-                address_1: customer?.address || '',
-                city: customer?.city || '',
-                postcode: customer?.zip || '',
-                email: customer?.email || 'info@dtfitalia.it',
-                country: 'IT',
-                phone: customer?.phone || ''
-            },
-            shipping: {
-                first_name: customer?.firstName || 'Cliente',
-                last_name: customer?.lastName || 'Guest',
-                address_1: shipping?.option === 'shipping' ? (customer?.address || '') : 'Via dei Castelli Romani, 22',
-                city: shipping?.option === 'shipping' ? (customer?.city || '') : 'Pomezia',
-                postcode: shipping?.option === 'shipping' ? (customer?.zip || '') : '00071',
+                email: customer?.email || '',
                 country: 'IT'
             },
-            line_items,
-            shipping_lines: [{
-                method_id: shipping?.option === 'pickup' ? 'local_pickup' : 'flat_rate',
-                method_title: shipping?.option === 'pickup' ? 'Ritiro in Sede' : 'Spedizione Standard',
-                total: String(shipping?.cost || "0")
-            }],
-            meta_data: s3_meta
+            line_items: [{
+                product_id: items?.productId || 488,
+                quantity: items?.quantity || 1,
+                total: String(pricing?.totalPrice || "0.00"),
+                meta_data: meta_data
+            }]
         };
-        
-        // --- STEP 1: CREAZIONE ORDINE SU WOOCOMMERCE ---
-        // Lo facciamo subito per evitare che un errore S3 blocchi la vendita
+
         const wcResponse = await createWooCommerceOrder(orderData);
         const orderId = wcResponse.id;
 
-        // --- STEP 2: LOGICA SPOSTAMENTO FILE S3 ---
-        let finalFileKey = uploadedFileKey;
-        const cleanKey = uploadedFileKey ? uploadedFileKey.replace(/^\//, '') : null;
-        const shouldMoveFile = cleanKey && !testOptions?.skipS3 && cleanKey.includes('temp/');
-
-        if (shouldMoveFile) {
+        // 3. Spostamento File S3 (Solo se esiste ed è in temp)
+        if (uploadedFileKey && uploadedFileKey.includes('temp/')) {
             try {
-                const fileName = cleanKey.split('/').pop(); 
+                const cleanKey = uploadedFileKey.replace(/^\//, '');
+                const fileName = cleanKey.split('/').pop();
                 const newKey = `uploads/orders/${orderId}/${fileName}`;
-                
-                // CopySource richiede il formato: bucket-name/path-to-file
-                const sourcePath = `${S3_BUCKET_NAME}/${cleanKey}`;
 
-                console.log(`[S3] Tentativo spostamento: ${sourcePath} -> ${newKey}`);
-
+                // COMANDO DI COPIA
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: S3_BUCKET_NAME,
-                    CopySource: sourcePath, 
+                    CopySource: `${S3_BUCKET_NAME}/${cleanKey}`, // Niente encode, solo stringa piana
                     Key: newKey
                 }));
 
+                // ELIMINAZIONE ORIGINALE
                 await s3Client.send(new DeleteObjectCommand({
                     Bucket: S3_BUCKET_NAME,
                     Key: cleanKey
                 }));
 
-                finalFileKey = newKey;
-
-                // --- STEP 3: AGGIORNAMENTO METADATI DEFINITIVI ---
+                // AGGIORNAMENTO WC CON NUOVA KEY
                 await updateWooCommerceOrder(orderId, {
-                    meta_data: [
-                        { key: '_s3_file_key', value: finalFileKey },
-                        { key: '_file_uploaded_to_s3', value: 'yes' }
-                    ]
+                    meta_data: [{ key: '_s3_file_key', value: newKey }]
                 });
-                
-                console.log(`[SUCCESS] Ordine ${orderId} e file S3 completati.`);
 
             } catch (s3Error) {
-                console.error("S3 Move Error:", s3Error);
-                // Non blocchiamo la risposta, l'ordine è già stato creato con successo
-                await updateWooCommerceOrder(orderId, {
-                    customer_note: `Nota: Ordine creato ma spostamento file S3 fallito. File ancora in temp: ${uploadedFileKey}`
-                });
+                console.error("Errore S3 (ma ordine creato):", s3Error);
             }
         }
-        
-        return NextResponse.json({ 
-            success: true, 
-            orderId: orderId,
-            total: wcResponse.total,
-            finalFileKey
-        });
+
+        return NextResponse.json({ success: true, orderId });
 
     } catch (error) {
-        console.error("Order API Error:", error);
-        return NextResponse.json({ 
-            success: false, 
-            error: error.message 
-        }, { status: 500 });
+        console.error("ERRORE API ORDER:", error.message);
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }

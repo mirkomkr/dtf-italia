@@ -126,10 +126,11 @@ export async function POST(request) {
                 console.log(`[DEBUG] S3 Copy: ${sourcePath} -> ${newKey}`);
 
                 await s3Client.send(new CopyObjectCommand({
-                    Bucket: S3_BUCKET_NAME,
-                    CopySource: encodeURI(sourcePath), 
-                    Key: newKey
-                }));
+    Bucket: S3_BUCKET_NAME,
+    
+    CopySource: encodeURIComponent(`${S3_BUCKET_NAME}/${cleanKey}`), 
+    Key: newKey
+}));;
 
                 await s3Client.send(new DeleteObjectCommand({
                     Bucket: S3_BUCKET_NAME,

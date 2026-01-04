@@ -153,12 +153,17 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
 
                 // 4. Aggiornamento Metadati (Fondamentale per i tuoi snippet a Roma)
                 await updateWooCommerceOrder(orderId, {
-                    meta_data: [
-                        { key: '_s3_file_key', value: finalFileKey },
-                        { key: '_file_uploaded_to_s3', value: 'yes' }
-                    ]
-                });
-
+    meta_data: [
+        { 
+            key: '_s3_file_key', 
+            value: finalFileKey 
+        },
+        { 
+            key: '_file_uploaded_to_s3', 
+            value: 'yes' 
+        }
+    ]
+});
             } catch (s3Error) {
                 console.error("S3 Move or Metadata Update Error:", s3Error);
                 // Feedback in WooCommerce Error Handling

@@ -56,15 +56,19 @@ const meta_data = [
     { key: 'Flash Order', value: items.flashOrder ? 'Si' : 'No' }
 ];
 
-// --- LOGICA STATO S3 (APPEND) ---
+// --- LOGICA STATO S3 (PER ORDINE E ITEM) ---
 const hasFile = !!uploadedFileKey && !testOptions.skipS3;
+const s3_meta = [];
 
 if (hasFile) {
-    meta_data.push({ key: '_file_uploaded_to_s3', value: 'yes' });
-    meta_data.push({ key: '_s3_file_key', value: uploadedFileKey });
+    s3_meta.push({ key: '_file_uploaded_to_s3', value: 'yes' });
+    s3_meta.push({ key: '_s3_file_key', value: uploadedFileKey });
 } else {
-    meta_data.push({ key: '_file_uploaded_to_s3', value: 'no' }); 
+    s3_meta.push({ key: '_file_uploaded_to_s3', value: 'no' }); 
 }
+
+// Aggiungiamo i tech meta all'item per compatibilità
+meta_data.push(...s3_meta);
 
  // METADATI TEST (SOLO SE IS_DEV_MODE)
 if (paymentMethod === 'dev' && IS_DEV_MODE) {
@@ -110,7 +114,8 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
                 country: 'IT'
             },
             line_items,
-            shipping_lines
+            shipping_lines,
+            meta_data: s3_meta // AGGIUNTO AL LIVELLO ORDINE
         };
         
         const wcResponse = await createWooCommerceOrder(orderData);
@@ -122,13 +127,13 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
 
         if (shouldMoveFile) {
             try {
-                const fileName = uploadedFileKey.split('/').pop();
-                const newKey = `uploads/orders/${orderId}_${fileName}`;
+                const newKey = uploadedFileKey.replace('uploads/temp/', 'uploads/orders/');
                 
-                // 1. Copy Object with Public Read ACL
+                // 1. Copy Object
+                // CopySource must be /bucket/key or bucket/key
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: S3_BUCKET_NAME,
-                    CopySource: `${S3_BUCKET_NAME}/${uploadedFileKey}`,
+                    CopySource: encodeURI(`${S3_BUCKET_NAME}/${uploadedFileKey}`),
                     Key: newKey,
                     ACL: 'public-read'
                 }));

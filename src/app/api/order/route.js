@@ -123,41 +123,53 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
 
         // --- NUOVA LOGICA: SPOSTAMENTO FILE S3 ---
         let finalFileKey = uploadedFileKey;
-        const shouldMoveFile = uploadedFileKey && !testOptions.skipS3 && uploadedFileKey.startsWith('uploads/temp/');
+        
+        // 1. Normalizziamo il percorso rimuovendo lo slash iniziale se presente
+        const cleanKey = uploadedFileKey ? uploadedFileKey.replace(/^\//, '') : null;
+
+        // 2. Controllo più flessibile: basta che contenga "temp/"
+        const shouldMoveFile = cleanKey && !testOptions.skipS3 && cleanKey.includes('temp/');
 
         if (shouldMoveFile) {
             try {
-                const newKey = uploadedFileKey.replace('uploads/temp/', 'uploads/orders/');
-                
-                // 1. Copy Object
-                // CopySource must be /bucket/key or bucket/key
+                // 3. Sostituzione precisa della cartella
+                const newKey = cleanKey.replace('temp/', 'orders/');
+                const source = `${S3_BUCKET_NAME}/${cleanKey}`;
+
+                console.log(`[DEBUG] Moving from ${source} to ${newKey}`);
+
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: S3_BUCKET_NAME,
-                    CopySource: encodeURI(`${S3_BUCKET_NAME}/${uploadedFileKey}`),
-                    Key: newKey,
-                    ACL: 'public-read'
+                    CopySource: source,
+                    Key: newKey
                 }));
 
-                // 2. Delete Temp Object
                 await s3Client.send(new DeleteObjectCommand({
                     Bucket: S3_BUCKET_NAME,
-                    Key: uploadedFileKey
+                    Key: cleanKey
                 }));
 
                 finalFileKey = newKey;
 
-                // 3. Modifica Metadati WooCommerce con il link definitivo (Chiamata Diretta)
+                // 4. Aggiornamento Metadati (Fondamentale per i tuoi snippet a Roma)
                 await updateWooCommerceOrder(orderId, {
                     meta_data: [
-                        { key: '_file_uploaded_to_s3', value: 'yes' },
                         { key: '_s3_file_key', value: finalFileKey },
-                        { key: 's3_download_url', value: `https://${S3_BUCKET_NAME}.s3.${S3_REGION}.amazonaws.com/${finalFileKey}` }
+                        { key: '_file_uploaded_to_s3', value: 'yes' }
                     ]
                 });
 
             } catch (s3Error) {
                 console.error("S3 Move or Metadata Update Error:", s3Error);
-                // Keep success: true even if S3/Metadata fails, as order exists
+                // Feedback in WooCommerce Error Handling
+                try {
+                    const errorMsg = `ERRORE SISTEMA: Spostamento S3 fallito. File: ${uploadedFileKey}. Errore: ${s3Error.message} (${s3Error.code || 'NoCode'})`;
+                    await updateWooCommerceOrder(orderId, {
+                        customer_note: errorMsg
+                    });
+                } catch (wcNoteError) {
+                    console.error("Failed to add error note to WC:", wcNoteError);
+                }
             }
         }
         

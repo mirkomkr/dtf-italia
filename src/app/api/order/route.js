@@ -2,19 +2,14 @@ import { NextResponse } from 'next/server';
 import { createWooCommerceOrder, updateWooCommerceOrder } from '@/lib/woocommerce';
 import { IS_DEV_MODE } from '@/lib/config';
 import { CopyObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { s3Client, S3_REGION, S3_BUCKET_NAME } from '@/lib/s3-client';
+import { s3Client, S3_BUCKET_NAME } from '@/lib/s3-client';
 
 export async function POST(request) {
-    // Definizione sicura del bucket con fallback
     const bucket = S3_BUCKET_NAME || process.env.S3_BUCKET_NAME;
 
     try {
         const body = await request.json();
-        console.log("INCOMING ORDER BODY:", body);
-        
-        // Destructure con valori di default e optional chaining aggressivo per evitare crash
         const { 
-            type = 'dtf',
             customer = {}, 
             shipping = { option: 'pickup', cost: 0 }, 
             paymentMethod = 'bacs', 
@@ -24,86 +19,31 @@ export async function POST(request) {
             testOptions = { skipS3: false }
         } = body;
 
-        // 1. Map Payment Method
-        let payment_method = 'bacs';
-        let payment_method_title = 'Bonifico Bancario';
-        let set_paid = false;
-
-        if (paymentMethod === 'stripe') {
-            payment_method = 'stripe';
-            payment_method_title = 'Carta di Credito (Stripe)';
-            set_paid = true;
-        } else if (paymentMethod === 'paypal') {
-             payment_method = 'paypal';
-             payment_method_title = 'PayPal';
-             set_paid = true;
-        } else if (paymentMethod === 'dev' && IS_DEV_MODE) {
-            payment_method = 'bacs';
-            payment_method_title = 'Bonifico Bancario (Dev Test)';
-            set_paid = true;
-        }
-
-        // 2. Map Line Items con check di sicurezza
-        const line_items = [];
-        const defaultId = type === 'serigrafia' ? 240 : 488;
+        // 1. Logica Pagamento
+        const isPaid = (paymentMethod === 'stripe' || paymentMethod === 'paypal' || (paymentMethod === 'dev' && IS_DEV_MODE));
         
-        // Costruzione Safe dei Metadati
+        // 2. Costruzione Metadati (TUTTI i campi originali)
         let safeDetailedQuantities = '{}';
-        try {
-            safeDetailedQuantities = JSON.stringify(items?.detailedQuantities || {});
-        } catch (e) {
-            console.error("JSON Stringify Error:", e);
-        }
+        try { safeDetailedQuantities = JSON.stringify(items?.detailedQuantities || {}); } catch (e) {}
 
         const meta_data = [
-            { key: 'Front Print', value: items?.frontPrint || 'Nessuna stampa fronte' },
-            { key: 'Back Print', value: items?.backPrint || 'Nessuna stampa retro' },
+            { key: 'Front Print', value: items?.frontPrint || 'N/D' },
+            { key: 'Back Print', value: items?.backPrint || 'N/D' },
             { key: 'Format', value: items?.format || 'custom' },
             { key: 'Dimensions', value: items?.dimensions || 'N/D' },
             { key: 'Detailed Quantities', value: safeDetailedQuantities },
             { key: 'Meters', value: items?.meters || '0' },
             { key: 'Full Service', value: items?.fullService ? 'Si' : 'No' },
-            { key: 'Flash Order', value: items?.flashOrder ? 'Si' : 'No' }
+            { key: 'Flash Order', value: items?.flashOrder ? 'Si' : 'No' },
+            { key: '_file_uploaded_to_s3', value: uploadedFileKey ? 'yes' : 'no' },
+            { key: '_s3_file_key', value: uploadedFileKey || '' }
         ];
 
-        // --- LOGICA STATO S3 (PER ORDINE E ITEM) ---
-        const hasFile = !!uploadedFileKey && !testOptions?.skipS3;
-        const s3_meta = [];
-
-        if (hasFile) {
-            s3_meta.push({ key: '_file_uploaded_to_s3', value: 'yes' });
-            s3_meta.push({ key: '_s3_file_key', value: uploadedFileKey });
-        } else {
-            s3_meta.push({ key: '_file_uploaded_to_s3', value: 'no' }); 
-        }
-
-        meta_data.push(...s3_meta);
-
-        if (paymentMethod === 'dev' && IS_DEV_MODE) {
-            meta_data.push({ key: '_is_dev_test', value: 'yes' });
-        }
-
-        line_items.push({
-            product_id: items?.productId || defaultId,
-            quantity: items?.quantity || items?.totalQuantity || 1,
-            total: String(pricing?.totalPrice || "0.00"),
-            meta_data: meta_data
-        });
-
-        // 3. Map Shipping
-        const shippingOption = shipping?.option || 'pickup';
-        const shipping_lines = [{
-            method_id: shippingOption === 'pickup' ? 'local_pickup' : 'flat_rate',
-            method_title: shippingOption === 'pickup' ? 'Ritiro in Sede' : 'Spedizione Standard',
-            total: String(shipping?.cost || "0")
-        }];
-
-        // 4. Construct Order Data
+        // 3. Preparazione Dati Ordine
         const orderData = {
-            payment_method,
-            payment_method_title,
-            set_paid,
-            currency: 'EUR',
+            payment_method: paymentMethod === 'dev' ? 'bacs' : paymentMethod,
+            payment_method_title: paymentMethod === 'stripe' ? 'Stripe' : 'Pagamento Online',
+            set_paid: isPaid,
             billing: {
                 first_name: customer?.firstName || 'Cliente',
                 last_name: customer?.lastName || 'Guest',
@@ -111,50 +51,41 @@ export async function POST(request) {
                 city: customer?.city || '',
                 postcode: customer?.zip || '',
                 email: customer?.email || 'info@dtfitalia.it',
-                country: 'IT',
                 phone: customer?.phone || ''
             },
             shipping: {
                 first_name: customer?.firstName || 'Cliente',
                 last_name: customer?.lastName || 'Guest',
-                address_1: shippingOption === 'shipping' ? (customer?.address || '') : 'Via dei Castelli Romani, 22',
-                city: shippingOption === 'shipping' ? (customer?.city || '') : 'Pomezia',
-                postcode: shippingOption === 'shipping' ? (customer?.zip || '') : '00071',
-                country: 'IT'
+                address_1: shipping?.option === 'shipping' ? (customer?.address || '') : 'Via dei Castelli Romani, 22',
+                city: shipping?.option === 'shipping' ? (customer?.city || '') : 'Pomezia',
+                postcode: shipping?.option === 'shipping' ? (customer?.zip || '') : '00071'
             },
-            line_items,
-            shipping_lines,
-            meta_data: s3_meta 
+            line_items: [{
+                product_id: items?.productId || 488,
+                quantity: items?.quantity || 1,
+                total: String(pricing?.totalPrice || "0.00"),
+                meta_data
+            }],
+            shipping_lines: [{
+                method_id: shipping?.option === 'pickup' ? 'local_pickup' : 'flat_rate',
+                method_title: shipping?.option === 'pickup' ? 'Ritiro in Sede' : 'Spedizione Standard',
+                total: String(shipping?.cost || "0")
+            }]
         };
         
         const wcResponse = await createWooCommerceOrder(orderData);
-        // Validazione ID risposta WC
-        if (!wcResponse?.id) {
-             console.error("WC Response Invalid:", wcResponse);
-             throw new Error("WooCommerce ha restituito una risposta senza ID");
-        }
+        if (!wcResponse?.id) throw new Error("ID ordine mancante da WooCommerce");
         const orderId = wcResponse.id;
 
-        // --- OTTIMIZZAZIONE S3: SPOSTAMENTO E AGGIORNAMENTO UNIFICATO ---
+        // 4. SPOSTAMENTO S3 POST-PAGAMENTO (Isolato)
         let finalFileKey = uploadedFileKey;
-        const wcUpdates = {}; 
-        const cleanKey = uploadedFileKey ? uploadedFileKey.replace(/^\//, '') : null;
-        const shouldMoveFile = cleanKey && !testOptions?.skipS3 && cleanKey.includes('temp/');
+        const cleanKey = uploadedFileKey?.replace(/^\//, '');
 
-        if (shouldMoveFile) {
+        if (cleanKey && !testOptions?.skipS3 && cleanKey.includes('temp/')) {
             try {
-                // 3. ESTRAZIONE NOME FILE E CREAZIONE NUOVO PERCORSO
                 const fileName = cleanKey.split('/').pop(); 
-                const newKey = `uploads/orders/${orderId}/${fileName}`;
-                
-                // COSTUZIONE COPYSOURCE (Come richiesto: Bucket/ChiaveSorgente senza slash iniziale)
-                // Esempio: "mio-bucket/uploads/temp/file.pdf"
-                const sourceKey = cleanKey; 
-                // Nota: encodeURIComponent è spesso richiesto da AWS, ma seguiamo la richiesta "Bucket + Key"
-                // Se necessario tornare a encodeURIComponent, usare: encodeURIComponent(`${bucket}/${sourceKey}`)
-                const copySource = `${bucket}/${sourceKey}`;
-
-                console.log(`[DEBUG] Moving from ${copySource} to ${newKey}`);
+                const newKey = `uploads/orders/ordine-${orderId}-${fileName}`;
+                const copySource = encodeURI(`${bucket}/${cleanKey}`);
 
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: bucket,
@@ -162,47 +93,21 @@ export async function POST(request) {
                     Key: newKey
                 }));
 
-                await s3Client.send(new DeleteObjectCommand({
-                    Bucket: bucket,
-                    Key: cleanKey
-                }));
-
+                await s3Client.send(new DeleteObjectCommand({ Bucket: bucket, Key: cleanKey }));
+                
                 finalFileKey = newKey;
-
-                wcUpdates.meta_data = [
-                    { key: '_s3_file_key', value: finalFileKey },
-                    { key: '_file_uploaded_to_s3', value: 'yes' }
-                ];
-
+                await updateWooCommerceOrder(orderId, {
+                    meta_data: [{ key: '_s3_file_key', value: finalFileKey }]
+                });
             } catch (s3Error) {
-                // FAIL-SAFE: Non bloccare l'ordine per errori S3
-                console.error("S3 Move Error (FAIL-SAFE ENABLED):", s3Error);
-                wcUpdates.customer_note = `ATTENZIONE: File caricato ma non spostato (Errore S3). Path originale: ${uploadedFileKey}. Msg: ${s3Error.message}`;
-                // finalFileKey resta quello originale (temp) per sicurezza
-            }
-        }
-
-        if (Object.keys(wcUpdates).length > 0) {
-            try {
-                await updateWooCommerceOrder(orderId, wcUpdates);
-            } catch (wcError) {
-                console.error("Failed to update WooCommerce with S3 result:", wcError);
+                console.error("S3 Move Error (Handled):", s3Error.message);
             }
         }
         
-        return NextResponse.json({ 
-            success: true, 
-            orderId: orderId,
-            total: wcResponse.total,
-            finalFileKey
-        });
+        return NextResponse.json({ success: true, orderId, finalFileKey });
 
     } catch (error) {
-        console.error("FULL ORDER API ERROR:", error, error.stack);
-        return NextResponse.json({ 
-            success: false, 
-            error: error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
-        }, { status: 500 });
+        console.error("FULL ERROR:", error.message);
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }

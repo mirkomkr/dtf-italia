@@ -5,10 +5,14 @@ import { CopyObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client, S3_REGION, S3_BUCKET_NAME } from '@/lib/s3-client';
 
 export async function POST(request) {
+    // Definizione sicura del bucket con fallback
+    const bucket = S3_BUCKET_NAME || process.env.S3_BUCKET_NAME;
+
     try {
         const body = await request.json();
+        console.log("INCOMING ORDER BODY:", body);
         
-        // Destructure con valori di default per evitare Errori 500
+        // Destructure con valori di default e optional chaining aggressivo per evitare crash
         const { 
             type = 'dtf',
             customer = {}, 
@@ -17,7 +21,6 @@ export async function POST(request) {
             items = {}, 
             pricing = { totalPrice: 0 },
             uploadedFileKey = null,
-            skipFiles = false,
             testOptions = { skipS3: false }
         } = body;
 
@@ -44,49 +47,55 @@ export async function POST(request) {
         const line_items = [];
         const defaultId = type === 'serigrafia' ? 240 : 488;
         
-// 2. Costruzione METADATI UNIFICATA
-const meta_data = [
-    { key: 'Front Print', value: items.frontPrint || 'Nessuna stampa fronte' },
-    { key: 'Back Print', value: items.backPrint || 'Nessuna stampa retro' },
-    { key: 'Format', value: items.format || 'custom' },
-    { key: 'Dimensions', value: items.dimensions || 'N/D' },
-    { key: 'Detailed Quantities', value: JSON.stringify(items.detailedQuantities || {}) },
-    { key: 'Meters', value: items.meters || '0' },
-    { key: 'Full Service', value: items.fullService ? 'Si' : 'No' },
-    { key: 'Flash Order', value: items.flashOrder ? 'Si' : 'No' }
-];
+        // Costruzione Safe dei Metadati
+        let safeDetailedQuantities = '{}';
+        try {
+            safeDetailedQuantities = JSON.stringify(items?.detailedQuantities || {});
+        } catch (e) {
+            console.error("JSON Stringify Error:", e);
+        }
 
-// --- LOGICA STATO S3 (PER ORDINE E ITEM) ---
-const hasFile = !!uploadedFileKey && !testOptions.skipS3;
-const s3_meta = [];
+        const meta_data = [
+            { key: 'Front Print', value: items?.frontPrint || 'Nessuna stampa fronte' },
+            { key: 'Back Print', value: items?.backPrint || 'Nessuna stampa retro' },
+            { key: 'Format', value: items?.format || 'custom' },
+            { key: 'Dimensions', value: items?.dimensions || 'N/D' },
+            { key: 'Detailed Quantities', value: safeDetailedQuantities },
+            { key: 'Meters', value: items?.meters || '0' },
+            { key: 'Full Service', value: items?.fullService ? 'Si' : 'No' },
+            { key: 'Flash Order', value: items?.flashOrder ? 'Si' : 'No' }
+        ];
 
-if (hasFile) {
-    s3_meta.push({ key: '_file_uploaded_to_s3', value: 'yes' });
-    s3_meta.push({ key: '_s3_file_key', value: uploadedFileKey });
-} else {
-    s3_meta.push({ key: '_file_uploaded_to_s3', value: 'no' }); 
-}
+        // --- LOGICA STATO S3 (PER ORDINE E ITEM) ---
+        const hasFile = !!uploadedFileKey && !testOptions?.skipS3;
+        const s3_meta = [];
 
-// Aggiungiamo i tech meta all'item per compatibilità
-meta_data.push(...s3_meta);
+        if (hasFile) {
+            s3_meta.push({ key: '_file_uploaded_to_s3', value: 'yes' });
+            s3_meta.push({ key: '_s3_file_key', value: uploadedFileKey });
+        } else {
+            s3_meta.push({ key: '_file_uploaded_to_s3', value: 'no' }); 
+        }
 
- // METADATI TEST (SOLO SE IS_DEV_MODE)
-if (paymentMethod === 'dev' && IS_DEV_MODE) {
-    meta_data.push({ key: '_is_dev_test', value: 'yes' });
-}
+        meta_data.push(...s3_meta);
+
+        if (paymentMethod === 'dev' && IS_DEV_MODE) {
+            meta_data.push({ key: '_is_dev_test', value: 'yes' });
+        }
 
         line_items.push({
-            product_id: items.productId || defaultId,
-            quantity: items.quantity || items.totalQuantity || 1,
-            total: String(pricing.totalPrice || "0.00"),
+            product_id: items?.productId || defaultId,
+            quantity: items?.quantity || items?.totalQuantity || 1,
+            total: String(pricing?.totalPrice || "0.00"),
             meta_data: meta_data
         });
 
         // 3. Map Shipping
+        const shippingOption = shipping?.option || 'pickup';
         const shipping_lines = [{
-            method_id: shipping.option === 'pickup' ? 'local_pickup' : 'flat_rate',
-            method_title: shipping.option === 'pickup' ? 'Ritiro in Sede' : 'Spedizione Standard',
-            total: String(shipping.cost || "0")
+            method_id: shippingOption === 'pickup' ? 'local_pickup' : 'flat_rate',
+            method_title: shippingOption === 'pickup' ? 'Ritiro in Sede' : 'Spedizione Standard',
+            total: String(shipping?.cost || "0")
         }];
 
         // 4. Construct Order Data
@@ -96,66 +105,65 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
             set_paid,
             currency: 'EUR',
             billing: {
-                first_name: customer.firstName || 'Cliente',
-                last_name: customer.lastName || 'Guest',
-                address_1: customer.address || '',
-                city: customer.city || '',
-                postcode: customer.zip || '',
-                email: customer.email || 'info@dtfitalia.it',
+                first_name: customer?.firstName || 'Cliente',
+                last_name: customer?.lastName || 'Guest',
+                address_1: customer?.address || '',
+                city: customer?.city || '',
+                postcode: customer?.zip || '',
+                email: customer?.email || 'info@dtfitalia.it',
                 country: 'IT',
-                phone: customer.phone || ''
+                phone: customer?.phone || ''
             },
             shipping: {
-                first_name: customer.firstName || 'Cliente',
-                last_name: customer.lastName || 'Guest',
-                address_1: shipping.option === 'shipping' ? (customer.address || '') : 'Via dei Castelli Romani, 22',
-                city: shipping.option === 'shipping' ? (customer.city || '') : 'Pomezia',
-                postcode: shipping.option === 'shipping' ? (customer.zip || '') : '00071',
+                first_name: customer?.firstName || 'Cliente',
+                last_name: customer?.lastName || 'Guest',
+                address_1: shippingOption === 'shipping' ? (customer?.address || '') : 'Via dei Castelli Romani, 22',
+                city: shippingOption === 'shipping' ? (customer?.city || '') : 'Pomezia',
+                postcode: shippingOption === 'shipping' ? (customer?.zip || '') : '00071',
                 country: 'IT'
             },
             line_items,
             shipping_lines,
-            meta_data: s3_meta // AGGIUNTO AL LIVELLO ORDINE
+            meta_data: s3_meta 
         };
         
         const wcResponse = await createWooCommerceOrder(orderData);
+        // Validazione ID risposta WC
+        if (!wcResponse?.id) {
+             console.error("WC Response Invalid:", wcResponse);
+             throw new Error("WooCommerce ha restituito una risposta senza ID");
+        }
         const orderId = wcResponse.id;
 
         // --- OTTIMIZZAZIONE S3: SPOSTAMENTO E AGGIORNAMENTO UNIFICATO ---
         let finalFileKey = uploadedFileKey;
-        const wcUpdates = {}; // Raccogliamo qui tutti gli aggiornamenti per fare UNA sola chiamata
-
-        // 1. Sanificazione rigorosa del percorso (rimuove slash iniziale se presente)
+        const wcUpdates = {}; 
         const cleanKey = uploadedFileKey ? uploadedFileKey.replace(/^\//, '') : null;
-        
-        // 2. Controllo: spostiamo solo se è in temp/
-        const shouldMoveFile = cleanKey && !testOptions.skipS3 && cleanKey.includes('temp/');
+        const shouldMoveFile = cleanKey && !testOptions?.skipS3 && cleanKey.includes('temp/');
 
         if (shouldMoveFile) {
             try {
-                // 3. ESTRAZIONE NOME FILE E CREAZIONE NUOVO PERCORSO
                 const fileName = cleanKey.split('/').pop(); 
                 const newKey = `uploads/orders/${orderId}/${fileName}`;
                 
-                // CopySource deve iniziare con / e includere il bucket
-                const source = `/${S3_BUCKET_NAME}/${cleanKey}`;
+                // USIAMO LA VARIABILE BUCKET SICURA + SLASH INIZIALE
+                const source = `/${bucket}/${cleanKey}`;
 
                 console.log(`[DEBUG] Moving from ${source} to ${newKey}`);
 
                 await s3Client.send(new CopyObjectCommand({
-                    Bucket: S3_BUCKET_NAME,
+                    Bucket: bucket,
                     CopySource: source,
                     Key: newKey
                 }));
 
                 await s3Client.send(new DeleteObjectCommand({
-                    Bucket: S3_BUCKET_NAME,
+                    Bucket: bucket,
                     Key: cleanKey
                 }));
 
                 finalFileKey = newKey;
 
-                // Prepariamo i metadati per l'aggiornamento (SENZA chiamare ancora WC)
                 wcUpdates.meta_data = [
                     { key: '_s3_file_key', value: finalFileKey },
                     { key: '_file_uploaded_to_s3', value: 'yes' }
@@ -163,19 +171,15 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
 
             } catch (s3Error) {
                 console.error("S3 Move Error:", s3Error);
-                // Invece di crashare, aggiungiamo una nota cliente
                 wcUpdates.customer_note = `ERRORE SISTEMA: Spostamento S3 fallito. File rimasto in: ${uploadedFileKey}. Errore: ${s3Error.message}`;
-                // finalFileKey resta quello originale (temp)
             }
         }
 
-        // --- ESECUZIONE UNICA AGGIORNAMENTO WOOCOMMERCE ---
         if (Object.keys(wcUpdates).length > 0) {
             try {
                 await updateWooCommerceOrder(orderId, wcUpdates);
             } catch (wcError) {
                 console.error("Failed to update WooCommerce with S3 result:", wcError);
-                // Non blocchiamo la risposta, l'ordine è comunque creato
             }
         }
         
@@ -187,7 +191,7 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
         });
 
     } catch (error) {
-        console.error("Order API Error:", error);
+        console.error("FULL ORDER API ERROR:", error, error.stack);
         return NextResponse.json({ 
             success: false, 
             error: error.message,

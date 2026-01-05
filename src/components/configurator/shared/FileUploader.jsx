@@ -119,20 +119,18 @@ export default function FileUploader({
 
         // Trigger S3 Upload
         if (uploadMode === 's3') {
-    const uploadedResults = []; // Creiamo un array di risultati
+    const uploadedResults = [];
     for(const f of validFiles) {
         const key = await handleS3Upload(f);
         if (key) {
-            uploadedResults.push({
-                name: f.name,
-                key: key,   // La key reale di S3
-                s3Key: key  // Doppia sicurezza
-            });
+            uploadedResults.push(key); // Salviamo solo la stringa della key
         }
     }
+    
     if (onUploadComplete) {
-        // Inviamo l'array di oggetti, così la pagina trova .key
-        onUploadComplete(uploadedResults); 
+        // Se è un caricamento singolo, invia la stringa, altrimenti l'array
+        const resultToReturn = uploadedResults.length === 1 ? uploadedResults[0] : uploadedResults;
+        onUploadComplete(resultToReturn); 
     }
 }
     };

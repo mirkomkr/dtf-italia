@@ -121,26 +121,26 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
         const wcResponse = await createWooCommerceOrder(orderData);
         const orderId = wcResponse.id;
 
-        // --- NUOVA LOGICA: SPOSTAMENTO FILE S3 ---
+        // --- OTTIMIZZAZIONE S3: SPOSTAMENTO E AGGIORNAMENTO UNIFICATO ---
         let finalFileKey = uploadedFileKey;
-        
-        // 1. Normalizziamo il percorso rimuovendo lo slash iniziale se presente
-        const cleanKey = uploadedFileKey ? uploadedFileKey.replace(/^\//, '') : null;
+        const wcUpdates = {}; // Raccogliamo qui tutti gli aggiornamenti per fare UNA sola chiamata
 
-        // 2. Controllo più flessibile: basta che contenga "temp/"
+        // 1. Sanificazione rigorosa del percorso (rimuove slash iniziale se presente)
+        const cleanKey = uploadedFileKey ? uploadedFileKey.replace(/^\//, '') : null;
+        
+        // 2. Controllo: spostiamo solo se è in temp/
         const shouldMoveFile = cleanKey && !testOptions.skipS3 && cleanKey.includes('temp/');
 
         if (shouldMoveFile) {
             try {
                 // 3. ESTRAZIONE NOME FILE E CREAZIONE NUOVO PERCORSO
-                // Prendiamo solo il nome del file (es: 123456-immagine.png)
                 const fileName = cleanKey.split('/').pop(); 
-                
-                // Creiamo il percorso con la cartella ordine (es: uploads/orders/67/123456-immagine.png)
                 const newKey = `uploads/orders/${orderId}/${fileName}`;
-                const source = `${S3_BUCKET_NAME}/${cleanKey}`;
+                
+                // CopySource deve iniziare con / e includere il bucket
+                const source = `/${S3_BUCKET_NAME}/${cleanKey}`;
 
-                console.log(`[DEBUG] Moving to order folder: ${newKey}`);
+                console.log(`[DEBUG] Moving from ${source} to ${newKey}`);
 
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: S3_BUCKET_NAME,
@@ -155,30 +155,27 @@ if (paymentMethod === 'dev' && IS_DEV_MODE) {
 
                 finalFileKey = newKey;
 
-                // 4. AGGIORNAMENTO METADATI (Aggiorniamo WC con il percorso cartolarizzato)
-                await updateWooCommerceOrder(orderId, {
-                    meta_data: [
-                        { 
-                            key: '_s3_file_key', 
-                            value: finalFileKey // Sarà: uploads/orders/67/nome-file.png
-                        },
-                        { 
-                            key: '_file_uploaded_to_s3', 
-                            value: 'yes' 
-                        }
-                    ]
-                });
+                // Prepariamo i metadati per l'aggiornamento (SENZA chiamare ancora WC)
+                wcUpdates.meta_data = [
+                    { key: '_s3_file_key', value: finalFileKey },
+                    { key: '_file_uploaded_to_s3', value: 'yes' }
+                ];
+
             } catch (s3Error) {
-                console.error("S3 Move or Metadata Update Error:", s3Error);
-                // Feedback in WooCommerce Error Handling
-                try {
-                    const errorMsg = `ERRORE SISTEMA: Spostamento S3 fallito. File: ${uploadedFileKey}. Errore: ${s3Error.message} (${s3Error.code || 'NoCode'})`;
-                    await updateWooCommerceOrder(orderId, {
-                        customer_note: errorMsg
-                    });
-                } catch (wcNoteError) {
-                    console.error("Failed to add error note to WC:", wcNoteError);
-                }
+                console.error("S3 Move Error:", s3Error);
+                // Invece di crashare, aggiungiamo una nota cliente
+                wcUpdates.customer_note = `ERRORE SISTEMA: Spostamento S3 fallito. File rimasto in: ${uploadedFileKey}. Errore: ${s3Error.message}`;
+                // finalFileKey resta quello originale (temp)
+            }
+        }
+
+        // --- ESECUZIONE UNICA AGGIORNAMENTO WOOCOMMERCE ---
+        if (Object.keys(wcUpdates).length > 0) {
+            try {
+                await updateWooCommerceOrder(orderId, wcUpdates);
+            } catch (wcError) {
+                console.error("Failed to update WooCommerce with S3 result:", wcError);
+                // Non blocchiamo la risposta, l'ordine è comunque creato
             }
         }
         

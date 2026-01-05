@@ -143,17 +143,22 @@ export async function POST(request) {
 
         if (shouldMoveFile) {
             try {
+                // 3. ESTRAZIONE NOME FILE E CREAZIONE NUOVO PERCORSO
                 const fileName = cleanKey.split('/').pop(); 
                 const newKey = `uploads/orders/${orderId}/${fileName}`;
                 
-                // USIAMO LA VARIABILE BUCKET SICURA + SLASH INIZIALE
-                const source = `/${bucket}/${cleanKey}`;
+                // COSTUZIONE COPYSOURCE (Come richiesto: Bucket/ChiaveSorgente senza slash iniziale)
+                // Esempio: "mio-bucket/uploads/temp/file.pdf"
+                const sourceKey = cleanKey; 
+                // Nota: encodeURIComponent è spesso richiesto da AWS, ma seguiamo la richiesta "Bucket + Key"
+                // Se necessario tornare a encodeURIComponent, usare: encodeURIComponent(`${bucket}/${sourceKey}`)
+                const copySource = `${bucket}/${sourceKey}`;
 
-                console.log(`[DEBUG] Moving from ${source} to ${newKey}`);
+                console.log(`[DEBUG] Moving from ${copySource} to ${newKey}`);
 
                 await s3Client.send(new CopyObjectCommand({
                     Bucket: bucket,
-                    CopySource: source,
+                    CopySource: copySource,
                     Key: newKey
                 }));
 
@@ -170,8 +175,10 @@ export async function POST(request) {
                 ];
 
             } catch (s3Error) {
-                console.error("S3 Move Error:", s3Error);
-                wcUpdates.customer_note = `ERRORE SISTEMA: Spostamento S3 fallito. File rimasto in: ${uploadedFileKey}. Errore: ${s3Error.message}`;
+                // FAIL-SAFE: Non bloccare l'ordine per errori S3
+                console.error("S3 Move Error (FAIL-SAFE ENABLED):", s3Error);
+                wcUpdates.customer_note = `ATTENZIONE: File caricato ma non spostato (Errore S3). Path originale: ${uploadedFileKey}. Msg: ${s3Error.message}`;
+                // finalFileKey resta quello originale (temp) per sicurezza
             }
         }
 

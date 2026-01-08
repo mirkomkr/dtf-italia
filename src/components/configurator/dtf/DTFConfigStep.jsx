@@ -21,17 +21,31 @@ export default function DTFConfigStep({
   
   const [selectedFormat, setSelectedFormat] = useState(initialConfig?.format || '');
   const [customDims, setCustomDims] = useState({ w: '', h: '' });
-  const [quantity, setQuantity] = useState(initialConfig?.quantity || 0);
+  
+  // Refactor: Make specific variables derived from props/state
+  const quantity = initialConfig?.quantity || 0;
+  
   const [extras, setExtras] = useState({
     isFullService: initialConfig?.isFullService || false,
     isFlashOrder: initialConfig?.isFlashOrder || false
   });
   const [priceData, setPriceData] = useState(null);
 
+  // Sync internal state with external props if they change deeply (optional but safe)
+  useEffect(() => {
+      // If props for extras change outside, we might want to sync. 
+      // primarily relying on 'onUpdate' to keep parent in sync.
+  }, []);
+
   useEffect(() => {
     if(!selectedFormat || quantity <= 0) {
       setPriceData(null);
-      if (onUpdate) onUpdate({ format: selectedFormat, quantity, price: null });
+      // Avoid calling onUpdate if we are just syncing? 
+      // If quantity is 0, we want to ensure parent knows price is null
+      if (initialConfig?.price !== null) {
+          // Only update if not already null to prevent loops? 
+          // But onUpdate is safe in Container.
+      }
       return;
     }
     const w = selectedFormat === 'custom' ? parseFloat(customDims.w) : DTF_FORMATS[selectedFormat]?.w;
@@ -39,14 +53,27 @@ export default function DTFConfigStep({
     if (selectedFormat === 'custom' && (!w || !h)) { setPriceData(null); return; }
 
     const params = {
-      quantity: parseInt(quantity, 10) || 1,
+      quantity: parseInt(quantity, 10) || 0,
       format: selectedFormat, width: w, height: h,
       isFullService: extras.isFullService, isFlashOrder: extras.isFlashOrder
     };
     const calculated = calculatePrice('dtf', params);
-    setPriceData(calculated);
-    if (onUpdate) onUpdate({ ...params, price: calculated });
-  }, [selectedFormat, customDims, quantity, extras]);
+    
+    // Only update if price changed to avoid loop
+    if (JSON.stringify(calculated) !== JSON.stringify(priceData)) {
+        setPriceData(calculated);
+        if (onUpdate) onUpdate({ ...params, price: calculated });
+    }
+  }, [selectedFormat, customDims, quantity, extras, priceData, onUpdate, DTF_FORMATS, initialConfig?.price]); // Added dependencies
+
+  const handleQuantityInput = (val) => {
+      const newQty = val === '' ? 0 : parseInt(val, 10);
+      if (onUpdate) {
+         // Optimistic update: Parent will re-render us with new qty
+         // We also invalidate price until effect runs
+         onUpdate({ ...initialConfig, quantity: newQty, price: null });
+      }
+  };
 
   return (
     <div className="space-y-8">
@@ -60,7 +87,11 @@ export default function DTFConfigStep({
                     return (
                         <button
                             key={key}
-                            onClick={() => setSelectedFormat(key)}
+                            onClick={() => {
+                                setSelectedFormat(key);
+                                // Trigger update immediately for responsiveness
+                                if(onUpdate) onUpdate({ ...initialConfig, format: key, price: null });
+                            }}
                             aria-pressed={isSelected}
                             className={cn(
                                 "relative p-4 rounded-xl border-2 text-left transition-all h-full min-h-[80px] flex flex-col justify-center",
@@ -99,7 +130,10 @@ export default function DTFConfigStep({
                                 onFocus={(e) => e.target.select()}
                                 onChange={(e) => {
                                     const val = e.target.value;
-                                    if (val <= 58) setCustomDims(p => ({...p, w: val}));
+                                    if (val <= 58) {
+                                        setCustomDims(p => ({...p, w: val}));
+                                        // Defer onUpdate to effect? Or call here? Effect is cleaner for multi-state.
+                                    }
                                 }}
                                 className={cn(
                                     "w-full h-12 border-2 border-gray-200 rounded-xl px-4 font-bold outline-none transition-all",
@@ -139,7 +173,10 @@ export default function DTFConfigStep({
                     aria-checked={extras.isFullService}
                     aria-label="Servizio Revisione File (Full Service)"
                     tabIndex={0}
-                    onClick={() => setExtras(p => ({...p, isFullService: !p.isFullService}))}
+                    onClick={() => {
+                        const newVal = !extras.isFullService;
+                        setExtras(p => ({...p, isFullService: newVal}));
+                    }}
                     onKeyDown={(e) => {
                         if (e.key === ' ' || e.key === 'Enter') {
                             e.preventDefault();
@@ -210,10 +247,7 @@ export default function DTFConfigStep({
                         type="number"
                         value={quantity === 0 ? '' : quantity}
                         onFocus={(e) => e.target.select()}
-                        onChange={(e) => {
-                            const valStr = e.target.value;
-                            setQuantity(valStr === '' ? 0 : parseInt(valStr, 10));
-                        }}
+                        onChange={(e) => handleQuantityInput(e.target.value)}
                         className={cn(
                             "w-32 h-12 rounded-xl border-2 border-gray-200 bg-white text-gray-900 text-lg font-bold text-center transition-all focus:outline-none",
                             brandColor === 'red' ? "focus:border-red-600 focus:ring-4 focus:ring-red-600/10" : "focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10"

@@ -90,7 +90,8 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   }, [getTotalQty]);
 
   // --- Handlers ---
-  const handleQuantityChange = (size, value) => {
+  // --- Handlers ---
+  const handleQuantityChange = useCallback((size, value) => {
     if (!selectedColor) return;
     const newVal = value === '' ? '' : Math.max(0, parseInt(value) || 0);
     
@@ -102,10 +103,15 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
           [activeGender]: { ...prev[selectedColor]?.[activeGender], [size]: newVal }
         }
       };
+      // We update price here directly or via effect? 
+      // Current design calls updatePrice here. 
+      // Note: updatePrice uses 'enableVariants', 'singleQuantity', etc. from closure.
+      // So dependencies for useCallback must be correct.
+      // Actually, updatePrice is in useCallback dependency list, so it's fine.
       updatePrice(newState, singleQuantity, frontPrint, backPrint, fileCheck);
       return newState;
     });
-  };
+  }, [selectedColor, activeGender, singleQuantity, frontPrint, backPrint, fileCheck, updatePrice]);
 
   const handleOrderSuccess = (newId, meta = {}) => {
     setOrderId(newId);

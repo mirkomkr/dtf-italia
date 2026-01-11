@@ -25,10 +25,6 @@ export default function DTFConfigStep({
   // Refactor: Make specific variables derived from props/state
   const quantity = initialConfig?.quantity || 0;
   
-  const [extras, setExtras] = useState({
-    isFullService: initialConfig?.isFullService || false,
-    isFlashOrder: initialConfig?.isFlashOrder || false
-  });
   const [priceData, setPriceData] = useState(null);
 
   // Sync internal state with external props if they change deeply (optional but safe)
@@ -55,7 +51,7 @@ export default function DTFConfigStep({
     const params = {
       quantity: parseInt(quantity, 10) || 0,
       format: selectedFormat, width: w, height: h,
-      isFullService: extras.isFullService, isFlashOrder: extras.isFlashOrder
+      isFullService: false, isFlashOrder: false
     };
     const calculated = calculatePrice('dtf', params);
     
@@ -64,7 +60,7 @@ export default function DTFConfigStep({
         setPriceData(calculated);
         if (onUpdate) onUpdate({ ...params, price: calculated });
     }
-  }, [selectedFormat, customDims, quantity, extras, priceData, onUpdate, DTF_FORMATS, initialConfig?.price]); // Added dependencies
+  }, [selectedFormat, customDims, quantity, priceData, onUpdate, DTF_FORMATS, initialConfig?.price]); // Added dependencies
 
   const handleQuantityInput = (val) => {
       const newQty = val === '' ? 0 : parseInt(val, 10);
@@ -163,84 +159,10 @@ export default function DTFConfigStep({
             )}
         </section>
 
-        {/* 2. Servizi Aggiuntivi */}
-        <section className="space-y-3" aria-label="Servizi Aggiuntivi">
-            <h3 className="text-xs font-bold text-gray-600 uppercase tracking-widest">2. Servizi Aggiuntivi</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Checkbox personalizzate con aria-checked */}
-                <div 
-                    role="checkbox"
-                    aria-checked={extras.isFullService}
-                    aria-label="Servizio Revisione File (Full Service)"
-                    tabIndex={0}
-                    onClick={() => {
-                        const newVal = !extras.isFullService;
-                        setExtras(p => ({...p, isFullService: newVal}));
-                    }}
-                    onKeyDown={(e) => {
-                        if (e.key === ' ' || e.key === 'Enter') {
-                            e.preventDefault();
-                            setExtras(p => ({...p, isFullService: !p.isFullService}));
-                        }
-                    }}
-                    className={cn(
-                        "p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center gap-4 outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-                        extras.isFullService 
-                            ? (brandColor === 'red' ? "bg-red-50 border-red-600" : "bg-indigo-50 border-indigo-600")
-                            : "bg-white border-gray-100 hover:border-gray-200"
-                    )}
-                >
-                    <div className={cn(
-                        "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
-                        extras.isFullService 
-                            ? (brandColor === 'red' ? "bg-red-600 border-red-600" : "bg-indigo-600 border-indigo-600") 
-                            : "border-gray-300"
-                    )}>
-                        {extras.isFullService && <CheckIcon className="text-white w-3 h-3" />}
-                    </div>
-                    <div>
-                        <p className="font-bold text-gray-900 text-sm">Full Service (+10%)</p>
-                        <p className="text-xs text-gray-500">Revisione file e ottimizzazione nesting.</p>
-                    </div>
-                </div>
-
-                <div 
-                    role="checkbox"
-                    aria-checked={extras.isFlashOrder}
-                    aria-label="Ordine Flash (Produzione 24h)"
-                    tabIndex={0}
-                    onClick={() => setExtras(p => ({...p, isFlashOrder: !p.isFlashOrder}))}
-                    onKeyDown={(e) => {
-                        if (e.key === ' ' || e.key === 'Enter') {
-                            e.preventDefault();
-                            setExtras(p => ({...p, isFlashOrder: !p.isFlashOrder}));
-                        }
-                    }}
-                    className={cn(
-                        "p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center gap-4 outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-                        extras.isFlashOrder 
-                            ? "bg-amber-50 border-amber-500"
-                            : "bg-white border-gray-100 hover:border-gray-200"
-                    )}
-                >
-                    <div className={cn(
-                        "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
-                        extras.isFlashOrder ? "bg-amber-500 border-amber-500" : "border-gray-300"
-                    )}>
-                        {extras.isFlashOrder && <CheckIcon className="text-white w-3 h-3" />}
-                    </div>
-                    <div>
-                        <p className="font-bold text-gray-900 text-sm">Ordine Flash (+10%)</p>
-                        <p className="text-xs text-gray-500">Produzione prioritaria in 24h.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {/* 3. Quantità e Prezzo */}
+        {/* 2. Quantità e Prezzo */}
         <section className="bg-gray-50 rounded-2xl p-4 md:p-6 border border-gray-100" aria-label="Riepilogo Quantità e Prezzo">
             <div className="space-y-3">
-                <label htmlFor="qty-main" className="text-xs font-bold text-gray-600 uppercase tracking-widest">3. Quantità</label>
+                <label htmlFor="qty-main" className="text-xs font-bold text-gray-600 uppercase tracking-widest">2. Quantità</label>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <input 
                         id="qty-main"

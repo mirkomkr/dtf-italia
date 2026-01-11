@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { calculatePrice } from '@/lib/pricing-engine';
 
 // Componenti Shared
 import StepNavigation from '../shared/StepNavigation';
@@ -149,6 +150,32 @@ export default function DTFContainer({ product }) {
                 brandColor="indigo"
                 onSuccess={handleOrderSuccess}
                 onBack={() => setCurrentStep(2)}
+                isProCheck={config.isFullService}
+                onToggleProCheck={(val) => {
+                    const newConfig = { ...config, isFullService: val };
+                    const computed = calculatePrice('dtf', {
+                        quantity: config.quantity,
+                        format: config.format,
+                        width: config.width,
+                        height: config.height,
+                        isFullService: val,
+                        isFlashOrder: config.isFlashOrder
+                    });
+                    setConfig({ ...newConfig, price: computed });
+                }}
+                isFlashOrder={config.isFlashOrder}
+                onToggleFlashOrder={(val) => {
+                    const newConfig = { ...config, isFlashOrder: val };
+                    const computed = calculatePrice('dtf', {
+                        quantity: config.quantity,
+                        format: config.format,
+                        width: config.width,
+                        height: config.height,
+                        isFullService: config.isFullService,
+                        isFlashOrder: val
+                    });
+                    setConfig({ ...newConfig, price: computed });
+                }}
             />
         )}
 

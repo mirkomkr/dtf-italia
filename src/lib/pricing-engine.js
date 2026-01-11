@@ -8,34 +8,37 @@ import { PRICING_CONFIG } from './pricing-config';
 class SerigrafiaStrategy {
   calculate(params) {
     const config = PRICING_CONFIG.serigrafia;
-    const { quantity, frontPrint, backPrint, fileCheck } = params;
+    const { quantity, frontPrint, backPrint, proCheck, autoOutline } = params; // Renamed fileCheck -> proCheck
     
     // Safety check
     if (!quantity || quantity <= 0) return { unitPrice: 0, totalPrice: 0 };
+
+    // --- LOGICA SOGLIA TECNICA ---
+    const isDigital = quantity < config.digital_threshold;
+    const technique = isDigital ? 'Digitale HD' : 'Serigrafia';
 
     // 1. Base Cost
     let unitBase = config.base_shirt;
     
     // 2. Print Costs
-    const frontCost = config.print_costs[frontPrint] || 0;
-    const backCost = config.print_costs[backPrint] || 0;
+    // Se digitale, usiamo il listino digitale (più caro, no impianti). Altrimenti listino standard.
+    const printList = isDigital ? (config.digital_print_costs || config.print_costs) : config.print_costs;
+    
+    const frontCost = printList[frontPrint] || 0;
+    const backCost = printList[backPrint] || 0;
     
     const unitPrintCost = frontCost + backCost;
     
-    // 3. Setup Fees (Impianti) - Esempio: calcolati sul totale non per unità, ma qui li spalmiamo o aggiungiamo fissi?
-    // Solitamente l'impianto è un costo fisso. 
-    // Se frontPrint != none => 1 impianto.
-    // Se backPrint != none => 1 impianto.
-    // Costo Impianto Totale:
+    // 3. Setup Fees (Impianti)
     let setupCost = 0;
-    if (quantity < config.setup_fee_threshold) {
+    // Solo per Serigrafia si pagano gli impianti (se sotto soglia gratis)
+    if (!isDigital && quantity < config.setup_fee_threshold) {
        if (frontPrint && frontPrint !== 'none') setupCost += config.impianto_stampa;
        if (backPrint && backPrint !== 'none') setupCost += config.impianto_stampa;
     }
 
-    // 4. Quantity Discount (Applied on Unit Price + Print Cost)
+    // 4. Quantity Discount (Applied on Unit Price)
     let discount = 0;
-    // Troviamo lo scaglione corretto (il più alto minore o uguale alla quantità)
     const tier = config.quantity_discounts
       .slice()
       .reverse()
@@ -51,7 +54,20 @@ class SerigrafiaStrategy {
     
     // Aggiungi Costi Fissi
     totalParams += setupCost;
-    if (fileCheck) totalParams += 10.00; // Hardcoded or from common config
+    
+    // Costo Pro Check (Check-up Grafico)
+    let proCheckCost = 0;
+    if (proCheck) {
+        proCheckCost = config.pro_check || 0;
+        totalParams += proCheckCost;
+    }
+    
+    // Costo Auto Outline (Contorno Salvavita)
+    let autoOutlineCost = 0;
+    if (autoOutline) {
+        autoOutlineCost = config.auto_outline || 0;
+        totalParams += autoOutlineCost;
+    }
 
     // Recalculate effective unit price for display
     let finalUnitPrice = totalParams / quantity;
@@ -61,7 +77,10 @@ class SerigrafiaStrategy {
       totalPrice: Number(totalParams.toFixed(2)),
       details: {
         setupCost,
-        discountPercentage: discount * 100
+        autoOutlineCost,
+        proCheckCost,
+        discountPercentage: discount * 100,
+        technique // Pass technique info specifically
       }
     };
   }
@@ -127,10 +146,12 @@ class DTFStrategy {
 
     // 6. Extras (Markups)
     let finalTotal = baseTotal;
+    let proCheckCost = 0;
     
-    // Full Service (+10%)
+    // Check-up Grafico (Fixed Fee)
     if (isFullService) {
-      finalTotal += (baseTotal * config.FULL_SERVICE_MARKUP);
+      proCheckCost = config.pro_check || 0;
+      finalTotal += proCheckCost;
     }
     
     // Flash Order (+10%)

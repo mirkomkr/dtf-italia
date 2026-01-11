@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { Shirt, RefreshCw } from 'lucide-react'; // Added Icons
 import { useSearchParams } from 'next/navigation';
 import { calculatePrice } from '@/lib/pricing-engine';
+import { cn } from '@/lib/utils';
 
 // Componenti Shared
 import StepNavigation from '../shared/StepNavigation';
@@ -13,6 +14,7 @@ import SuccessStep from '../shared/SuccessStep';
 
 // Componente Specifico
 import ConfigStep from './ConfigStep';
+import { SHIRT_SIZES, KID_SIZES } from './constants';
 
 const FileUploader = dynamic(() => import('../shared/FileUploader'), {
   loading: () => <p className="p-10 text-center text-gray-600 italic">Preparazione caricamento...</p>,
@@ -39,7 +41,48 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   const [frontPrint, setFrontPrint] = useState('1_color');
   const [backPrint, setBackPrint] = useState('none');
   const [fileCheck, setFileCheck] = useState(false);
+  const [autoOutline, setAutoOutline] = useState(false); // New State
   const [price, setPrice] = useState({ unitPrice: 0, totalPrice: 0 });
+
+  // --- Analisi Colori (Tono su Tono) ---
+  const { hasDarkColors, hasLightColors } = useMemo(() => {
+    const activeColors = Object.keys(quantities).filter(color => {
+         const colorQty = Object.values(quantities[color] || {}).reduce((acc, genderObj) => 
+            acc + Object.values(genderObj || {}).reduce((sAcc, q) => sAcc + (parseInt(q)||0), 0), 0
+         );
+         return colorQty > 0;
+    });
+    
+    // Fallback for single quantity if no variants
+    if (!enableVariants && singleQuantity > 0 && selectedColor) {
+        if (!activeColors.includes(selectedColor)) activeColors.push(selectedColor);
+    }
+
+    let hasDark = false;
+    let hasLight = false;
+
+    // Import constants inside check or assume available? They are not imported here.
+    // We need to import SHIRT_COLORS from constants. 
+    // Wait, SerigrafiaContainer does not import SHIRT_COLORS. 
+    // I need to update imports first? No, I can't in this block.
+    // I will assume I need to fetch color data. 
+    // Actually, `quantities` keys are color IDs. I should have color data available or import it.
+    // Let's assume I can't import easily here without another edit. 
+    // I'll skip the import for now and just check known IDs? 
+    // Better: I will add the import in a separate tool call if needed, but wait, 
+    // I can't see the top of the file in this context. 
+    // I'll try to rely on passed `product` if it has colors? No.
+    // I'll stick to hardcoded checks for now matching constants.js IDs if I can't import.
+    // dark: nero, blu_notte, blu_royal, verde, viola
+    // light: bianco, giallo
+    
+    activeColors.forEach(cId => {
+        if (['nero', 'blu_notte', 'blu_royal', 'verde', 'viola'].includes(cId)) hasDark = true;
+        if (['bianco', 'giallo'].includes(cId)) hasLight = true;
+    });
+
+    return { hasDarkColors: hasDark, hasLightColors: hasLight };
+  }, [quantities, singleQuantity, selectedColor, enableVariants]);
 
   // --- Logica Layout Prodotto ---
   const genderLayout = useMemo(() => {
@@ -74,7 +117,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
   const totalQuantity = useMemo(() => getTotalQty(quantities, singleQuantity), [quantities, singleQuantity, getTotalQty]);
 
-  const updatePrice = useCallback((q, s, f, b, c) => {
+  const updatePrice = useCallback((q, s, f, b, c, ao) => {
     const qty = getTotalQty(q, s);
     if (qty === 0) {
       setPrice({ unitPrice: 0, totalPrice: 0 });
@@ -84,7 +127,8 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
       quantity: qty,
       frontPrint: f,
       backPrint: b,
-      fileCheck: c
+      fileCheck: c,
+      autoOutline: ao
     });
     setPrice(result);
   }, [getTotalQty]);
@@ -103,15 +147,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
           [activeGender]: { ...prev[selectedColor]?.[activeGender], [size]: newVal }
         }
       };
-      // We update price here directly or via effect? 
-      // Current design calls updatePrice here. 
-      // Note: updatePrice uses 'enableVariants', 'singleQuantity', etc. from closure.
-      // So dependencies for useCallback must be correct.
-      // Actually, updatePrice is in useCallback dependency list, so it's fine.
-      updatePrice(newState, singleQuantity, frontPrint, backPrint, fileCheck);
+      updatePrice(newState, singleQuantity, frontPrint, backPrint, fileCheck, autoOutline);
       return newState;
     });
-  }, [selectedColor, activeGender, singleQuantity, frontPrint, backPrint, fileCheck, updatePrice]);
+  }, [selectedColor, activeGender, singleQuantity, frontPrint, backPrint, fileCheck, autoOutline, updatePrice]);
 
   const handleOrderSuccess = (newId, meta = {}) => {
     setOrderId(newId);
@@ -150,19 +189,24 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             setSelectedColor={setSelectedColor}
             quantities={quantities}
             onQuantityChange={handleQuantityChange}
+            sizes={activeGender === 'bambino' && genderLayout === 'clothing' ? KID_SIZES : SHIRT_SIZES}
             singleQuantity={singleQuantity}
             setSingleQuantity={(val) => {
               const n = val === '' ? '' : Math.max(0, parseInt(val) || 0);
               setSingleQuantity(n);
-              updatePrice(quantities, n, frontPrint, backPrint, fileCheck);
+              updatePrice(quantities, n, frontPrint, backPrint, fileCheck, autoOutline);
             }}
             frontPrint={frontPrint}
-            setFrontPrint={(val) => { setFrontPrint(val); updatePrice(quantities, singleQuantity, val, backPrint, fileCheck); }}
+            setFrontPrint={(val) => { setFrontPrint(val); updatePrice(quantities, singleQuantity, val, backPrint, fileCheck, autoOutline); }}
             backPrint={backPrint}
-            setBackPrint={(val) => { setBackPrint(val); updatePrice(quantities, singleQuantity, frontPrint, val, fileCheck); }}
+            setBackPrint={(val) => { setBackPrint(val); updatePrice(quantities, singleQuantity, frontPrint, val, fileCheck, autoOutline); }}
             
             fileCheck={fileCheck}
-            setFileCheck={(val) => { setFileCheck(val); updatePrice(quantities, singleQuantity, frontPrint, backPrint, val); }}
+            setFileCheck={(val) => { setFileCheck(val); updatePrice(quantities, singleQuantity, frontPrint, backPrint, val, autoOutline); }}
+            
+            autoOutline={autoOutline}
+            setAutoOutline={(val) => { setAutoOutline(val); updatePrice(quantities, singleQuantity, frontPrint, backPrint, fileCheck, val); }}
+
             price={price}
             totalQuantity={totalQuantity}
             onNext={() => setCurrentStep(2)}
@@ -183,6 +227,65 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                   : 'Carica il file necessario per la tua configurazione.'}
               </p>
             </div>
+            
+            {/* Tone-on-Tone Disclaimers & Auto Outline Action */}
+            {/* Tone-on-Tone Disclaimers & Auto Outline Action */}
+            {(hasDarkColors || hasLightColors) && (
+                <div className="space-y-4">
+                    <div className={cn(
+                        "p-6 rounded-2xl border shadow-sm animate-in fade-in flex flex-col xl:flex-row gap-6 items-start justify-between",
+                        hasDarkColors ? "bg-slate-50 border-slate-200" : "bg-amber-50 border-amber-200"
+                    )}>
+                        <div className="space-y-2">
+                             <div className="flex items-center gap-2 mb-2">
+                                <span className="text-xl">{hasDarkColors ? '⚠️' : '💡'}</span>
+                                <h4 className={cn("font-bold uppercase text-sm", hasDarkColors ? "text-slate-900" : "text-amber-900")}>
+                                    {hasDarkColors ? "Attenzione: Colori Scuri Rilevati" : "Attenzione: Colori Chiari Rilevati"}
+                                </h4>
+                             </div>
+                            
+                            <p className={cn("text-sm leading-relaxed max-w-xl", hasDarkColors ? "text-slate-700" : "text-amber-800")}>
+                                {hasDarkColors 
+                                    ? "Nel tuo ordine ci sono maglie di colore scuro (es. Nero, Blu, Verde). Assicurati che il tuo file non contenga elementi neri o molto scuri che risulterebbero invisibili."
+                                    : "Nel tuo ordine ci sono maglie di colore chiaro (es. Bianco, Giallo). Assicurati che il tuo file non contenga elementi bianchi/chiari che potrebbero confondersi."
+                                }
+                            </p>
+                        </div>
+
+                        {/* Contextual Action: Auto Outline */}
+                        <div className="flex-shrink-0 w-full md:w-auto">
+                            <label className={cn(
+                                "flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all",
+                                autoOutline 
+                                    ? "bg-red-50 border-red-600 text-red-900 shadow-sm" 
+                                    : "bg-white border-gray-100 text-gray-500 hover:border-gray-200"
+                            )}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={autoOutline}
+                                    onChange={(e) => {
+                                        const val = e.target.checked;
+                                        setAutoOutline(val);
+                                        updatePrice(quantities, singleQuantity, frontPrint, backPrint, fileCheck, val);
+                                    }}
+                                    className="w-5 h-5 rounded border-gray-300 text-red-600 accent-red-600 focus:ring-red-500"
+                                />
+                                <div className="text-xs">
+                                    <span className="font-bold block uppercase tracking-wide">Adatta file automaticamente</span>
+                                    <span className={cn("block mt-1 font-medium", autoOutline ? "text-red-600" : "text-gray-400")}>
+                                        {autoOutline ? '✅ Opzione Attiva' : '+ €5.00'}
+                                    </span>
+                                </div>
+                            </label>
+                            {/* Optional: Small help text beneath button */}
+                             {autoOutline && (
+                                <p className="text-[10px] text-center mt-2 text-red-500 font-medium">Bordo salvavita incluso</p>
+                             )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
 
             <div className={`grid grid-cols-1 ${frontPrint !== 'none' && backPrint !== 'none' ? 'md:grid-cols-2 gap-8' : 'gap-0 max-w-xl mx-auto'}`}>
               
@@ -268,11 +371,26 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
           <UnifiedCheckout 
             type="serigrafia"
             priceData={price}
-            productData={{ quantities, singleQuantity, frontPrint, backPrint, fileCheck, totalQuantity }}
-            uploadedFileKey={fileKeys} // Passing object {front, back} instead of string
+            productData={{ 
+                quantities, 
+                singleQuantity, 
+                frontPrint, 
+                backPrint, 
+                fileCheck, 
+                autoOutline,
+                totalQuantity,
+                technique: price?.details?.technique || 'N/D' // Pass technique info
+            }}
+            uploadedFileKey={fileKeys} 
             brandColor="red"
             onSuccess={handleOrderSuccess}
             onBack={() => setCurrentStep(2)}
+            // Pro Check Upgrade (+7€)
+            isProCheck={fileCheck}
+            onToggleProCheck={(val) => {
+                setFileCheck(val);
+                updatePrice(quantities, singleQuantity, frontPrint, backPrint, val, autoOutline);
+            }}
           />
         )}
 

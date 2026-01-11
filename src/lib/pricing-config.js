@@ -2,12 +2,25 @@ export const PRICING_CONFIG = {
   serigrafia: {
     base_shirt: 5.50, // Prezzo base t-shirt bianca/colorata standard
     impianto_stampa: 25.00, // Costo fisso impianto per colore/lato (una tantum)
+    auto_outline: 5.00, // Costo fisso per "Contorno Salvavita"
+    pro_check: 7.00, // Costo fisso "Check-up Grafico Totale"
     setup_fee_threshold: 100, // Quantità sopra la quale l'impianto è gratis (esempio)
+    
+    // SOGLIA DIGITALE/SERIGRAFIA
+    digital_threshold: 30, // Sotto questa quantità: Stampa Digitale (No Impianto, Prezzo Unitario Maggiorato)
+    
     print_costs: {
       'none': 0,
       '1_color': 1.50,
       '2_colors': 2.80,
       'full_color': 4.50
+    },
+    // Listino Stampa Digitale (Prezzi unitari più alti, ma senza costo impianto)
+    digital_print_costs: {
+        'none': 0,
+        '1_color': 4.00,   // Esempio: Più alto vs 1.50
+        '2_colors': 5.50,  // Esempio: Più alto vs 2.80
+        'full_color': 7.50 // Esempio: Più alto vs 4.50
     },
     quantity_discounts: [
       { min: 0, discount: 0 },
@@ -24,7 +37,7 @@ export const PRICING_CONFIG = {
     DISCOUNT_STEP: 2.50, // Euro per 10mt
     DISCOUNT_STEP_METERS: 10,
     MIN_PRICE_METER: 10.50,
-    FULL_SERVICE_MARKUP: 0.10,
+    pro_check: 7.00,
     FLASH_ORDER_MARKUP: 0.10,
     BOBINA_WIDTH: 58, // cm
     fixed_fees: {

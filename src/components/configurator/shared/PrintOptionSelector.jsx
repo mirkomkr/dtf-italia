@@ -5,7 +5,7 @@ const DEFAULT_OPTIONS = [
     { id: 'none', label: 'Nessuna Stampa' },
     { id: '1_color', label: '1 Colore' },
     { id: '2_colors', label: '2 Colori' },
-    { id: 'full_color', label: 'Full Color' },
+    { id: 'full_color', label: <span className="flex flex-col items-center leading-none gap-0.5">Full Color <span className="text-[9px] font-medium opacity-80 decoration-none normal-case tracking-normal">(Digitale)</span></span> },
 ];
 
 /**

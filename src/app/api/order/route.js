@@ -66,12 +66,17 @@ export async function POST(request) {
         const meta_data = [
             { key: 'Front Print', value: items?.frontPrint || (type === 'dtf' ? 'Stampa DTF' : 'N/D') },
             { key: 'Back Print', value: items?.backPrint || 'N/D' },
+            { key: 'Technique', value: items?.technique || (type === 'serigrafia' ? 'Serigrafia (Standard)' : 'N/D') }, 
             { key: 'Format', value: items?.format || 'Personalizzato' },
             { key: 'Dimensions', value: items?.width ? `${items.width}x${items.height}cm` : (items?.dimensions || 'N/D') },
             { key: 'Detailed Quantities', value: safeDetailedQuantities },
             { key: 'Meters', value: String(metersValue) },
-            { key: 'Full Service', value: (items?.isFullService || items?.fileCheck) ? 'Si' : 'No' },
+            { key: 'Pro Check', value: (items?.isFullService || items?.fileCheck || items?.isProCheck) ? 'Si' : 'No' },
+            { key: 'Auto Outline', value: items?.autoOutline ? 'Si' : 'No' },
+            { key: 'is_pro_check', value: !!(items?.isFullService || items?.fileCheck || items?.isProCheck) },
+            { key: 'is_auto_outline', value: !!items?.autoOutline },
             { key: 'Flash Order', value: items?.isFlashOrder ? 'Si' : 'No' },
+            { key: 'is_flash_order', value: !!items?.isFlashOrder },
             { key: '_file_uploaded_to_s3', value: hasFiles ? 'yes' : 'no' },
             { key: '_configurator_type', value: type }
         ];

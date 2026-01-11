@@ -14,7 +14,11 @@ export default function UnifiedCheckout({
     brandColor = 'indigo',
     onSuccess, 
     onBack,
-    uploadedFileKey = null
+    uploadedFileKey = null,
+    isProCheck,
+    onToggleProCheck,
+    isFlashOrder,
+    onToggleFlashOrder
 }) {
     // --- Stato Locale ---
     const [formData, setFormData] = useState({
@@ -86,6 +90,21 @@ export default function UnifiedCheckout({
         }
     };
 
+    // --- Styles Dinamici per Extra ---
+    const extraStyles = brandColor === 'red' ? {
+        active: 'bg-red-50 border-red-600',
+        text: 'text-red-600',
+        textBold: 'text-red-700',
+        accent: 'accent-red-600 text-red-600',
+        ring: 'focus:ring-red-500'
+    } : {
+        active: 'bg-indigo-50 border-indigo-600',
+        text: 'text-indigo-600',
+        textBold: 'text-indigo-700',
+        accent: 'accent-indigo-600 text-indigo-600',
+        ring: 'focus:ring-indigo-500'
+    };
+
     return (
         <div className="flex flex-col lg:flex-row gap-8">
             
@@ -128,6 +147,66 @@ export default function UnifiedCheckout({
                     data={{ ...productData, shippingCost }} 
                     brandColor={brandColor} 
                  />
+
+                 {/* UPGRADE SERVICES */}
+                 <div className="space-y-3">
+                    {onToggleProCheck && (
+                        <div 
+                            onClick={() => onToggleProCheck(!isProCheck)}
+                            className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 ${
+                                isProCheck 
+                                ? extraStyles.active
+                                : 'bg-white border-gray-100 hover:border-gray-200'
+                            }`}
+                        >
+                            <input 
+                                type="checkbox" 
+                                checked={isProCheck}
+                                onChange={() => {}} 
+                                className={cn("w-5 h-5 rounded border-gray-300 pointer-events-none", extraStyles.accent, extraStyles.ring)}
+                            />
+                            <div className="flex-1">
+                                <div className="flex justify-between items-center">
+                                    <span className="font-bold text-gray-900 text-sm italic tracking-tight">Check-up Grafico Totale</span>
+                                    <span className={cn("font-bold text-sm", isProCheck ? extraStyles.textBold : "text-gray-400")}>+ €7.00</span>
+                                </div>
+                                <p className={cn("text-xs mt-0.5 leading-snug", isProCheck ? extraStyles.text : "text-gray-500")}>
+                                    {type === 'dtf' 
+                                        ? "Controllo tecnico risoluzione, ottimizzazione nesting e verifica file per stampa DTF."
+                                        : "Controllo tecnico risoluzione, setup margini e ottimizzazione file per la stampa."
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {onToggleFlashOrder && (
+                        <div 
+                            onClick={() => onToggleFlashOrder(!isFlashOrder)}
+                            className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 ${
+                                isFlashOrder 
+                                ? extraStyles.active
+                                : 'bg-white border-gray-100 hover:border-gray-200'
+                            }`}
+                        >
+                            <input 
+                                type="checkbox" 
+                                checked={isFlashOrder}
+                                onChange={() => {}} 
+                                className={cn("w-5 h-5 rounded border-gray-300 pointer-events-none", extraStyles.accent, extraStyles.ring)}
+                            />
+                            <div className="flex-1">
+                                <div className="flex justify-between items-center">
+                                    <span className="font-bold text-gray-900 text-sm italic tracking-tight">Ordine Flash</span>
+                                    <span className={cn("font-bold text-sm", isFlashOrder ? extraStyles.textBold : "text-gray-400")}>+ 10%</span>
+                                </div>
+                                <p className={cn("text-xs mt-0.5 leading-snug", isFlashOrder ? extraStyles.text : "text-gray-500")}>
+                                    Produzione prioritaria e spedizione entro 24h.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                 </div>
                  
                  <PaymentActions 
                     onPaymentSelect={handlePayment} 

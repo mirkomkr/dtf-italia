@@ -39,12 +39,11 @@ export default function ConfigStep({
   setFrontPrint,
   backPrint,
   setBackPrint,
-  fileCheck,
-  setFileCheck,
   price,
   totalQuantity,
+  sizes = SHIRT_SIZES,
   onNext,
-  brandColor = 'red'
+  brandColor = 'red',
 }) {
   
   const getColorTotal = (colorId) => {
@@ -137,7 +136,7 @@ export default function ConfigStep({
             {enableVariants && genderLayout === 'clothing' ? (
                 <SizeMatrix 
                     brandColor="red"
-                    sizes={SHIRT_SIZES}
+                    sizes={sizes}
                     quantities={getCurrentViewQuantities()}
                     onQuantityChange={onQuantityChange}
                     visible={!!selectedColor}
@@ -162,6 +161,16 @@ export default function ConfigStep({
                     />
                 </div>
             )}
+            
+            {/* Dynamic Info Message for Digital Printing */}
+            {(totalQuantity > 0 && totalQuantity < 30) && (
+                <div className="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200 flex gap-3 animate-in fade-in slide-in-from-top-1">
+                    <span className="text-xl">💡</span>
+                    <p className="text-amber-800 text-xs font-bold leading-relaxed">
+                        Per ordini inferiori a 30 pezzi, la stampa viene eseguita in <span className="underline decoration-amber-500/50 underline-offset-2">Digitale</span> per garantire una qualità ottimale senza costi di impianto.
+                    </p>
+                </div>
+            )}
         </section>
 
         {/* 4. Opzioni Stampa */}
@@ -176,34 +185,10 @@ export default function ConfigStep({
             />
         </section>
 
-        {/* 5. Extra: Controllo Professionale */}
-        <section aria-label="Servizi Extra">
-            <div 
-                onClick={() => setFileCheck(!fileCheck)}
-                className={cn(
-                    "p-4 rounded-xl border-2 cursor-pointer transition-colors flex items-center gap-4",
-                    fileCheck 
-                        ? "bg-red-50 border-red-600" 
-                        : "bg-white border-gray-100 hover:border-gray-200"
-                )}
-            >
-                <input 
-                    id="extra-file-check"
-                    type="checkbox" 
-                    checked={fileCheck}
-                    readOnly
-                    className="w-5 h-5 rounded border-gray-300 text-red-600 pointer-events-none"
-                    aria-labelledby="file-check-label"
-                />
-                <label id="file-check-label" htmlFor="extra-file-check" className="text-sm cursor-pointer">
-                    <p className="font-bold text-gray-900">Verifica File Professionale (+€10.00)</p>
-                    <p className="text-gray-500">Controllo manuale risoluzione e setup colori.</p>
-                </label>
-            </div>
-        </section>
+
 
         {/* Footer: Prezzo e Procedi */}
-        <footer className="pt-6 border-t border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <footer className="pt-6 border-t border-gray-100 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
              <div className="flex items-baseline gap-4" aria-live="polite">
                 <span className="text-4xl font-black text-gray-900">
                     {formatCurrency(price.totalPrice)}

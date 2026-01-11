@@ -73,11 +73,11 @@ export async function POST(request) {
             { key: 'Dimensions', value: items?.width ? `${items.width}x${items.height}cm` : (items?.dimensions || 'N/D') },
             { key: 'Detailed Quantities', value: safeDetailedQuantities },
             { key: 'Meters', value: String(metersValue) },
-            { key: 'Pro Check', value: (items?.isFullService || items?.fileCheck || items?.isProCheck || items?.proCheck) ? 'Si' : 'No' },
-            { key: 'Auto Outline', value: items?.autoOutline ? 'Si' : 'No' },
+            { key: 'Full Service', value: (items?.isFullService || items?.fileCheck || items?.isProCheck || items?.proCheck) ? 'Si' : 'No' },
+            { key: 'Flash Order', value: items?.isFlashOrder ? 'Si' : 'No' },
+            // Metadati tecnici per logica interna (booleani come stringhe)
             { key: 'is_pro_check', value: (items?.isFullService || items?.fileCheck || items?.isProCheck || items?.proCheck) ? "true" : "false" },
             { key: 'is_auto_outline', value: items?.autoOutline ? "true" : "false" },
-            { key: 'Flash Order', value: items?.isFlashOrder ? 'Si' : 'No' },
             { key: 'is_flash_order', value: items?.isFlashOrder ? "true" : "false" },
             { key: '_file_uploaded_to_s3', value: hasFiles ? 'yes' : 'no' },
             { key: '_configurator_type', value: type }
@@ -130,7 +130,7 @@ export async function POST(request) {
                     const cleanFileName = rawFileName.replace(/^[0-9]+-/, ''); // Rimuove timestamp iniziale se presente
                     
                     const suffix = keyType === 'front' ? 'FRONTE' : 'RETRO';
-                    const newKey = `uploads/orders/ordine-${orderId}-${suffix}-${cleanFileName}`;
+                    const newKey = `uploads/orders/${orderId}/ordine-${orderId}-${suffix}-${cleanFileName}`;
                     
                     // Copy
                     await s3Client.send(new CopyObjectCommand({

@@ -12,7 +12,7 @@ export async function POST(request) {
     }
 
     const key = orderId 
-  ? `uploads/orders/${orderId}/${Date.now()}-${filename.replace(/\s+/g, '_')}`
+  ? `uploads/orders/${orderId}/ordine-${orderId}-SOLLECITO-${Date.now()}-${filename.replace(/\s+/g, '_')}`
   : `uploads/temp/${Date.now()}-${filename.replace(/\s+/g, '_')}`;
     
     const command = new PutObjectCommand({

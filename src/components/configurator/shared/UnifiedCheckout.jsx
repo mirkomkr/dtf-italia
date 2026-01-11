@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { IS_DEV_MODE } from '@/lib/config';
+import { cn } from '@/lib/utils';
 import OrderSummary from './OrderSummary';
 import ShippingSelector from './ShippingSelector';
 import CustomerForm from './CustomerForm';

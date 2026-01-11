@@ -137,6 +137,8 @@ export async function POST(request) {
                     finalKeys[keyType] = newKey;
 
                     // Delete old (solo se copia ok)
+                    // NOTA: In dev mode o se vogliamo essere più sicuri, potremmo non cancellare subito se c'è rischio.
+                    // Ma per ora manteniamo la logica: Copy -> Delete old
                     await s3Client.send(new DeleteObjectCommand({ Bucket: bucket, Key: sourceKey }));
                 }
 
@@ -157,21 +159,19 @@ export async function POST(request) {
                     try {
                         // Eliminiamo i file MOVED dalla destinazione finale
                         await s3Client.send(new DeleteObjectCommand({ Bucket: bucket, Key: moved.newKey }));
-                        // Nota: I file sorgente sono stati eliminati... idealmente dovremmo copiarli indietro ma è complesso.
-                        // In questo design, se il secondo fallisce, il primo è perso dalla temp folder ma è nella order folder che stiamo cancellando.
-                        // Sarebbe meglio fare COPY ALL then DELETE ALL.
-                        // FIX PER V2: Cambiamo strategia -> Copy All first.
                     } catch (rbError) {
                          console.error("ROLLBACK FAILED:", rbError);
                     }
                 }
                 
-                // Notifichiamo errore ma l'ordine è creato... Situazione ibrida.
-                // In un e-commerce reale, meglio loggare l'errore grave per admin.
-                // L'utente vedrà "Success" parziale o errore? 
-                // Se file system fallisce, l'ordine esiste ma senza file. 
-                // Restituiamo 200 con warning o lasciamo che l'admin gestisca.
-                // Per ora, loggiamo errore critico.
+                // RESTITUIAMO ERRORE SPECIFICO AL CLIENT
+                // Anche se l'ordine è creato (WooCommerce ID esiste), segnaliamo il fallimento file.
+                return NextResponse.json({ 
+                    success: false, 
+                    orderId, // Ritorniamo ID così il client sa che l'ordine base esiste
+                    error: "Errore durante il salvataggio dei file. L'ordine è stato creato ma i file non sono stati allegati correttamente.",
+                    detail: moveError.message 
+                }, { status: 500 });
             }
         }
         
@@ -179,6 +179,11 @@ export async function POST(request) {
 
     } catch (error) {
         console.error("ORDER API ERROR:", error.message);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        // Risposta JSON strutturata invece di 500 generico white screen
+        return NextResponse.json({ 
+            success: false, 
+            error: "Errore interno del server durante la creazione dell'ordine.",
+            detail: error.message 
+        }, { status: 500 });
     }
 }

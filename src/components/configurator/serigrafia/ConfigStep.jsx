@@ -148,8 +148,16 @@ export default function ConfigStep({
                     <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">3. Quantità</label>
                     <SingleSizeSelector 
                         brandColor="red"
-                        quantity={genderLayout === 'caps' ? (getCurrentViewQuantities()['UNICA'] || 0) : singleQuantity}
-                        onQuantityChange={genderLayout === 'caps' ? (val) => onQuantityChange('UNICA', val) : setSingleQuantity}
+                        quantity={
+                            (enableVariants && (genderLayout === 'caps' || genderLayout === 'none')) 
+                                ? (getCurrentViewQuantities()['UNICA'] || 0) 
+                                : singleQuantity
+                        }
+                        onQuantityChange={
+                            (enableVariants && (genderLayout === 'caps' || genderLayout === 'none'))
+                                ? (val) => onQuantityChange('UNICA', val) 
+                                : setSingleQuantity
+                        }
                         visible={!!selectedColor}
                     />
                 </div>

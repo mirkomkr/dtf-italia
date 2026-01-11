@@ -175,38 +175,43 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-red-900 text-left">
               <h3 className="font-bold mb-2 uppercase text-sm">Caricamento File Serigrafia</h3>
-              <p className="text-sm">Carica i file necessari per la tua configurazione. {backPrint !== 'none' ? 'È richiesto un file per il fronte e uno per il retro.' : 'Carica il file per la stampa frontale.'}</p>
+              <p className="text-sm">
+                {frontPrint !== 'none' && backPrint !== 'none' 
+                  ? 'È richiesto un file per la stampa frontale e uno per il retro.' 
+                  : frontPrint === 'none' && backPrint !== 'none'
+                  ? 'Carica il file necessario per la stampa retro.'
+                  : 'Carica il file necessario per la tua configurazione.'}
+              </p>
             </div>
 
-            <div className={`grid grid-cols-1 ${backPrint !== 'none' ? 'md:grid-cols-2 gap-8' : 'gap-0 max-w-xl mx-auto'}`}>
+            <div className={`grid grid-cols-1 ${frontPrint !== 'none' && backPrint !== 'none' ? 'md:grid-cols-2 gap-8' : 'gap-0 max-w-xl mx-auto'}`}>
               
-              {/* UPLOAD FRONTE */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-red-900 font-bold uppercase text-sm border-b pb-2 border-red-100">
-                  <Shirt className="w-5 h-5" />
-                  <span>Stampa Fronte</span>
+              {/* UPLOAD FRONTE - Solo se Front Print != none */}
+              {frontPrint !== 'none' && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-red-900 font-bold uppercase text-sm border-b pb-2 border-red-100">
+                    <Shirt className="w-5 h-5" />
+                    <span>Stampa Fronte</span>
+                  </div>
+                  <FileUploader 
+                    uploadMode="s3"
+                    brandColor="red"
+                    file={files.front}
+                    onFileSelect={(f) => {
+                        setFiles(prev => ({ ...prev, front: f }));
+                        setFileKeys(prev => ({ ...prev, front: null })); 
+                    }}
+                    onFileRemove={() => {
+                        setFiles(prev => ({ ...prev, front: null }));
+                        setFileKeys(prev => ({ ...prev, front: null }));
+                    }}
+                    onUploadComplete={(key) => setFileKeys(prev => ({ ...prev, front: key }))}
+                  />
+                   {fileKeys.front && <p className="text-xs text-green-600 font-bold text-center">✅ File Fronte Caricato</p>}
                 </div>
-                <FileUploader 
-                  uploadMode="s3"
-                  brandColor="red"
-                  file={files.front}
-                  onFileSelect={(f) => {
-                      setFiles(prev => ({ ...prev, front: f }));
-                      // Reset key on new file selection to force re-upload if needed? 
-                      // FileUploader logic handles upload on select.
-                      // We might want to clear key if file changes, but Uploader calls onUploadComplete eventually.
-                      setFileKeys(prev => ({ ...prev, front: null })); 
-                  }}
-                  onFileRemove={() => {
-                      setFiles(prev => ({ ...prev, front: null }));
-                      setFileKeys(prev => ({ ...prev, front: null }));
-                  }}
-                  onUploadComplete={(key) => setFileKeys(prev => ({ ...prev, front: key }))}
-                />
-                 {fileKeys.front && <p className="text-xs text-green-600 font-bold text-center">✅ File Fronte Caricato</p>}
-              </div>
+              )}
 
-              {/* UPLOAD RETRO (Condizionale) */}
+              {/* UPLOAD RETRO - Solo se Back Print != none */}
               {backPrint !== 'none' && (
                  <div className="space-y-4">
                   <div className="flex items-center gap-2 text-red-900 font-bold uppercase text-sm border-b pb-2 border-red-100">
@@ -241,10 +246,13 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
               </button>
               
               <button
-                disabled={!fileKeys.front || (backPrint !== 'none' && !fileKeys.back)}
+                disabled={
+                    (frontPrint !== 'none' && !fileKeys.front) || 
+                    (backPrint !== 'none' && !fileKeys.back)
+                }
                 onClick={() => setCurrentStep(3)}
                 className={`px-8 py-3 rounded-xl font-bold text-white shadow-xl transition-all ${
-                  (!fileKeys.front || (backPrint !== 'none' && !fileKeys.back))
+                  ((frontPrint !== 'none' && !fileKeys.front) || (backPrint !== 'none' && !fileKeys.back))
                     ? 'bg-gray-300 cursor-not-allowed'
                     : 'bg-red-600 hover:bg-red-700 hover:shadow-2xl hover:-translate-y-1'
                 }`}

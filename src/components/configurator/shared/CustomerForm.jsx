@@ -34,7 +34,6 @@ export default function CustomerForm({
 
     return (
         <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">I tuoi dati</h3>
             
             <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -94,7 +93,7 @@ export default function CustomerForm({
             {showAddress && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-top-2 pt-2">
                     <div>
-                        <label htmlFor="address" className={labelClass}>Indirizzo di Spedizione</label>
+                        <label htmlFor="address" className={labelClass}>Indirizzo di Spedizione <span className="text-red-500" aria-hidden="true">*</span></label>
                         
                         {scriptLoaded ? (
                             <GoogleAddressInput 

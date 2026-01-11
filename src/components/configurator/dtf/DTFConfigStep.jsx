@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { AlertCircle } from 'lucide-react';
 import { calculatePrice, formatCurrency } from '../../../lib/pricing-engine';
 import { PRICING_CONFIG } from '../../../lib/pricing-config';
 import DTFVisualizer from './DTFVisualizer';
@@ -116,43 +117,83 @@ export default function DTFConfigStep({
             {/* Input Custom con ID per Label Association */}
             {selectedFormat === 'custom' && (
                 <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 space-y-4 animate-in fade-in slide-in-from-top-2">
-                    <div className="flex flex-col sm:flex-row gap-4 items-end">
-                        <div className="flex-1 space-y-2">
-                            <label htmlFor="width-input" className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Larghezza (max 58cm)</label>
-                            <input 
-                                id="width-input"
-                                type="number" 
-                                value={customDims.w}
-                                onFocus={(e) => e.target.select()}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (val <= 58) {
-                                        setCustomDims(p => ({...p, w: val}));
-                                        // Defer onUpdate to effect? Or call here? Effect is cleaner for multi-state.
-                                    }
-                                }}
-                                className={cn(
-                                    "w-full h-12 border-2 border-gray-200 rounded-xl px-4 font-bold outline-none transition-all",
-                                    brandColor === 'red' ? "focus:border-red-600 focus:ring-4 focus:ring-red-600/10" : "focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10"
-                                )}
-                                placeholder="cm"
-                            />
-                        </div>
-                        <div className="hidden sm:block pb-3 text-gray-300 font-bold" aria-hidden="true">×</div>
-                        <div className="flex-1 space-y-2">
-                            <label htmlFor="height-input" className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Altezza (cm)</label>
-                            <input 
-                                id="height-input"
-                                type="number" 
-                                value={customDims.h}
-                                onFocus={(e) => e.target.select()}
-                                onChange={(e) => setCustomDims(p => ({...p, h: e.target.value}))}
-                                className={cn(
-                                    "w-full h-12 border-2 border-gray-200 rounded-xl px-4 font-bold outline-none transition-all",
-                                    brandColor === 'red' ? "focus:border-red-600 focus:ring-4 focus:ring-red-600/10" : "focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10"
-                                )}
-                                placeholder="cm"
-                            />
+                    <div className="flex flex-col gap-6">
+                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
+                            <div className="flex-1 w-full space-y-2">
+                                <label htmlFor="width-input" className="text-[10px] font-bold text-gray-600 uppercase tracking-wider flex items-center justify-between">
+                                    <span>Larghezza (max 58cm)</span>
+                                    {customDims.w >= PRICING_CONFIG.dtf.BOBINA_WIDTH && (
+                                        <span className="text-red-600 animate-pulse flex items-center gap-1 normal-case font-medium">
+                                            <AlertCircle size={10} /> Limite raggiunto
+                                        </span>
+                                    )}
+                                </label>
+                                <div className="relative">
+                                    <input 
+                                        id="width-input"
+                                        type="number" 
+                                        value={customDims.w}
+                                        onFocus={(e) => e.target.select()}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val <= PRICING_CONFIG.dtf.BOBINA_WIDTH) {
+                                                setCustomDims(p => ({...p, w: val}));
+                                            }
+                                        }}
+                                        aria-invalid={customDims.w >= PRICING_CONFIG.dtf.BOBINA_WIDTH}
+                                        aria-describedby="width-warning"
+                                        className={cn(
+                                            "w-full h-12 border-2 rounded-xl px-4 font-bold outline-none transition-all",
+                                            customDims.w >= PRICING_CONFIG.dtf.BOBINA_WIDTH 
+                                                ? "border-red-500 bg-red-50 focus:ring-4 focus:ring-red-500/10" 
+                                                : (brandColor === 'red' ? "border-gray-200 focus:border-red-600 focus:ring-4 focus:ring-red-600/10" : "border-gray-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10")
+                                        )}
+                                        placeholder="cm"
+                                    />
+                                    <div id="width-warning" aria-live="polite" className="sr-only">
+                                        {customDims.w >= PRICING_CONFIG.dtf.BOBINA_WIDTH ? "Hai raggiunto la larghezza massima di 58 centimetri" : ""}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="hidden sm:block pb-3 text-gray-300 font-bold" aria-hidden="true">×</div>
+                            
+                            <div className="flex-1 w-full space-y-2">
+                                <label htmlFor="height-input" className="text-[10px] font-bold text-gray-600 uppercase tracking-wider flex items-center justify-between">
+                                    <span>Lunghezza (max 300cm)</span>
+                                    {customDims.h >= PRICING_CONFIG.dtf.MAX_CUSTOM_HEIGHT && (
+                                        <span className="text-red-600 animate-pulse flex items-center gap-1 normal-case font-medium">
+                                            <AlertCircle size={10} /> Limite raggiunto
+                                        </span>
+                                    )}
+                                </label>
+                                <div className="relative">
+                                    <input 
+                                        id="height-input"
+                                        type="number" 
+                                        value={customDims.h}
+                                        onFocus={(e) => e.target.select()}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val <= PRICING_CONFIG.dtf.MAX_CUSTOM_HEIGHT) {
+                                                setCustomDims(p => ({...p, h: val}));
+                                            }
+                                        }}
+                                        aria-invalid={customDims.h >= PRICING_CONFIG.dtf.MAX_CUSTOM_HEIGHT}
+                                        aria-describedby="height-warning"
+                                        className={cn(
+                                            "w-full h-12 border-2 rounded-xl px-4 font-bold outline-none transition-all",
+                                            customDims.h >= PRICING_CONFIG.dtf.MAX_CUSTOM_HEIGHT 
+                                                ? "border-red-500 bg-red-50 focus:ring-4 focus:ring-red-500/10" 
+                                                : (brandColor === 'red' ? "border-gray-200 focus:border-red-600 focus:ring-4 focus:ring-red-600/10" : "border-gray-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10")
+                                        )}
+                                        placeholder="cm"
+                                    />
+                                    <div id="height-warning" aria-live="polite" className="sr-only">
+                                        {customDims.h >= PRICING_CONFIG.dtf.MAX_CUSTOM_HEIGHT ? "Hai raggiunto la lunghezza massima di 300 centimetri" : ""}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -184,13 +225,15 @@ export default function DTFConfigStep({
                                     <span className="text-4xl font-black text-gray-900 tracking-tight">
                                         {formatCurrency(priceData.totalPrice)}
                                     </span>
-                                    <span className="text-sm font-bold text-gray-600 uppercase">
-                                        {formatCurrency(priceData.unitPrice)} / cad.
-                                    </span>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-bold text-gray-600 uppercase">
+                                            {formatCurrency(priceData.unitPrice)} / cad.
+                                        </span>
+                                        <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mt-0.5">
+                                            (IVA incl.)
+                                        </p>
+                                    </div>
                                 </div>
-                                <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mt-1">
-                                    Totale Stimato (IVA escl.)
-                                </p>
                             </>
                         ) : (
                             <p className="text-sm font-medium text-gray-600 italic">

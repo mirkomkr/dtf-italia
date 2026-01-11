@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { Shirt, RefreshCw } from 'lucide-react'; // Added Icons
+import { Shirt, RefreshCw, Info } from 'lucide-react'; // Added Icons
 import { useSearchParams } from 'next/navigation';
 import { calculatePrice } from '@/lib/pricing-engine';
 import { cn } from '@/lib/utils';
@@ -217,23 +217,30 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
         {/* STEP 2: CARICAMENTO FILE (PRE-PAGAMENTO) */}
         {currentStep === 2 && (
           <div className="max-w-4xl mx-auto space-y-8">
-            <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-red-900 text-left">
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4 md:p-6 text-red-900 text-left">
               <h3 className="font-bold mb-2 uppercase text-sm">Caricamento File Serigrafia</h3>
               <p className="text-sm">
                 {frontPrint !== 'none' && backPrint !== 'none' 
                   ? 'È richiesto un file per la stampa frontale e uno per il retro.' 
                   : frontPrint === 'none' && backPrint !== 'none'
                   ? 'Carica il file necessario per la stampa retro.'
-                  : 'Carica il file necessario per la tua configurazione.'}
+                  : 'Carica il file necessario per la tua stampa.'}
               </p>
+              
+              <div className="mt-4 flex items-start gap-2 text-[0.85rem] text-slate-600 leading-relaxed bg-white/50 p-3 rounded-xl border border-red-200/50">
+                <Info className="w-4 h-4 mt-0.5 text-red-600 shrink-0" />
+                <p>
+                    La dimensione del file inviato verrà adattata in base al supporto e alla taglia selezionata (Adulto/Bambino), mantenendo le proporzioni originali. Per un posizionamento o misure specifiche, seleziona <strong>'Controllo File'</strong> al checkout. 
+                    <span className="block mt-1 font-medium text-slate-700 italic">I nostri tecnici sceglieranno sempre la dimensione migliore per la tua stampa.</span>
+                </p>
+              </div>
             </div>
             
-            {/* Tone-on-Tone Disclaimers & Auto Outline Action */}
             {/* Tone-on-Tone Disclaimers & Auto Outline Action */}
             {(hasDarkColors || hasLightColors) && (
                 <div className="space-y-4">
                     <div className={cn(
-                        "p-6 rounded-2xl border shadow-sm animate-in fade-in flex flex-col xl:flex-row gap-6 items-start justify-between",
+                        "p-6 rounded-2xl border shadow-sm animate-in fade-in flex flex-col gap-6",
                         hasDarkColors ? "bg-slate-50 border-slate-200" : "bg-amber-50 border-amber-200"
                     )}>
                         <div className="space-y-2">
@@ -244,43 +251,47 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                                 </h4>
                              </div>
                             
-                            <p className={cn("text-sm leading-relaxed max-w-xl", hasDarkColors ? "text-slate-700" : "text-amber-800")}>
+                            <p className={cn("text-sm leading-relaxed", hasDarkColors ? "text-slate-700" : "text-amber-800")}>
                                 {hasDarkColors 
-                                    ? "Nel tuo ordine ci sono maglie di colore scuro (es. Nero, Blu, Verde). Assicurati che il tuo file non contenga elementi neri o molto scuri che risulterebbero invisibili."
-                                    : "Nel tuo ordine ci sono maglie di colore chiaro (es. Bianco, Giallo). Assicurati che il tuo file non contenga elementi bianchi/chiari che potrebbero confondersi."
+                                    ? "Nel tuo ordine ci sono maglie di colore scuro (es. Nero, Blu, Verde). Assicurati che il tuo file non contenga elementi neri o molto scuri che risulterebbero invisibili. Se necessario seleziona 'Applica bordo esterno' qui sotto per richiedere ai nostri tecnici l'aggiunta di un contorno di contrasto."
+                                    : "Nel tuo ordine ci sono maglie di colore chiaro (es. Bianco, Giallo). Assicurati che il tuo file non contenga elementi bianchi/chiari che potrebbero confondersi. Se necessario seleziona 'Applica bordo esterno' qui sotto per richiedere ai nostri tecnici l'aggiunta di un contorno di contrasto."
                                 }
                             </p>
                         </div>
 
                         {/* Contextual Action: Auto Outline */}
-                        <div className="flex-shrink-0 w-full md:w-auto">
-                            <label className={cn(
-                                "flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all",
-                                autoOutline 
-                                    ? "bg-red-50 border-red-600 text-red-900 shadow-sm" 
-                                    : "bg-white border-gray-100 text-gray-500 hover:border-gray-200"
-                            )}>
+                        <div className="pt-4 border-t border-dashed border-gray-200">
+                            <div 
+                                onClick={() => {
+                                    const val = !autoOutline;
+                                    setAutoOutline(val);
+                                    updatePrice(quantities, singleQuantity, frontPrint, backPrint, fileCheck, val);
+                                }}
+                                className={cn(
+                                    "p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 w-fit",
+                                    autoOutline 
+                                        ? "bg-red-50 border-red-600" 
+                                        : "bg-white border-gray-100 hover:border-gray-200"
+                                )}
+                            >
                                 <input 
                                     type="checkbox" 
                                     checked={autoOutline}
-                                    onChange={(e) => {
-                                        const val = e.target.checked;
-                                        setAutoOutline(val);
-                                        updatePrice(quantities, singleQuantity, frontPrint, backPrint, fileCheck, val);
-                                    }}
-                                    className="w-5 h-5 rounded border-gray-300 text-red-600 accent-red-600 focus:ring-red-500"
+                                    onChange={() => {}} 
+                                    className="w-5 h-5 rounded border-gray-300 pointer-events-none text-red-600 accent-red-600 focus:ring-red-500"
                                 />
-                                <div className="text-xs">
-                                    <span className="font-bold block uppercase tracking-wide">Adatta file automaticamente</span>
-                                    <span className={cn("block mt-1 font-medium", autoOutline ? "text-red-600" : "text-gray-400")}>
-                                        {autoOutline ? '✅ Opzione Attiva' : '+ €5.00'}
-                                    </span>
+                                <div className="flex-1">
+                                    <div className="flex justify-between items-center gap-8">
+                                        <span className="font-bold text-gray-900 text-sm tracking-tight uppercase">Applica bordo esterno</span>
+                                        <span className={cn("font-bold text-sm", autoOutline ? "text-red-700" : "text-gray-400")}>
+                                            + €5.00
+                                        </span>
+                                    </div>
+                                    <p className={cn("text-[10px] mt-0.5 leading-snug font-medium", autoOutline ? "text-red-600" : "text-gray-500")}>
+                                        Aggiunta di un contorno di contrasto al file di stampa.
+                                    </p>
                                 </div>
-                            </label>
-                            {/* Optional: Small help text beneath button */}
-                             {autoOutline && (
-                                <p className="text-[10px] text-center mt-2 text-red-500 font-medium">Bordo salvavita incluso</p>
-                             )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -354,11 +365,12 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                     (backPrint !== 'none' && !fileKeys.back)
                 }
                 onClick={() => setCurrentStep(3)}
-                className={`px-8 py-3 rounded-xl font-bold text-white shadow-xl transition-all ${
-                  ((frontPrint !== 'none' && !fileKeys.front) || (backPrint !== 'none' && !fileKeys.back))
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : 'bg-red-600 hover:bg-red-700 hover:shadow-2xl hover:-translate-y-1'
-                }`}
+                className={cn(
+                    "px-8 py-3 rounded-xl font-bold text-white shadow-xl transition-all",
+                    ((frontPrint !== 'none' && !fileKeys.front) || (backPrint !== 'none' && !fileKeys.back))
+                        ? "bg-gray-300 cursor-not-allowed" 
+                        : "bg-red-600 hover:bg-red-700 hover:shadow-2xl hover:-translate-y-1"
+                )}
               >
                 Procedi al Checkout
               </button>

@@ -193,24 +193,29 @@ export default function ConfigStep({
                 <span className="text-4xl font-black text-gray-900">
                     {formatCurrency(price.totalPrice)}
                 </span>
-                <span className="text-sm font-bold text-gray-600 uppercase">
-                    {formatCurrency(price.unitPrice)} / cad.
-                </span>
+                <div className="flex flex-col">
+                    <span className="text-sm font-bold text-gray-600 uppercase">
+                        {formatCurrency(price.unitPrice)} / cad.
+                    </span>
+                    <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest mt-0.5">
+                        (IVA incl.)
+                    </p>
+                </div>
              </div>
+             
 
               <button 
                 onClick={() => totalQuantity > 0 && onNext()}
                 aria-disabled={totalQuantity === 0}
                 className={cn(
-                    "py-4 px-10 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-widest shadow-lg bg-red-600 shadow-red-100",
+                    "bg-red-600 text-white px-8 py-4 rounded-xl font-bold transition-all uppercase tracking-widest text-sm shadow-lg shadow-red-100",
                     "focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
                     totalQuantity === 0 
                         ? "opacity-30 cursor-not-allowed" 
                         : "hover:bg-red-700"
                 )}
               >
-                Configura Spedizione
-                <ArrowRightIcon />
+                Upload File
               </button>
         </footer>
     </div>

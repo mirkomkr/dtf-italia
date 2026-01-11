@@ -40,6 +40,7 @@ export const PRICING_CONFIG = {
     pro_check: 7.00,
     FLASH_ORDER_MARKUP: 0.10,
     BOBINA_WIDTH: 58, // cm
+    MAX_CUSTOM_HEIGHT: 300, // cm
     fixed_fees: {
        file_check: 10.00
     },

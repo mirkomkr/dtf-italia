@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Info } from 'lucide-react';
 import { calculatePrice } from '@/lib/pricing-engine';
 
 // Componenti Shared
@@ -103,7 +104,7 @@ export default function DTFContainer({ product }) {
                                 : "hover:bg-indigo-700"
                         )}
                     >
-                        Procedi al Checkout
+                        Upload file
                     </button>
                 </div>
             </div>
@@ -112,11 +113,19 @@ export default function DTFContainer({ product }) {
         {/* STEP 2: CARICAMENTO FILE */}
         {currentStep === 2 && (
             <div className="max-w-3xl mx-auto space-y-8 text-center">
-                <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 text-left">
+                <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 md:p-6 text-left">
                     <h3 className="font-bold text-indigo-900 mb-2 uppercase text-sm tracking-wider">Caricamento File DTF</h3>
                     <p className="text-indigo-800 text-sm mb-4">
-                        Il caricamento dei file ora avviene <strong>prima del pagamento</strong>.
+                        Carica il file necessario per la tua stampa.
                     </p>
+
+                    <div className="mt-4 flex items-start gap-2 text-[0.85rem] text-slate-600 leading-relaxed bg-white/50 p-3 rounded-xl border border-indigo-200/50">
+                        <Info className="w-4 h-4 mt-0.5 text-indigo-600 shrink-0" />
+                        <p>
+                            La dimensione del file inviato verrà adattata al formato selezionato nell'ordine, mantenendo le proporzioni originali. Per un controllo tecnico della risoluzione, seleziona <strong>'Controllo File'</strong> al checkout.
+                            <span className="block mt-1 font-medium text-slate-700 italic">I nostri tecnici sceglieranno sempre la dimensione migliore per la tua stampa.</span>
+                        </p>
+                    </div>
                 </div>
                 
                 <FileUploader 
@@ -128,13 +137,27 @@ export default function DTFContainer({ product }) {
                     brandColor="indigo"
                     onUploadComplete={(key) => {
                         setUploadedFileKey(key);
-                        setCurrentStep(3);
                     }}
                 />
+                
+                {uploadedFileKey && <p className="text-xs text-green-600 font-bold text-center">✅ File Caricato</p>}
 
-                <div className="flex justify-start">
+                <div className="flex justify-between items-center pt-8 border-t border-gray-100">
                     <button onClick={() => setCurrentStep(1)} className="text-gray-600 font-bold text-xs uppercase hover:text-indigo-600 transition-colors">
                         Indietro
+                    </button>
+
+                    <button
+                        disabled={!uploadedFileKey}
+                        onClick={() => setCurrentStep(3)}
+                        className={cn(
+                            "px-8 py-3 rounded-xl font-bold text-white shadow-xl transition-all",
+                            !uploadedFileKey 
+                                ? "bg-gray-300 cursor-not-allowed" 
+                                : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-2xl hover:-translate-y-1"
+                        )}
+                    >
+                        Procedi al Checkout
                     </button>
                 </div>
             </div>

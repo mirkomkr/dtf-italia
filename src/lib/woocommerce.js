@@ -60,12 +60,15 @@ const fetchOptions = {
     throw new Error(`WooCommerce API Error: ${res.status} ${res.statusText}`);
   }
 
+  // Cloniamo la risposta per poterla leggere due volte se necessario
+  const resClone = res.clone();
+
   try {
       return await res.json();
   } catch (parseError) {
-      const bodySnippet = await res.text().catch(() => "Unable to read body");
-      console.error("FAILED TO PARSE WOOCOMMERCE JSON. Response body snippet:", bodySnippet.substring(0, 500));
-      throw new Error(`WooCommerce returned invalid JSON (HTML?). Snippet: ${bodySnippet.substring(0, 200)}...`);
+      const bodySnippet = await resClone.text().catch(() => "Unable to read body");
+      console.error("FAILED TO PARSE WOOCOMMERCE JSON. Response body snippet:", bodySnippet.substring(0, 800));
+      throw new Error(`WooCommerce returned invalid JSON (HTML?). Snippet: ${bodySnippet.substring(0, 300)}...`);
   }
 }
 

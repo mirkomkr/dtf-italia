@@ -8,7 +8,10 @@ import { PRICING_CONFIG } from './pricing-config';
 class SerigrafiaStrategy {
   calculate(params) {
     const config = PRICING_CONFIG.serigrafia;
-    const { quantity, frontPrint, backPrint, proCheck, autoOutline } = params; // Renamed fileCheck -> proCheck
+    const { quantity, frontPrint, backPrint, fileCheck, proCheck, autoOutline } = params;
+    
+    // Supportiamo entrambi i nomi (backward compatibility)
+    const activeProCheck = proCheck || fileCheck;
     
     // Safety check
     if (!quantity || quantity <= 0) return { unitPrice: 0, totalPrice: 0 };
@@ -57,7 +60,7 @@ class SerigrafiaStrategy {
     
     // Costo Pro Check (Check-up Grafico)
     let proCheckCost = 0;
-    if (proCheck) {
+    if (activeProCheck) {
         proCheckCost = config.pro_check || 0;
         totalParams += proCheckCost;
     }

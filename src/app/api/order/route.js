@@ -9,6 +9,8 @@ export async function POST(request) {
 
     try {
         const body = await request.json();
+        console.log("ORDER REQUEST BODY:", JSON.stringify(body, null, 2));
+
         const { 
             type = 'dtf',
             customer = {}, 
@@ -71,12 +73,12 @@ export async function POST(request) {
             { key: 'Dimensions', value: items?.width ? `${items.width}x${items.height}cm` : (items?.dimensions || 'N/D') },
             { key: 'Detailed Quantities', value: safeDetailedQuantities },
             { key: 'Meters', value: String(metersValue) },
-            { key: 'Pro Check', value: (items?.isFullService || items?.fileCheck || items?.isProCheck) ? 'Si' : 'No' },
+            { key: 'Pro Check', value: (items?.isFullService || items?.fileCheck || items?.isProCheck || items?.proCheck) ? 'Si' : 'No' },
             { key: 'Auto Outline', value: items?.autoOutline ? 'Si' : 'No' },
-            { key: 'is_pro_check', value: !!(items?.isFullService || items?.fileCheck || items?.isProCheck) },
-            { key: 'is_auto_outline', value: !!items?.autoOutline },
+            { key: 'is_pro_check', value: (items?.isFullService || items?.fileCheck || items?.isProCheck || items?.proCheck) ? "true" : "false" },
+            { key: 'is_auto_outline', value: items?.autoOutline ? "true" : "false" },
             { key: 'Flash Order', value: items?.isFlashOrder ? 'Si' : 'No' },
-            { key: 'is_flash_order', value: !!items?.isFlashOrder },
+            { key: 'is_flash_order', value: items?.isFlashOrder ? "true" : "false" },
             { key: '_file_uploaded_to_s3', value: hasFiles ? 'yes' : 'no' },
             { key: '_configurator_type', value: type }
         ];
@@ -183,7 +185,7 @@ export async function POST(request) {
         return NextResponse.json({ success: true, orderId });
 
     } catch (error) {
-        console.error("ORDER API ERROR:", error.message);
+        console.error("ORDER API ERROR (FULL):", error);
         // Risposta JSON strutturata invece di 500 generico white screen
         return NextResponse.json({ 
             success: false, 

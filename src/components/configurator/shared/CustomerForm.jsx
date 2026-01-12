@@ -75,53 +75,9 @@ export default function CustomerForm({
 
             {/* DATI PRINCIPALI */}
             <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label htmlFor="firstName" className={labelClass}>
-                        Nome <span className="text-red-500" aria-hidden="true">*</span>
-                    </label>
-                    <input 
-                        id="firstName"
-                        type="text" 
-                        name="firstName" 
-                        placeholder="Mario" 
-                        value={formData.firstName} 
-                        onChange={onChange}
-                        onBlur={onBlur} 
-                        className={getInputClass('firstName')}
-                        autoComplete="given-name"
-                        required
-                        aria-invalid={!!errors.firstName}
-                        aria-describedby={errors.firstName ? "firstName-error" : undefined}
-                    />
-                    {renderError('firstName')}
-                </div>
-                <div>
-                    <label htmlFor="lastName" className={labelClass}>
-                        Cognome <span className="text-red-500" aria-hidden="true">*</span>
-                    </label>
-                    <input 
-                        id="lastName"
-                        type="text" 
-                        name="lastName" 
-                        placeholder="Rossi" 
-                        value={formData.lastName} 
-                        onChange={onChange}
-                        onBlur={onBlur} 
-                        className={getInputClass('lastName')}
-                        autoComplete="family-name"
-                        required
-                        aria-invalid={!!errors.lastName}
-                        aria-describedby={errors.lastName ? "lastName-error" : undefined}
-                    />
-                    {renderError('lastName')}
-                </div>
-            </div>
-
-            {/* DATI AZIENDALI vs PRIVATO */}
-            <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
                 {isCompany ? (
                     <>
-                        <div>
+                         <div>
                             <label htmlFor="companyName" className={labelClass}>
                                 Ragione Sociale <span className="text-red-500" aria-hidden="true">*</span>
                             </label>
@@ -140,6 +96,75 @@ export default function CustomerForm({
                             />
                             {renderError('companyName')}
                         </div>
+                        <div>
+                            <label htmlFor="referencePerson" className={labelClass}>
+                                Referente (C/O) <span className="text-gray-400 font-normal text-[10px] ml-1">(Opzionale)</span>
+                            </label>
+                            <input 
+                                id="referencePerson"
+                                type="text" 
+                                name="referencePerson" 
+                                placeholder="Mario Rossi" 
+                                value={formData.referencePerson || ''} // Handle undefined
+                                onChange={onChange}
+                                onBlur={onBlur} 
+                                className={getInputClass('referencePerson')} // Usually valid unless we add rules
+                                autoComplete="section-contact name"
+                            />
+                            {/* No error render needed for optional field unless validation added */}
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div>
+                            <label htmlFor="firstName" className={labelClass}>
+                                Nome <span className="text-red-500" aria-hidden="true">*</span>
+                            </label>
+                            <input 
+                                id="firstName"
+                                type="text" 
+                                name="firstName" 
+                                placeholder="Mario" 
+                                value={formData.firstName} 
+                                onChange={onChange}
+                                onBlur={onBlur} 
+                                className={getInputClass('firstName')}
+                                autoComplete="given-name"
+                                required
+                                aria-invalid={!!errors.firstName}
+                                aria-describedby={errors.firstName ? "firstName-error" : undefined}
+                            />
+                            {renderError('firstName')}
+                        </div>
+                        <div>
+                            <label htmlFor="lastName" className={labelClass}>
+                                Cognome <span className="text-red-500" aria-hidden="true">*</span>
+                            </label>
+                            <input 
+                                id="lastName"
+                                type="text" 
+                                name="lastName" 
+                                placeholder="Rossi" 
+                                value={formData.lastName} 
+                                onChange={onChange}
+                                onBlur={onBlur} 
+                                className={getInputClass('lastName')}
+                                autoComplete="family-name"
+                                required
+                                aria-invalid={!!errors.lastName}
+                                aria-describedby={errors.lastName ? "lastName-error" : undefined}
+                            />
+                            {renderError('lastName')}
+                        </div>
+                    </>
+                )}
+            </div>
+
+            {/* DATI AZIENDALI vs PRIVATO */}
+            <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                {isCompany ? (
+                    <>
+                        {/* Company Name moved up */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="partitaIva" className={labelClass}>
@@ -400,6 +425,29 @@ export default function CustomerForm({
 
                 </div>
             )}
+            
+            {/* NOTE DI CONSEGNA (Opzionale) */}
+            <div>
+                <label htmlFor="notes" className={labelClass}>
+                    Note di Consegna <span className="text-gray-400 font-normal text-[10px] ml-1">(Opzionale)</span>
+                </label>
+                <textarea 
+                    id="notes"
+                    name="notes" 
+                    placeholder="Instruzioni per il corriere, codice citofono, ecc..." 
+                    value={formData.notes || ''} 
+                    onChange={onChange}
+                    onBlur={onBlur} 
+                    className={cn(getInputClass('notes'), "h-24 py-3 resize-y min-h-[5rem] max-h-[10rem]")}
+                    maxLength={200}
+                />
+                <div className="flex justify-end mt-1">
+                    <span className="text-[10px] text-gray-400">
+                        {formData.notes?.length || 0}/200
+                    </span>
+                </div>
+            </div>
+
             {showAddress && (
                 <Script
                     src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}

@@ -39,11 +39,14 @@ export default function UnifiedCheckout({
         billingSameAsShipping: true,
         billingAddress: '',
         billingCity: '',
-        billingZip: ''
+        billingZip: '',
+        referencePerson: '', // Persona di riferimento per aziende
+        notes: '' // Note opzionali ordine
     });
     const [shippingOption, setShippingOption] = useState('shipping');
     const [isProcessing, setIsProcessing] = useState(false);
     const [errors, setErrors] = useState({});
+    const [submitError, setSubmitError] = useState(null);
 
     // Costo spedizione semplice
     const shippingCost = shippingOption === 'pickup' ? 0.00 : 7.50; 
@@ -60,6 +63,9 @@ export default function UnifiedCheckout({
         switch (name) {
             case 'firstName':
             case 'lastName':
+                if (formData.customerType === 'private' && !value) error = 'Campo obbligatorio';
+                break;
+
             case 'email':
             case 'address':
             case 'city':
@@ -110,9 +116,9 @@ export default function UnifiedCheckout({
         
         // Elenco campi da validare in base al tipo
         const fieldsToValidate = [
-            'firstName', 'lastName', 'email', 
+            'email',
+            ...(formData.customerType === 'private' ? ['firstName', 'lastName', 'codiceFiscale'] : ['companyName', 'partitaIva', 'sdiCode', 'pec']),
             ...(shippingOption === 'shipping' ? ['address', 'city', 'zip'] : []),
-            ...(formData.customerType === 'private' ? ['codiceFiscale'] : ['companyName', 'partitaIva', 'sdiCode', 'pec']),
             ...(!formData.billingSameAsShipping ? ['billingAddress', 'billingCity', 'billingZip'] : [])
         ];
 
@@ -135,7 +141,7 @@ export default function UnifiedCheckout({
         }
 
         setIsProcessing(true);
-        setError(null);
+        setSubmitError(null);
 
         try {
             const payload = {
@@ -170,7 +176,7 @@ export default function UnifiedCheckout({
                 throw new Error(result.error || "Errore durante la creazione dell'ordine");
             }
         } catch (err) {
-            setError(err.message);
+            setSubmitError(err.message);
         } finally {
             setIsProcessing(false);
         }
@@ -196,9 +202,9 @@ export default function UnifiedCheckout({
             
             {/* PARTE SINISTRA: INPUT DATI */}
             <div className="flex-1 space-y-8">
-                {error && (
-                    <div className="p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
-                        {error}
+                {submitError && (
+                    <div className="p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm" role="alert">
+                        {submitError}
                     </div>
                 )}
                 

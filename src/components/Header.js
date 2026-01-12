@@ -55,20 +55,20 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-gray-900 absolute top-0 left-0 w-full z-50 py-6" role="banner">
+    <header className="bg-gray-900/90 backdrop-blur-md sticky top-0 left-0 w-full z-50 border-b border-white/5 transition-all duration-300" role="banner">
       {/* Schema.org JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      <div className="container mx-auto px-4 flex items-center justify-between">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 py-4 flex items-center justify-between">
         
         {/* Logo Section */}
         <div className="flex-shrink-0 z-50 relative">
           <Link 
             href="/" 
-            className="inline-block text-2xl font-black text-white tracking-tighter cursor-pointer hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-white rounded-md px-1"
+            className="inline-block text-xl md:text-2xl font-black text-white tracking-tighter cursor-pointer hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md px-1"
             aria-label="DTF Italia - Torna alla Home"
             onClick={() => setIsMobileMenuOpen(false)}
           >
@@ -79,14 +79,15 @@ export default function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-8 text-sm font-medium text-gray-300" aria-label="Navigazione Principale">
+        <nav className="hidden md:flex md:gap-3 lg:gap-6 xl:gap-8 md:text-[0.70rem] lg:text-sm xl:text-base font-semibold text-gray-300 items-center" aria-label="Navigazione Principale">
           {navLinks.map((link) => (
             <Link 
               key={link.label}
               href={link.href} 
-              className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-sm"
+              className="hover:text-white transition-all duration-300 relative group py-2 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-sm"
             >
-              {link.label}
+              <span className="relative z-10">{link.label}</span>
+              <span className="absolute bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
           ))}
         </nav>

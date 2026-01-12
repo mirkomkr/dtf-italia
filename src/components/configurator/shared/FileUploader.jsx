@@ -194,38 +194,43 @@ export default function FileUploader({
                     <div className="w-full space-y-3">
                         {currentFiles.map((f, i) => (
                            <div key={i} className={cn(
-                                "flex items-center justify-between bg-white p-3 rounded-xl border shadow-sm transition-all duration-200",
+                                "flex items-center gap-2 md:gap-3 bg-white p-3 rounded-xl border shadow-sm transition-all duration-200 min-w-0 w-full overflow-hidden",
                                 isRed ? 'border-red-100' : 'border-gray-200 hover:border-indigo-300'
                            )}>
-                                <div className="flex items-center gap-3 overflow-hidden w-full">
-                                    <FileCheck className="w-6 h-6 md:w-8 md:h-8 text-green-500 flex-shrink-0" />
-                                    <div className="min-w-0 flex-grow">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <p className="font-bold text-sm text-gray-800 truncate mr-2">{f.name}</p>
-                                            {uploadMode === 's3' && (
-                                                <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
-                                                    {uploadProgress[f.name] === 100 ? 'CARICATO' : (uploadProgress[f.name] === -1 ? 'ERRORE' : 'IN CODA...')}
-                                                </p>
-                                            )}
+                                <FileCheck className="w-6 h-6 md:w-8 md:h-8 text-green-500 flex-shrink-0" />
+                                
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex justify-between items-center mb-1 gap-4 min-w-0">
+                                        <div className="min-w-0 flex-1 max-w-[140px] xs:max-w-[250px] sm:max-w-[350px]">
+                                            <p className="font-bold text-[0.8rem] md:text-sm text-gray-800 truncate" title={f.name}>
+                                                {f.name}
+                                            </p>
                                         </div>
-                                        
-                                        {/* Progress Bar */}
                                         {uploadMode === 's3' && (
-                                            <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                                <div 
-                                                    className={`h-full transition-all duration-300 ${uploadProgress[f.name] === -1 ? 'bg-red-500' : 'bg-green-500'}`}
-                                                    style={{ width: `${Math.max(5, uploadProgress[f.name] || 0)}%` }}
-                                                />
-                                            </div>
+                                            <p className="text-[10px] font-bold text-slate-500 whitespace-nowrap flex-shrink-0">
+                                                {uploadProgress[f.name] === 100 ? 'CARICATO' : (uploadProgress[f.name] === -1 ? 'ERRORE' : 'IN CODA...')}
+                                            </p>
                                         )}
                                     </div>
-                                    <button 
-                                        onClick={(e) => handleReset(e, f)}
-                                        className="text-red-400 hover:text-red-600 font-bold px-2"
-                                    >
-                                        ✕
-                                    </button>
+                                    
+                                    {/* Progress Bar */}
+                                    {uploadMode === 's3' && (
+                                        <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                            <div 
+                                                className={`h-full transition-all duration-300 ${uploadProgress[f.name] === -1 ? 'bg-red-500' : 'bg-green-500'}`}
+                                                style={{ width: `${Math.max(5, uploadProgress[f.name] || 0)}%` }}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
+
+                                <button 
+                                    onClick={(e) => handleReset(e, f)}
+                                    className="text-red-400 hover:text-red-600 font-bold px-2 flex-shrink-0 transition-colors"
+                                    aria-label="Rimuovi file"
+                                >
+                                    ✕
+                                </button>
                            </div>
                         ))}
                     </div>

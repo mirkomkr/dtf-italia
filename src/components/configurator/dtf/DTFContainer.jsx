@@ -92,15 +92,15 @@ export default function DTFContainer({ product }) {
                     initialConfig={config}
                     onUpdate={handleConfigUpdate}
                 />
-                <div className="flex justify-end">
+                <div className="flex flex-col md:flex-row justify-end pt-6 border-t border-gray-100">
                     <button
                         onClick={() => config.price && setCurrentStep(2)}
                         aria-disabled={!config.price}
                         className={cn(
-                            "bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold transition-all uppercase tracking-widest text-sm",
+                            "w-full md:w-auto bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold transition-all uppercase tracking-widest text-sm shadow-lg shadow-indigo-100",
                             "focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2",
                             !config.price 
-                                ? "opacity-50 cursor-not-allowed" 
+                                ? "opacity-30 cursor-not-allowed" 
                                 : "hover:bg-indigo-700"
                         )}
                     >
@@ -142,8 +142,8 @@ export default function DTFContainer({ product }) {
                 
                 {uploadedFileKey && <p className="text-xs text-green-600 font-bold text-center">✅ File Caricato</p>}
 
-                <div className="flex justify-between items-center pt-8 border-t border-gray-100">
-                    <button onClick={() => setCurrentStep(1)} className="text-gray-600 font-bold text-xs uppercase hover:text-indigo-600 transition-colors">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-gray-100">
+                    <button onClick={() => setCurrentStep(1)} className="order-2 md:order-1 text-gray-600 font-bold text-xs uppercase hover:text-indigo-600 transition-colors">
                         Indietro
                     </button>
 
@@ -151,9 +151,10 @@ export default function DTFContainer({ product }) {
                         disabled={!uploadedFileKey}
                         onClick={() => setCurrentStep(3)}
                         className={cn(
-                            "px-8 py-3 rounded-xl font-bold text-white shadow-xl transition-all",
+                            "order-1 md:order-2 w-full md:w-auto px-8 py-4 rounded-xl font-bold text-white transition-all uppercase tracking-widest text-sm shadow-lg shadow-indigo-100",
+                            "focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2",
                             !uploadedFileKey 
-                                ? "bg-gray-300 cursor-not-allowed" 
+                                ? "opacity-30 cursor-not-allowed bg-indigo-600" 
                                 : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-2xl hover:-translate-y-1"
                         )}
                     >

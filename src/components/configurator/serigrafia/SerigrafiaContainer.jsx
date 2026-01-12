@@ -351,10 +351,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
               )}
             </div>
 
-            <div className="flex justify-between items-center pt-8 border-t border-gray-100">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-gray-100">
               <button 
                 onClick={() => setCurrentStep(1)} 
-                className="text-gray-600 font-bold text-xs uppercase hover:text-red-600 transition-colors"
+                className="order-2 md:order-1 text-gray-600 font-bold text-xs uppercase hover:text-red-600 transition-colors"
               >
                 Indietro
               </button>
@@ -366,9 +366,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                 }
                 onClick={() => setCurrentStep(3)}
                 className={cn(
-                    "px-8 py-3 rounded-xl font-bold text-white shadow-xl transition-all",
+                    "order-1 md:order-2 w-full md:w-auto px-8 py-4 rounded-xl font-bold text-white transition-all uppercase tracking-widest text-sm shadow-lg shadow-red-100",
+                    "focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
                     ((frontPrint !== 'none' && !fileKeys.front) || (backPrint !== 'none' && !fileKeys.back))
-                        ? "bg-gray-300 cursor-not-allowed" 
+                        ? "opacity-30 cursor-not-allowed bg-red-600" 
                         : "bg-red-600 hover:bg-red-700 hover:shadow-2xl hover:-translate-y-1"
                 )}
               >

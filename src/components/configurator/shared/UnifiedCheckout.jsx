@@ -28,24 +28,109 @@ export default function UnifiedCheckout({
         email: '',
         address: '',
         city: '',
-        zip: ''
+        zip: '',
+        // Nuovi campi per fatturazione
+        customerType: 'private', // 'private' | 'company'
+        codiceFiscale: '',
+        companyName: '',
+        partitaIva: '',
+        sdiCode: '',
+        pec: '',
+        billingSameAsShipping: true,
+        billingAddress: '',
+        billingCity: '',
+        billingZip: ''
     });
     const [shippingOption, setShippingOption] = useState('shipping');
     const [isProcessing, setIsProcessing] = useState(false);
-    const [error, setError] = useState(null);
+    const [errors, setErrors] = useState({});
 
     // Costo spedizione semplice
     const shippingCost = shippingOption === 'pickup' ? 0.00 : 7.50; 
 
+    // --- Helpers Validazione ---
+    const validateField = (name, value, formData) => {
+        let error = null;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // Regex CF: 16 char, 6 letters, 2 digits, 1 letter, 2 digits, 1 letter, 3 digits, 1 letter
+        const cfRegex = /^[A-Z]{6}[0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]$/i;
+        const pivaRegex = /^[0-9]{11}$/;
+        const sdiRegex = /^[A-Z0-9]{7}$/i;
+
+        switch (name) {
+            case 'firstName':
+            case 'lastName':
+            case 'email':
+            case 'address':
+            case 'city':
+            case 'zip':
+                if (!value) error = 'Campo obbligatorio';
+                if (name === 'email' && value && !emailRegex.test(value)) error = 'Email non valida';
+                break;
+            
+            case 'codiceFiscale':
+                if (formData.customerType === 'private') {
+                    if (!value) error = 'Codice Fiscale obbligatorio';
+                    else if (!cfRegex.test(value)) error = 'Formato non valido (es. RSSMRA80A01H501U)';
+                }
+                break;
+
+            case 'companyName':
+            case 'partitaIva':
+            case 'sdiCode':
+            case 'pec':
+                if (formData.customerType === 'company') {
+                    if (!value) error = 'Campo obbligatorio per aziende';
+                    else if (name === 'partitaIva' && !pivaRegex.test(value)) error = 'Partita IVA deve contenere 11 numeri';
+                    else if (name === 'sdiCode' && !sdiRegex.test(value)) error = 'SDI deve essere 7 caratteri';
+                    else if (name === 'pec' && !emailRegex.test(value)) error = 'PEC non valida';
+                }
+                break;
+
+            case 'billingAddress':
+            case 'billingCity':
+            case 'billingZip':
+                if (!formData.billingSameAsShipping && !value) error = 'Campo obbligatorio';
+                break;
+        }
+        return error;
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        const error = validateField(name, value, formData);
+        setErrors(prev => ({ ...prev, [name]: error }));
+    };
+
     // --- Logica di Pagamento ---
     const handlePayment = async (paymentMethod, skipS3 = false) => {
-        // Validazione Base
-        if (!formData.firstName || !formData.lastName || !formData.email) {
-            alert("Per favore, inserisci i dati di contatto.");
-            return;
-        }
-        if (shippingOption === 'shipping' && !formData.address) {
-            alert("Per favore, inserisci l'indirizzo di spedizione.");
+        // Validazione Completa
+        const newErrors = {};
+        let isValid = true;
+        
+        // Elenco campi da validare in base al tipo
+        const fieldsToValidate = [
+            'firstName', 'lastName', 'email', 
+            ...(shippingOption === 'shipping' ? ['address', 'city', 'zip'] : []),
+            ...(formData.customerType === 'private' ? ['codiceFiscale'] : ['companyName', 'partitaIva', 'sdiCode', 'pec']),
+            ...(!formData.billingSameAsShipping ? ['billingAddress', 'billingCity', 'billingZip'] : [])
+        ];
+
+        fieldsToValidate.forEach(field => {
+            const error = validateField(field, formData[field], formData);
+            if (error) {
+                newErrors[field] = error;
+                isValid = false;
+            }
+        });
+
+        setErrors(newErrors);
+
+        if (!isValid) {
+            // Focus sul primo errore
+            const firstErrorField = Object.keys(newErrors)[0];
+            const element = document.getElementById(firstErrorField);
+            if (element) element.focus();
             return;
         }
 
@@ -132,8 +217,17 @@ export default function UnifiedCheckout({
                     <h2 className="text-xl font-bold text-gray-900 mb-4">2. I tuoi dati</h2>
                     <CustomerForm 
                         formData={formData} 
-                        onChange={(e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))}
-                        onAddressSelect={(addr) => setFormData(prev => ({ ...prev, ...addr }))}
+                        onChange={(e) => {
+                            setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+                            // Clear error on change if desired, or keep until blur
+                            if (errors[e.target.name]) setErrors(prev => ({ ...prev, [e.target.name]: null }));
+                        }}
+                        onBlur={handleBlur}
+                        errors={errors}
+                        onAddressSelect={(addr) => {
+                            setFormData(prev => ({ ...prev, ...addr }));
+                            setErrors(prev => ({ ...prev, address: null, city: null, zip: null }));
+                        }}
                         showAddress={shippingOption === 'shipping'}
                         brandColor={brandColor}
                     />

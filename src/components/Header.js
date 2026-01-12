@@ -55,7 +55,10 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-gray-900/90 backdrop-blur-md sticky top-0 left-0 w-full z-50 border-b border-white/5 transition-all duration-300" role="banner">
+    <header 
+      className={`fixed top-0 left-0 w-full z-50 border-b border-white/5 ${isMobileMenuOpen ? 'bg-gray-900' : 'bg-gray-900/90 backdrop-blur-md'}`} 
+      role="banner"
+    >
       {/* Schema.org JSON-LD */}
       <script
         type="application/ld+json"

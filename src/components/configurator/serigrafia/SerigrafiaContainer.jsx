@@ -230,7 +230,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
               <div className="mt-4 flex items-start gap-2 text-[0.85rem] text-slate-600 leading-relaxed bg-white/50 p-3 rounded-xl border border-red-200/50">
                 <Info className="w-4 h-4 mt-0.5 text-red-600 shrink-0" />
                 <p>
-                    La dimensione del file inviato verrà adattata in base al supporto e alla taglia selezionata (Adulto/Bambino), mantenendo le proporzioni originali. Per un posizionamento o misure specifiche, seleziona <strong>'Controllo File'</strong> al checkout. 
+                    La dimensione del file inviato verrà adattata in base al supporto e alla taglia selezionata (Adulto/Bambino), mantenendo le proporzioni originali. Per un controllo tecnico della risoluzione, seleziona <strong>'Controllo File'</strong> al checkout.
                     <span className="block mt-1 font-medium text-slate-700 italic">I nostri tecnici sceglieranno sempre la dimensione migliore per la tua stampa.</span>
                 </p>
               </div>

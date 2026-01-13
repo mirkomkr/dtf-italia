@@ -159,8 +159,21 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   };
 
   const scrollToTop = () => {
+    const target = document.getElementById('configurator-top');
+    if (!target) return;
+
     if (window.innerWidth < 1024) {
-      document.getElementById('configurator-top')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+      const offset = 100;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = target.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'instant'
+      });
+      target.focus({ preventScroll: true });
     } else {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
@@ -174,7 +187,11 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   ];
 
   return (
-    <div id="configurator-top" className="scroll-mt-32 relative w-full rounded-3xl p-4 md:p-8 border border-slate-200/50 shadow-2xl overflow-visible bg-white">
+    <div 
+      id="configurator-top" 
+      tabIndex="-1"
+      className="scroll-mt-32 outline-none relative w-full rounded-3xl p-4 md:p-8 border border-slate-200/50 shadow-2xl overflow-visible bg-white transition-none"
+    >
       <StepNavigation 
         currentStep={currentStep} 
         steps={steps}

@@ -54,8 +54,25 @@ export default function DTFContainer({ product }) {
 
   // --- Handlers ---
   const scrollToTop = () => {
+    // Cerchiamo l'elemento target
+    const target = document.getElementById('configurator-top');
+    if (!target) return;
+
     if (window.innerWidth < 1024) {
-      document.getElementById('configurator-top')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+      // Su mobile calcoliamo la posizione esatta sottraendo un offset per l'header
+      const offset = 100; // 80px header + 20px respiro
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = target.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'instant'
+      });
+      
+      // Portiamo il focus sul contenitore per evitare che il browser scorra altrove
+      target.focus({ preventScroll: true });
     } else {
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
@@ -79,7 +96,11 @@ export default function DTFContainer({ product }) {
   ];
 
   return (
-    <div id="configurator-top" className="scroll-mt-32 relative w-full rounded-3xl p-4 md:p-8 border border-slate-200/50 shadow-2xl overflow-visible bg-white">
+    <div 
+      id="configurator-top" 
+      tabIndex="-1"
+      className="scroll-mt-32 outline-none relative w-full rounded-3xl p-4 md:p-8 border border-slate-200/50 shadow-2xl overflow-visible bg-white transition-none"
+    >
       
       {/* Navigazione Step */}
       <StepNavigation 

@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: auto !important;
+}
+
 html, body {
   height: auto;
 }

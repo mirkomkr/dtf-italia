@@ -159,7 +159,11 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (window.innerWidth < 1024) {
+      document.getElementById('configurator-top')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
   };
 
   const steps = [
@@ -169,7 +173,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   ];
 
   return (
-    <div id="configurator-top" className="scroll-mt-40 relative w-full rounded-3xl p-4 md:p-8 border border-slate-200/50 shadow-2xl overflow-visible bg-white">
+    <div id="configurator-top" className="scroll-mt-32 relative w-full rounded-3xl p-4 md:p-8 border border-slate-200/50 shadow-2xl overflow-visible bg-white">
       <StepNavigation 
         currentStep={currentStep} 
         steps={steps}

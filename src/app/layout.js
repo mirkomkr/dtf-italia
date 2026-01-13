@@ -43,11 +43,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="it" className="scroll-smooth" suppressHydrationWarning>
+    <html lang="it" suppressHydrationWarning>
 
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col`}>
         <Header />
-        <main id="main-content" className="relative flex-1 pt-20 flex flex-col">
+        <main id="main-content" className="relative flex-1 flex flex-col">
           {children}
         </main>
         <Footer />

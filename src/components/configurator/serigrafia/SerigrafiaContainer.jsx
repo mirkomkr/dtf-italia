@@ -155,23 +155,30 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   const handleOrderSuccess = (newId, meta = {}) => {
     setOrderId(newId);
     setCurrentStep(4);
+    scrollToTop();
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const steps = [
     { id: 1, label: 'Configura' },
     { id: 2, label: 'Upload' },
-    { id: 3, label: 'Checkout' },
-    { id: 4, label: 'Completato' }
+    { id: 3, label: 'Checkout' }
   ];
 
   return (
-    <div id="configurator-top" className="relative w-full rounded-3xl p-4 md:p-8 border border-slate-200/50 shadow-2xl overflow-visible bg-white">
+    <div id="configurator-top" className="scroll-mt-40 relative w-full rounded-3xl p-4 md:p-8 border border-slate-200/50 shadow-2xl overflow-visible bg-white">
       <StepNavigation 
         currentStep={currentStep} 
         steps={steps}
         onStepClick={(s) => {
           if (s > currentStep && s > 1 && !selectedColor) return; // Basic validation
-          if (s < currentStep) setCurrentStep(s);
+          if (s < currentStep) {
+              setCurrentStep(s);
+              scrollToTop();
+          }
         }}
         isStepCompleted={!!orderId}
         brandColor="red"
@@ -209,7 +216,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
             price={price}
             totalQuantity={totalQuantity}
-            onNext={() => setCurrentStep(2)}
+            onNext={() => {
+                setCurrentStep(2);
+                scrollToTop();
+            }}
             brandColor="red"
           />
         )}
@@ -353,7 +363,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
             <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-gray-100">
               <button 
-                onClick={() => setCurrentStep(1)} 
+                onClick={() => {
+                    setCurrentStep(1);
+                    scrollToTop();
+                }} 
                 className="order-2 md:order-1 text-gray-600 font-bold text-xs uppercase hover:text-red-600 transition-colors"
               >
                 Indietro
@@ -364,7 +377,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                     (frontPrint !== 'none' && !fileKeys.front) || 
                     (backPrint !== 'none' && !fileKeys.back)
                 }
-                onClick={() => setCurrentStep(3)}
+                onClick={() => {
+                    setCurrentStep(3);
+                    scrollToTop();
+                }}
                 className={cn(
                     "order-1 md:order-2 w-full md:w-auto px-8 py-4 rounded-xl font-bold text-white transition-all uppercase tracking-widest text-sm shadow-lg shadow-red-100",
                     "focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
@@ -397,7 +413,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             uploadedFileKey={fileKeys} 
             brandColor="red"
             onSuccess={handleOrderSuccess}
-            onBack={() => setCurrentStep(2)}
+            onBack={() => {
+                setCurrentStep(2);
+                scrollToTop();
+            }}
             // Pro Check Upgrade (+7€)
             isProCheck={fileCheck}
             onToggleProCheck={(val) => {

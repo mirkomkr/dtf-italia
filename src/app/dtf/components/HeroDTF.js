@@ -25,7 +25,7 @@ export default function Hero({ product }) {
     const finalProduct = product || { id: 'dtf-service', name: 'Service Stampa DTF', slug: 'service-stampa-dtf-roma' };
 
     const scrollToConfig = () => {
-        document.getElementById('configurator-section')?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('configurator-section')?.scrollIntoView({ behavior: 'instant' });
     };
 
     return (

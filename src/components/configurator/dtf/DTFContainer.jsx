@@ -53,6 +53,10 @@ export default function DTFContainer({ product }) {
   }, [urlOrderId]);
 
   // --- Handlers ---
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
   const handleConfigUpdate = (newConfig) => {
     setConfig(prev => ({ ...prev, ...newConfig }));
   };
@@ -60,6 +64,7 @@ export default function DTFContainer({ product }) {
   const handleOrderSuccess = (newOrderId, meta = {}) => {
     setOrderId(newOrderId);
     setCurrentStep(4);
+    scrollToTop();
   };
 
   const steps = [
@@ -78,7 +83,10 @@ export default function DTFContainer({ product }) {
         steps={steps}
         onStepClick={(step) => {
             if (step > currentStep && step > 1 && !config.price) return;
-            if (step < currentStep) setCurrentStep(step);
+            if (step < currentStep) {
+                setCurrentStep(step);
+                scrollToTop();
+            }
         }}
         isStepCompleted={!!orderId} 
       />
@@ -94,7 +102,12 @@ export default function DTFContainer({ product }) {
                 />
                 <div className="flex flex-col md:flex-row justify-end pt-6 border-t border-gray-100">
                     <button
-                        onClick={() => config.price && setCurrentStep(2)}
+                        onClick={() => {
+                            if (config.price) {
+                                setCurrentStep(2);
+                                scrollToTop();
+                            }
+                        }}
                         aria-disabled={!config.price}
                         className={cn(
                             "w-full md:w-auto bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold transition-all uppercase tracking-widest text-sm shadow-lg shadow-indigo-100",
@@ -143,7 +156,7 @@ export default function DTFContainer({ product }) {
                 {uploadedFileKey && <p className="text-xs text-green-600 font-bold text-center">✅ File Caricato</p>}
 
                 <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-gray-100">
-                    <button onClick={() => setCurrentStep(1)} className="order-2 md:order-1 text-gray-600 font-bold text-xs uppercase hover:text-indigo-600 transition-colors">
+                    <button onClick={() => { setCurrentStep(1); scrollToTop(); }} className="order-2 md:order-1 text-gray-600 font-bold text-xs uppercase hover:text-indigo-600 transition-colors">
                         Indietro
                     </button>
 
@@ -173,7 +186,10 @@ export default function DTFContainer({ product }) {
                 uploadedFileKey={uploadedFileKey}
                 brandColor="indigo"
                 onSuccess={handleOrderSuccess}
-                onBack={() => setCurrentStep(2)}
+                onBack={() => {
+                    setCurrentStep(2);
+                    scrollToTop();
+                }}
                 isProCheck={config.isFullService}
                 onToggleProCheck={(val) => {
                     const newConfig = { ...config, isFullService: val };

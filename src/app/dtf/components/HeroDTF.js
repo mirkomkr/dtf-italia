@@ -158,7 +158,7 @@ export default function HeroDTF({ product }) {
                     {/* Right Column: Configurator */}
                     <aside 
                         id="configurator-section"
-                        className="min-w-0 w-full flex flex-col justify-center"
+                        className="min-w-0 w-full lg:mt-20 flex flex-col justify-center"
                         aria-labelledby="configurator-heading"
                     >
                         {/* Hidden heading for screen readers */}

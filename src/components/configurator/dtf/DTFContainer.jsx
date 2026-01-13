@@ -166,7 +166,10 @@ export default function DTFContainer({ product }) {
 
                     <button
                         disabled={!uploadedFileKey}
-                        onClick={() => setCurrentStep(3)}
+                        onClick={() => {
+                            setCurrentStep(3);
+                            scrollToTop();
+                        }}
                         className={cn(
                             "order-1 md:order-2 w-full md:w-auto px-8 py-4 rounded-xl font-bold text-white transition-all uppercase tracking-widest text-sm shadow-lg shadow-indigo-100",
                             "focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2",

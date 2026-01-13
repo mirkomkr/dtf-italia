@@ -61,14 +61,31 @@ export default function HeroDTF({ product }) {
     };
 
     /**
-     * Scroll to configurator section with instant behavior
-     * Prevents smooth scroll conflicts with global CSS
+     * Scroll to configurator section with robust coordinate-based logic
+     * Prevents "ghost scrolls" and ensures header clearance
      */
     const scrollToConfig = () => {
-        document.getElementById('configurator-section')?.scrollIntoView({ 
-            behavior: 'instant',
-            block: 'start'
-        });
+        const target = document.getElementById('configurator-top') || document.getElementById('configurator-section');
+        if (!target) return;
+
+        if (window.innerWidth < 1024) {
+            const offset = 100;
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = target.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'instant'
+            });
+            
+            // Focus management to lock the scroll position
+            target.focus({ preventScroll: true });
+        } else {
+            // Standard desktop behavior
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
     };
 
     return (

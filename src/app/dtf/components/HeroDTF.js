@@ -80,7 +80,7 @@ export default function Hero({ product }) {
                     </div>
 
                     {/* Right: Configurator */}
-                    <div id="configurator-section" className="w-full flex flex-col justify-center">
+                    <div id="configurator-section" className="w-full mt-16 flex flex-col justify-center">
                        <LazyLoader>
                              {finalProduct ? (
                                  <UniversalContainer 

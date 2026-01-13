@@ -80,9 +80,16 @@ export default function HeroSerigrafia() {
 
           </div>
 
-          {/* Placeholder visivo (futuro: immagine o mockup) */}
-          <div className="flex-1 hidden lg:block" aria-hidden="true">
-            {/* spazio volutamente lasciato per future immagini / mockup */}
+          <div className="flex-1 hidden lg:flex items-center justify-center">
+            <div 
+              className="w-full max-w-md aspect-[4/3] rounded-2xl bg-white/5 border border-red-500/20 backdrop-blur-sm flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <div className="text-center">
+                <span className="text-5xl mb-2 block">🎨</span>
+                <span className="text-white/30 text-sm font-medium">Hero Image Placeholder</span>
+              </div>
+            </div>
           </div>
 
         </div>

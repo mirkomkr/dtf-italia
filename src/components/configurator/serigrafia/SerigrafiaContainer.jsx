@@ -169,7 +169,8 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   const steps = [
     { id: 1, label: 'Configura' },
     { id: 2, label: 'Upload' },
-    { id: 3, label: 'Checkout' }
+    { id: 3, label: 'Checkout' },
+    { id: 4, label: 'Completato' }
   ];
 
   return (

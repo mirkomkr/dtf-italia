@@ -15,7 +15,8 @@ export default function StepNavigation({ currentStep, steps, onStepClick, isStep
   const defaultSteps = [
     { id: 1, label: 'Configura' },
     { id: 2, label: 'Upload' },
-    { id: 3, label: 'Checkout' }
+    { id: 3, label: 'Checkout' },
+    { id: 4, label: 'Completato' }
   ];
   
   const actualSteps = steps || defaultSteps;

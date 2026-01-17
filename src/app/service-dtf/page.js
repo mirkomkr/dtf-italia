@@ -1,12 +1,8 @@
 // app/service-dtf/page.js
 import HeroDTF from "./components/HeroDTF";
-import dynamic from 'next/dynamic';
 import { getWooCommerceProducts } from "@/lib/woocommerce";
+import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
 import { Zap, ShieldCheck, Truck } from 'lucide-react';
-
-const HowItWorks = dynamic(() => import('@/components/Sections').then(mod => mod.HowItWorks), { ssr: true });
-const Benefits = dynamic(() => import('@/components/Sections').then(mod => mod.Benefits), { ssr: true });
-const FAQ = dynamic(() => import('@/components/Sections').then(mod => mod.FAQ), { ssr: true });
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
 

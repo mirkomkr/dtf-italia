@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import localFont from 'next/font/local';
 import "./globals.css";
 import Header from "@/components/Header";
 import dynamic from 'next/dynamic';
@@ -6,10 +6,12 @@ import dynamic from 'next/dynamic';
 
 const Footer = dynamic(() => import('@/components/Footer'), { ssr: true });
 
-const inter = Inter({ 
-  subsets: ["latin"],
+const inter = localFont({
+  src: '../../public/fonts/inter/Inter-VariableFont.woff2',
+  variable: '--font-inter',
   display: 'swap',
-  preload: true
+  preload: true,
+  weight: '100 900',
 });
 
 /**

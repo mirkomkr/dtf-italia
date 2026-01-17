@@ -4,6 +4,10 @@ import { getWooCommerceProducts } from "@/lib/woocommerce";
 import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
 import { Zap, ShieldCheck, Truck } from 'lucide-react';
 
+// ISR: Revalidate every 24 hours (86400 seconds)
+// On-demand revalidation via /api/revalidate when products change
+export const revalidate = 86400;
+
 // Base URL pubblico
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
 

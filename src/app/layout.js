@@ -4,7 +4,10 @@ import Header from "@/components/Header";
 import dynamic from 'next/dynamic';
 
 
-const Footer = dynamic(() => import('@/components/Footer'), { ssr: true });
+const Footer = dynamic(() => import('@/components/Footer'), { 
+  ssr: false,  // Lazy load Footer (below-the-fold)
+  loading: () => null 
+});
 
 const inter = localFont({
   src: '../../public/fonts/inter/Inter-VariableFont.woff2',

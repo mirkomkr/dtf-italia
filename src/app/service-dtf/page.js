@@ -4,6 +4,9 @@ import { getWooCommerceProducts } from "@/lib/woocommerce";
 import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
 import { Zap, ShieldCheck, Truck } from 'lucide-react';
 
+// ISR: Revalidate every 24 hours
+export const revalidate = 86400;
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
 
 export const metadata = {

@@ -2,7 +2,10 @@ import { notFound } from "next/navigation";
 import GalleriaProdotto from "./galleriaProdotto";
 import dynamic from 'next/dynamic';
 import LazyLoader from "@/components/common/LazyLoader";
-import { getWooCommerceProducts } from "@/lib/woocommerce";
+ import { getWooCommerceProducts } from "@/lib/woocommerce";
+
+// ISR: Revalidate every 1 hour (products change more frequently)
+export const revalidate = 3600;
 
 const UniversalContainer = dynamic(() => import('@/app/stampa-serigrafica/components/ConfiguratoreSerigrafia'), { 
   ssr: false,

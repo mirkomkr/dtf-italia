@@ -12,6 +12,7 @@ export const revalidate = 86400;
 const BASE_URL = "https://www.dtfitalia.it";
 
 // Metadata SEO
+export const metadata = {
   title: {
     absolute: "Stampa Serigrafica Roma - Abbigliamento e Gadget | DTF Italia"
   },

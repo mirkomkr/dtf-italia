@@ -13,7 +13,9 @@ export const revalidate = 86400;
 const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
-  title: "DTF Italia - Stampa Direct-To-Film Premium 24h",
+  title: {
+    absolute: "DTF Italia - Stampa Direct-To-Film Premium 24h"
+  },
   description:
     "Servizio di stampa DTF professionale per aziende e creativi. Alta qualità, spedizione in 24h, nessun minimo d'ordine. Carica il tuo file e ordina subito.",
   keywords: [

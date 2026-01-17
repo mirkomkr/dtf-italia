@@ -1,13 +1,7 @@
 import localFont from 'next/font/local';
 import "./globals.css";
 import Header from "@/components/Header";
-import dynamic from 'next/dynamic';
-
-
-const Footer = dynamic(() => import('@/components/Footer'), { 
-  ssr: false,  // Lazy load Footer (below-the-fold)
-  loading: () => null 
-});
+import Footer from "@/components/Footer";
 
 const inter = localFont({
   src: '../../public/fonts/inter/Inter-VariableFont.woff2',
@@ -26,7 +20,7 @@ const inter = localFont({
  * - robots: Ensures crawlability
  */
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.dtfitalia.it'),
+  metadataBase: new URL('https://www.dtfitalia.it'),
   title: {
     default: 'DTF Italia - Stampa Professionale',
     template: '%s | DTF Italia',

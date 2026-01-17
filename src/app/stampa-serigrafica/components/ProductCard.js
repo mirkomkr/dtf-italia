@@ -19,7 +19,7 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
     >
       {/* Link overlay accessibile - No Prefetch per preservare il main thread */}
       <Link
-        href={`/serigrafia/${product.slug}`}
+        href={`/stampa-serigrafica/${product.slug}`}
         aria-label={`Configura ${product.name}`}
         className="absolute inset-0 z-10"
         prefetch={false}

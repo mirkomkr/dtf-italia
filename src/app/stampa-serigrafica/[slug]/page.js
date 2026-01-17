@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
 import GalleriaProdotto from "./galleriaProdotto";
 import dynamic from 'next/dynamic';
-// import SkeletonConfigurator from "@/components/ui/SkeletonConfigurator"; // REMOVED
 import LazyLoader from "@/components/common/LazyLoader";
 import { getWooCommerceProducts } from "@/lib/woocommerce";
 
-const UniversalContainer = dynamic(() => import('@/app/stampa-serigrafica-roma/components/ConfiguratoreSerigrafia'), { 
+const UniversalContainer = dynamic(() => import('@/app/stampa-serigrafica/components/ConfiguratoreSerigrafia'), { 
   ssr: false,
   loading: () => (
     <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full flex items-center justify-center">
@@ -59,7 +58,7 @@ export async function generateMetadata({ params }) {
       type: "website",
     },
     alternates: {
-      canonical: `/serigrafia/${product.slug}`,
+      canonical: `/stampa-serigrafica/${product.slug}`,
     },
   };
 }
@@ -85,7 +84,7 @@ export default async function ProductPage({ params }) {
     },
     "offers": {
       "@type": "Offer",
-      "url": `https://www.dtfitalia.it/serigrafia/${product.slug}`,
+      "url": `https://www.dtfitalia.it/stampa-serigrafica/${product.slug}`,
       "priceCurrency": "EUR",
       "price": product.price || "0",
       "availability": "https://schema.org/InStock"
@@ -103,7 +102,7 @@ export default async function ProductPage({ params }) {
         <ol className="flex gap-1 flex-wrap">
           <li><a href="/" className="hover:underline">Home</a></li>
           <li>/</li>
-          <li><a href="/serigrafia" className="hover:underline">Serigrafia</a></li>
+          <li><a href="/stampa-serigrafica" className="hover:underline">Serigrafia</a></li>
           <li>/</li>
           <li aria-current="page" className="text-gray-900 font-semibold">
             {product.name}

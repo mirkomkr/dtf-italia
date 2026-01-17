@@ -1,6 +1,5 @@
 // app/page.js (Home)
 import Hero from "@/app/service-dtf/components/HeroDTF";
-// import { HowItWorks, Benefits, FAQ } from "@/components/Sections";
 import dynamic from 'next/dynamic';
 import { getWooCommerceProducts } from "@/lib/woocommerce"; // Import for server fetching
 import { Zap, ShieldCheck, Truck } from 'lucide-react';

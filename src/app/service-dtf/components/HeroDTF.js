@@ -158,7 +158,7 @@ export default function HeroDTF({ product }) {
                                 Configura Ordine
                             </button>
                             <Link 
-                                href="/serigrafia"
+                                href="/stampa-serigrafica"
                                 className="px-8 py-4 bg-black/25 text-white border-2 border-white/10 rounded-xl font-bold text-lg hover:bg-black/40 active:bg-black/50 transition-all flex items-center justify-center backdrop-blur-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50"
                                 aria-label="Esplora il catalogo prodotti serigrafia"
                             >

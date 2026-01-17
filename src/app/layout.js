@@ -2,6 +2,7 @@ import localFont from 'next/font/local';
 import "./globals.css";
 import Header from "@/components/Header";
 import dynamic from 'next/dynamic';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 
 const Footer = dynamic(() => import('@/components/Footer'), { 
@@ -58,6 +59,7 @@ export default function RootLayout({ children }) {
 
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col`}>
         <Header />
+        <SpeedInsights />
         <main id="main-content" className="relative flex-1 flex flex-col">
           {children}
         </main>

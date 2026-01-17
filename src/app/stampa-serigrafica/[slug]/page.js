@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import LazyLoader from "@/components/common/LazyLoader";
 import { getWooCommerceProducts } from "@/lib/woocommerce";
 
-const UniversalContainer = dynamic(() => import('@/app/serigrafia/components/ConfiguratoreSerigrafia'), { 
+const UniversalContainer = dynamic(() => import('@/app/stampa-serigrafica-roma/components/ConfiguratoreSerigrafia'), { 
   ssr: false,
   loading: () => (
     <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-slate-200/50 shadow-2xl min-h-[700px] w-full flex items-center justify-center">

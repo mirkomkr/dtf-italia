@@ -17,9 +17,10 @@ const STATIC_ROUTES = [
   { path: '/', changeFreq: 'weekly', priority: 1.0 },
   
   // Product/Service pages - High priority
-  { path: '/serigrafia', changeFreq: 'weekly', priority: 0.9 },
-  { path: '/sublimazione', changeFreq: 'monthly', priority: 0.8 },
-  { path: '/calendari', changeFreq: 'monthly', priority: 0.8 },
+  { path: '/stampa-serigrafica', changeFreq: 'weekly', priority: 0.9 },
+  { path: '/service-dtf', changeFreq: 'weekly', priority: 0.9 },
+  { path: '/stampa-sublimazione', changeFreq: 'weekly', priority: 0.8 },
+  { path: '/stampa-calendari', changeFreq: 'weekly', priority: 0.8 },
   { path: '/pellicole-serigrafia', changeFreq: 'monthly', priority: 0.8 },
   
   // Utility pages - Lower priority

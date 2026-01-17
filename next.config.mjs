@@ -32,6 +32,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // WordPress Admin Redirects
       {
         source: '/wp-admin',
         destination: 'https://wp.dtfitalia.it/wp-admin',
@@ -40,6 +41,55 @@ const nextConfig = {
       {
         source: '/wp-login.php',
         destination: 'https://wp.dtfitalia.it/wp-login.php',
+        permanent: true,
+      },
+      
+      // SEO Refactor: Legacy URL Redirects (301)
+      {
+        source: '/serigrafia',
+        destination: '/stampa-serigrafica',
+        permanent: true,
+      },
+      {
+        source: '/sublimazione',
+        destination: '/stampa-sublimazione',
+        permanent: true,
+      },
+      {
+        source: '/calendari',
+        destination: '/stampa-calendari',
+        permanent: true,
+      },
+      {
+        source: '/dtf',
+        destination: '/service-dtf',
+        permanent: true,
+      },
+      
+      // Anchor Fragment Redirects (for old internal links)
+      {
+        source: '/:path*#serigrafia',
+        destination: '/stampa-serigrafica',
+        permanent: true,
+      },
+      {
+        source: '/:path*#sublimazione',
+        destination: '/stampa-sublimazione',
+        permanent: true,
+      },
+      {
+        source: '/:path*#calendari',
+        destination: '/stampa-calendari',
+        permanent: true,
+      },
+      {
+        source: '/:path*#pellicole',
+        destination: '/pellicole-serigrafia',
+        permanent: true,
+      },
+      {
+        source: '/:path*#dtf',
+        destination: '/service-dtf',
         permanent: true,
       },
     ]

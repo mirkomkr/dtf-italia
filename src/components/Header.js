@@ -46,11 +46,11 @@ export default function Header() {
 
   const navLinks = [
     { href: "#how-it-works", label: "Come Funziona" },
-    { href: "/", label: "DTF" },
-    { href: "/serigrafia", label: "Serigrafia" },
-    { href: "/sublimazione", label: "Sublimazione" },
-    { href: "/calendari", label: "Calendari" },
-    { href: "/pellicole-serigrafia", label: "Pellicole Serigrafia" },
+    { href: "/service-dtf", label: "DTF Service" },
+    { href: "/stampa-serigrafica", label: "Serigrafia" },
+    { href: "/stampa-sublimazione", label: "Sublimazione" },
+    { href: "/stampa-calendari", label: "Calendari" },
+    { href: "/pellicole-serigrafia", label: "Pellicole" },
     { href: "#", label: "FAQ" },
   ];
 

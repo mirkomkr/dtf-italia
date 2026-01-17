@@ -52,7 +52,7 @@ const CheckIcon = ({ className }) => (
  * @param {Object} props
  * @param {Object} props.product - Product data for configurator
  */
-export default function HeroDTF({ product }) {
+export default function HeroDTF({ product, title }) {
     // Fallback product to ensure configurator always renders
     const finalProduct = product || { 
         id: 'dtf-service', 
@@ -132,8 +132,8 @@ export default function HeroDTF({ product }) {
                             id="hero-heading"
                             className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight break-words"
                         >
-                            {props.title ? (
-                                props.title
+                            {title ? (
+                                title
                             ) : (
                                 <>
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">

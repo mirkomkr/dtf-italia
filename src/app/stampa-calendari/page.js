@@ -6,16 +6,16 @@ import { Zap, ShieldCheck, Truck } from 'lucide-react';
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
+const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
-  title: "Calendari Personalizzati 2026 - DTF Italia Roma",
+  title: "Stampa Calendari Personalizzati 2026 Roma",
   description: "Creazione calendari personalizzati da 1 a 1000+ pezzi. Soluzioni per privati (foto di famiglia) e aziende (eventi e promozione). Spedizione in tutta Italia.",
   keywords: "calendari personalizzati, calendari aziendali, calendari 2026, stampa calendari Roma",
   authors: [{ name: "DTF Italia" }],
   robots: { index: true, follow: true, maxSnippet: -1, maxImagePreview: "large", maxVideoPreview: -1 },
   openGraph: {
-    title: "Calendari Personalizzati 2026 - DTF Italia Roma",
+    title: "Stampa Calendari Personalizzati 2026 Roma",
     description: "Creazione calendari personalizzati da 1 a 1000+ pezzi per privati e aziende.",
     url: `${BASE_URL}/stampa-calendari`,
     siteName: "DTF Italia",
@@ -30,41 +30,34 @@ export const metadata = {
       }
     ]
   },
+  alternates: {
+    canonical: `${BASE_URL}/stampa-calendari`
+  }
 };
 
 export default function CalendariPage() {
-  // Product Schema
-  const productSchema = {
+  // Service Schema (SEO Optimization)
+  const serviceSchema = {
     "@context": "https://schema.org",
-    "@type": "Product",
-    "@id": `${BASE_URL}/stampa-calendari#product`,
+    "@type": "Service",
+    "@id": `${BASE_URL}/stampa-calendari#service`,
     "name": "Calendari Personalizzati Roma",
     "description": "Creazione calendari personalizzati da 1 a 1000+ pezzi. Soluzioni per privati (foto di famiglia) e aziende (eventi e promozione).",
+    "provider": {
+      "@id": `${BASE_URL}/#organization`
+    },
+    "areaServed": [
+      { "@id": "https://www.wikidata.org/wiki/Q220", "@type": "City", "name": "Roma" },
+      { "@id": "https://www.wikidata.org/wiki/Q38", "@type": "Country", "name": "Italia" }
+    ],
+    "serviceType": "Stampa Calendari",
     "image": {
       "@type": "ImageObject",
       "url": `${BASE_URL}/og-image-calendari.jpg`,
-      "caption": "Calendario personalizzato 2026 - DTF Italia Roma"
-    },
-    "brand": {
-      "@type": "Brand",
-      "name": "DTF Italia"
-    },
-    "offers": {
-      "@type": "Offer",
-      "url": `${BASE_URL}/stampa-calendari`,
-      "priceCurrency": "EUR",
-      "price": "1.00",
-      "availability": "https://schema.org/InStock",
-      "seller": {
-        "@id": `${BASE_URL}/#organization`
-      }
-    },
-    "areaServed": [
-      { "@type": "City", "name": "Roma" },
-      { "@type": "Country", "name": "Italia" }
-    ]
-    // TODO: Insert Google Business Profile URL when available
-    // "mainEntityOfPage": "https://www.google.com/maps/place/...",
+      "caption": "Calendario personalizzato 2026 - DTF Italia Roma",
+      "width": 1200,
+      "height": 630
+    }
   };
 
   const calendariSteps = [
@@ -140,7 +133,7 @@ export default function CalendariPage() {
       {/* JSON-LD Schemas */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
       <script
         type="application/ld+json"
@@ -154,7 +147,7 @@ export default function CalendariPage() {
       <HeroCalendari />
       
       {/* Future: Product grid section */}
-      <main className="bg-gray-100 py-20">
+      <main id="prodotti-calendari" className="bg-gray-100 py-20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">I Nostri Modelli 2026</h2>
           <p className="text-gray-600">Stiamo preparando il catalogo completo dei calendari 2026 a Roma.</p>
@@ -173,7 +166,7 @@ export default function CalendariPage() {
               <h3 className="font-bold text-lg mb-2">DTF Service</h3>
               <p className="text-sm text-gray-600">Stampa transfer digitale</p>
             </a>
-            <a href="/stampa-serigrafia" className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+            <a href="/stampa-serigrafica" className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
               <h3 className="font-bold text-lg mb-2">Serigrafia</h3>
               <p className="text-sm text-gray-600">Stampa professionale su abbigliamento</p>
             </a>

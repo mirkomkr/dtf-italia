@@ -23,6 +23,9 @@ const STATIC_ROUTES = [
   { path: '/stampa-calendari', changeFreq: 'weekly', priority: 0.8 },
   { path: '/pellicole-serigrafia', changeFreq: 'monthly', priority: 0.8 },
   
+  // FAQ page - High priority for SEO
+  { path: '/faq', changeFreq: 'weekly', priority: 0.9 },
+  
   // Utility pages - Lower priority
   { path: '/carica-file', changeFreq: 'monthly', priority: 0.6 },
   { path: '/credits', changeFreq: 'yearly', priority: 0.3 },

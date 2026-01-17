@@ -84,7 +84,9 @@ export default function HeroCalendari() {
 
             {/* Description */}
             <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">
-              Dai calendari da muro ai modelli da scrivania. 
+              Dai calendari da muro, muro silhouette e calendari da scrivania . 
+            </p>
+            <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">
               Stampa di alta qualità per promuovere il tuo brand ogni giorno dell'anno 
               con grafiche nitide e finiture professionali.
             </p>
@@ -117,19 +119,19 @@ export default function HeroCalendari() {
               aria-label="Azioni principali"
             >
               <a
-                href="#modelli-calendari"
+                href="#prodotti-calendari"
                 className="px-8 py-4 bg-white text-amber-700 rounded-xl font-bold text-lg hover:bg-gray-100 active:bg-gray-200 transition-all shadow-lg shadow-amber-600/25 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50"
                 aria-label="Esplora i modelli di calendari disponibili"
               >
-                Scopri i Modelli
+                Scopri i prodotti
               </a>
 
               <a
-                href="#preventivo-calendari"
+                href="#how-it-works"
                 className="px-8 py-4 bg-black/25 text-white border-2 border-white/10 rounded-xl font-bold text-lg hover:bg-black/40 active:bg-black/50 transition-all flex items-center justify-center backdrop-blur-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50"
                 aria-label="Richiedi un preventivo personalizzato"
               >
-                Richiedi Preventivo
+                Come funziona
               </a>
             </div>
 

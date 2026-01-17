@@ -7,10 +7,10 @@ import { Zap, ShieldCheck, Truck } from 'lucide-react';
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
+const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
-  title: "DTF Service Roma - Stampa Transfer Digitale Professionale",
+  title: "DTF Service Roma - Transfer Professionali",
   description:
     "Servizio professionale di stampa DTF per terzi e professionisti della personalizzazione. Alta qualità, spedizione in 24h, nessun minimo d'ordine.",
   keywords: [
@@ -30,7 +30,7 @@ export const metadata = {
     maxVideoPreview: -1,
   },
   openGraph: {
-    title: "DTF Service Roma - Stampa Transfer Digitale Professionale",
+    title: "DTF Service Roma - Transfer Professionali",
     description:
       "Servizio professionale di stampa DTF per terzi e professionisti della personalizzazione.",
     url: `${BASE_URL}/service-dtf`,
@@ -46,6 +46,9 @@ export const metadata = {
       },
     ],
   },
+  alternates: {
+    canonical: `${BASE_URL}/service-dtf`
+  }
 };
 
 export default async function ServiceDTFPage() {
@@ -71,8 +74,8 @@ export default async function ServiceDTFPage() {
       "@id": `${BASE_URL}/#organization`
     },
     "areaServed": [
-      { "@type": "City", "name": "Roma" },
-      { "@type": "Country", "name": "Italia" }
+      { "@id": "https://www.wikidata.org/wiki/Q220", "@type": "City", "name": "Roma" },
+      { "@id": "https://www.wikidata.org/wiki/Q38", "@type": "Country", "name": "Italia" }
     ],
     "serviceType": "Stampa DTF",
     // TODO: Insert Google Business Profile URL when available

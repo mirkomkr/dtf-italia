@@ -45,13 +45,12 @@ export default function Header() {
   };
 
   const navLinks = [
-    { href: "#how-it-works", label: "Come Funziona" },
     { href: "/service-dtf", label: "DTF Service" },
     { href: "/stampa-serigrafica", label: "Serigrafia" },
     { href: "/stampa-sublimazione", label: "Sublimazione" },
     { href: "/stampa-calendari", label: "Calendari" },
     { href: "/pellicole-serigrafia", label: "Pellicole" },
-    { href: "#", label: "FAQ" },
+    { href: "/faq", label: "FAQ" },
   ];
 
   return (

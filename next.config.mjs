@@ -45,11 +45,7 @@ const nextConfig = {
       },
       
       // SEO Refactor: Legacy URL Redirects (301)
-      {
-        source: '/serigrafia',
-        destination: '/stampa-serigrafica',
-        permanent: true,
-      },
+
       {
         source: '/sublimazione',
         destination: '/stampa-sublimazione',
@@ -95,6 +91,8 @@ const nextConfig = {
     ]
   },
   async headers() {
+    if (process.env.NODE_ENV !== 'production') return [];
+    
     return [
       {
         source: '/:path*',

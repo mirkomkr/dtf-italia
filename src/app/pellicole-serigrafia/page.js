@@ -6,16 +6,16 @@ import { Zap, ShieldCheck, Truck } from 'lucide-react';
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
+const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
-  title: "Pellicole per Serigrafia Professionali - DTF Italia Roma",
-  description: "Servizio di stampa pellicole ad alta definizione per laboratori serigrafici. Massima densità ottica (Dmax > 4.0) e stabilità dimensionale. Spedizione in tutta Italia.",
+  title: "Pellicole Serigrafiche Professionali Roma",
+  description: "Stampa pellicole serigrafiche ad alta definizione per laboratori. Dmax > 4.0, nero coprente e stabilità dimensionale. Spedizioni rapide in tutta Italia.",
   keywords: "pellicole serigrafia, pellicole inkjet, pellicole laser, Dmax 4.0, laboratorio serigrafia Roma",
   authors: [{ name: "DTF Italia" }],
   robots: { index: true, follow: true, maxSnippet: -1, maxImagePreview: "large", maxVideoPreview: -1 },
   openGraph: {
-    title: "Pellicole per Serigrafia Professionali - DTF Italia Roma",
+    title: "Pellicole Serigrafiche Professionali Roma",
     description: "Servizio di stampa pellicole ad alta definizione per laboratori serigrafici.",
     url: `${BASE_URL}/pellicole-serigrafia`,
     siteName: "DTF Italia",
@@ -30,6 +30,9 @@ export const metadata = {
       }
     ]
   },
+  alternates: {
+    canonical: `${BASE_URL}/pellicole-serigrafia`
+  }
 };
 
 export default function PellicolePage() {
@@ -44,8 +47,8 @@ export default function PellicolePage() {
       "@id": `${BASE_URL}/#organization`
     },
     "areaServed": [
-      { "@type": "City", "name": "Roma" },
-      { "@type": "Country", "name": "Italia" }
+      { "@id": "https://www.wikidata.org/wiki/Q220", "@type": "City", "name": "Roma" },
+      { "@id": "https://www.wikidata.org/wiki/Q38", "@type": "Country", "name": "Italia" }
     ],
     "serviceType": "Stampa Pellicole Serigrafia",
     // TODO: Insert Google Business Profile URL when available
@@ -165,7 +168,7 @@ export default function PellicolePage() {
               <h3 className="font-bold text-lg mb-2">DTF Service</h3>
               <p className="text-sm text-gray-600">Stampa transfer digitale</p>
             </a>
-            <a href="/stampa-serigrafia" className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+            <a href="/stampa-serigrafica" className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
               <h3 className="font-bold text-lg mb-2">Serigrafia</h3>
               <p className="text-sm text-gray-600">Stampa professionale su abbigliamento</p>
             </a>

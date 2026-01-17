@@ -6,16 +6,16 @@ import { Zap, ShieldCheck, Truck } from 'lucide-react';
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
+const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
-  title: "Stampa a Sublimazione Roma - Gadget e Abbigliamento Tecnico",
+  title: "Stampa Sublimazione Roma - Gadget e Sport",
   description: "Personalizzazione tramite sublimazione per tazze, cuscini, mousepad e maglie sportive. Ideale per regali e promozioni. Spedizione in tutta Italia.",
   keywords: "stampa sublimazione, gadget personalizzati, abbigliamento tecnico, tazze personalizzate, Roma",
   authors: [{ name: "DTF Italia" }],
   robots: { index: true, follow: true, maxSnippet: -1, maxImagePreview: "large", maxVideoPreview: -1 },
   openGraph: {
-    title: "Stampa a Sublimazione Roma - Gadget e Abbigliamento Tecnico",
+    title: "Stampa Sublimazione Roma - Gadget e Sport",
     description: "Personalizzazione tramite sublimazione per tazze, cuscini, mousepad e maglie sportive.",
     url: `${BASE_URL}/stampa-sublimazione`,
     siteName: "DTF Italia",
@@ -30,41 +30,34 @@ export const metadata = {
       }
     ]
   },
+  alternates: {
+    canonical: `${BASE_URL}/stampa-sublimazione`
+  }
 };
 
 export default function SublimationPage() {
-  // Product Schema (for Google Shopping)
-  const productSchema = {
+  // Service Schema (SEO Optimization)
+  const serviceSchema = {
     "@context": "https://schema.org",
-    "@type": "Product",
-    "@id": `${BASE_URL}/stampa-sublimazione#product`,
+    "@type": "Service",
+    "@id": `${BASE_URL}/stampa-sublimazione#service`,
     "name": "Stampa a Sublimazione Roma (Gadget e Abbigliamento Tecnico)",
     "description": "Personalizzazione tramite sublimazione per tazze, cuscini, mousepad e maglie sportive. Ideale per regali e promozioni.",
+    "provider": {
+      "@id": `${BASE_URL}/#organization`
+    },
+    "areaServed": [
+      { "@id": "https://www.wikidata.org/wiki/Q220", "@type": "City", "name": "Roma" },
+      { "@id": "https://www.wikidata.org/wiki/Q38", "@type": "Country", "name": "Italia" }
+    ],
+    "serviceType": "Stampa Sublimazione",
     "image": {
       "@type": "ImageObject",
       "url": `${BASE_URL}/og-image-sublimazione.jpg`,
-      "caption": "Tazza personalizzata con stampa a sublimazione - DTF Italia Roma"
-    },
-    "brand": {
-      "@type": "Brand",
-      "name": "DTF Italia"
-    },
-    "offers": {
-      "@type": "Offer",
-      "url": `${BASE_URL}/stampa-sublimazione`,
-      "priceCurrency": "EUR",
-      "price": "1.00",
-      "availability": "https://schema.org/InStock",
-      "seller": {
-        "@id": `${BASE_URL}/#organization`
-      }
-    },
-    "areaServed": [
-      { "@type": "City", "name": "Roma" },
-      { "@type": "Country", "name": "Italia" }
-    ]
-    // TODO: Insert Google Business Profile URL when available
-    // "mainEntityOfPage": "https://www.google.com/maps/place/...",
+      "caption": "Tazza personalizzata con stampa a sublimazione - DTF Italia Roma",
+      "width": 1200,
+      "height": 630
+    }
   };
 
   const sublimazioneSteps = [
@@ -140,7 +133,7 @@ export default function SublimationPage() {
       {/* JSON-LD Schemas */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
       />
       <script
         type="application/ld+json"
@@ -154,7 +147,7 @@ export default function SublimationPage() {
       <HeroSublimazione />
       
       {/* Future: Product grid section */}
-      <main className="bg-gray-100 py-20">
+      <main id="prodotti-sublimazione" className="bg-gray-100 py-20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Prodotti in arrivo</h2>
           <p className="text-gray-600">Stiamo preparando il catalogo prodotti per la sublimazione a Roma.</p>
@@ -173,7 +166,7 @@ export default function SublimationPage() {
               <h3 className="font-bold text-lg mb-2">DTF Service</h3>
               <p className="text-sm text-gray-600">Stampa transfer digitale</p>
             </a>
-            <a href="/stampa-serigrafia" className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+            <a href="/stampa-serigrafica" className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
               <h3 className="font-bold text-lg mb-2">Serigrafia</h3>
               <p className="text-sm text-gray-600">Stampa professionale su abbigliamento</p>
             </a>

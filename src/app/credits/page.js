@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 
 export const metadata = {
   title: "Credits Immagini - DTF Italia",
-  description: "Credits fotografici per le immagini utilizzate su DTF Italia.",
+  description: "Scopri i credits fotografici di DTF Italia. Un ringraziamento speciale ai fotografi e alle risorse creative che rendono unico il nostro sito web.",
   keywords: "credits immagini, fotografia, DTF Italia",
   robots: "index, follow",
   openGraph: {

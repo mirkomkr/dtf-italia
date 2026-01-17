@@ -83,10 +83,10 @@ export default function HeroSerigrafia() {
 
             {/* Description */}
             <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">
-              Ideale per felpe, t-shirt e capi personalizzati.
-              Colori pieni, alta resistenza ai lavaggi e risultati professionali
-              per brand, aziende ed eventi.
+              Ideale per felpe, t-shirt, cappelli, shopping bag e capi personalizzati.
             </p>
+            <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">Colori pieni, alta resistenza ai lavaggi e risultati professionali
+            per brand, aziende ed eventi.</p>
 
             {/* Benefits List */}
             <ul 
@@ -124,7 +124,7 @@ export default function HeroSerigrafia() {
               </a>
 
               <a
-                href="#come-funziona-serigrafia"
+                href="#how-it-works"
                 className="px-8 py-4 bg-black/25 text-white border-2 border-white/10 rounded-xl font-bold text-lg hover:bg-black/40 active:bg-black/50 transition-all flex items-center justify-center backdrop-blur-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50"
                 aria-label="Scopri come funziona il processo di serigrafia"
               >

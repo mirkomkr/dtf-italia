@@ -9,10 +9,11 @@ import { Zap, ShieldCheck, Truck } from 'lucide-react';
 export const revalidate = 86400;
 
 // Base URL pubblico
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
+// Base URL pubblico (Forzato su www per evitare redirect chain sui canonical)
+const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
-  title: "DTF Italia - Stampa Direct-To-Film Premium in 24h",
+  title: "DTF Italia - Stampa Direct-To-Film Premium 24h",
   description:
     "Servizio di stampa DTF professionale per aziende e creativi. Alta qualità, spedizione in 24h, nessun minimo d'ordine. Carica il tuo file e ordina subito.",
   keywords: [
@@ -47,6 +48,9 @@ export const metadata = {
         alt: "DTF Italia - Stampa Direct-To-Film Premium",
       },
     ],
+  },
+  alternates: {
+    canonical: BASE_URL,
   },
 };
 

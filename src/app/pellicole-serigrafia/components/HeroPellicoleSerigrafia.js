@@ -117,15 +117,15 @@ export default function HeroPellicoleSerigrafia() {
               aria-label="Azioni principali"
             >
               <a
-                href="#catalogo-pellicole"
+                href="#"
                 className="px-8 py-4 bg-white text-emerald-700 rounded-xl font-bold text-lg hover:bg-gray-100 active:bg-gray-200 transition-all shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/50"
                 aria-label="Esplora il catalogo completo delle pellicole"
               >
-                Vai al Catalogo
+                Configura Ordine
               </a>
 
               <a
-                href="#schede-tecniche"
+                href="#"
                 className="px-8 py-4 bg-black/25 text-white border-2 border-white/10 rounded-xl font-bold text-lg hover:bg-black/40 active:bg-black/50 transition-all flex items-center justify-center backdrop-blur-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/50"
                 aria-label="Consulta le schede tecniche dei prodotti"
               >

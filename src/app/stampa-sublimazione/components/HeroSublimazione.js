@@ -84,10 +84,10 @@ export default function HeroSublimazione() {
 
             {/* Description */}
             <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">
-              Ideale per abbigliamento sportivo, gadget e tessuti sintetici.
-              Stampa fotografica ad alta definizione con risultati che resistono
-              al tempo e ai lavaggi.
-            </p>
+              Ideale per abbigliamento sportivo, gadget e tessuti sintetici.</p>
+            <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">
+              Stampa fotografica ad alta definizione con risultati che resistono al tempo e ai lavaggi.</p>
+            
 
             {/* Benefits List */}
             <ul 
@@ -125,7 +125,7 @@ export default function HeroSublimazione() {
               </a>
 
               <a
-                href="#come-funziona-sublimazione"
+                href="#how-it-works"
                 className="px-8 py-4 bg-black/25 text-white border-2 border-white/10 rounded-xl font-bold text-lg hover:bg-black/40 active:bg-black/50 transition-all flex items-center justify-center backdrop-blur-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50"
                 aria-label="Scopri come funziona il processo di sublimazione"
               >

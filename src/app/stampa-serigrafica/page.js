@@ -9,17 +9,17 @@ import { Zap, ShieldCheck, Truck } from 'lucide-react';
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.dtfitalia.it";
+const BASE_URL = "https://www.dtfitalia.it";
 
 // Metadata SEO
 export const metadata = {
-  title: "Stampa Serigrafica Professionale - DTF Italia Roma",
-  description: "Serigrafia professionale a Roma specializzata in stampa su abbigliamento e gadget: t-shirt, magliette, felpe, felpe con cappuccio, cappelli, borse e gadget personalizzati. Alta qualità e produzione rapida per privati e aziende.",
+  title: "Stampa Serigrafica Roma - Abbigliamento e Gadget",
+  description: "Serigrafia professionale a Roma per abbigliamento e gadget: t-shirt, felpe, cappelli e shopper. Alta qualità, produzione rapida e spedizione in tutta Italia.",
   keywords: "stampa serigrafica, abbigliamento personalizzato, gadget personalizzati, DTF Roma",
   authors: [{ name: "DTF Italia" }],
   robots: "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1",
   openGraph: {
-    title: "Stampa Serigrafica Professionale - DTF Italia Roma",
+    title: "Stampa Serigrafica Roma - Abbigliamento e Gadget",
     description: "Serigrafia professionale a Roma specializzata in stampa su abbigliamento e gadget.",
     url: `${BASE_URL}/stampa-serigrafica`,
     siteName: "DTF Italia",
@@ -34,6 +34,9 @@ export const metadata = {
       }
     ]
   },
+  alternates: {
+    canonical: `${BASE_URL}/stampa-serigrafica`
+  }
 };
 
 export const viewport = { width: "device-width", initialScale: 1 };
@@ -42,11 +45,16 @@ export default async function SerigrafiaPage() {
   const categorySlug = "stampa-abbigliamento-serigrafia";
   const pageSlug = "serigrafia";
 
-  let products = await getWooCommerceProducts({ 
-    category: categorySlug,
-    perPage: 50, // Limit high enough for this page
-
-  });
+  let products = [];
+  try {
+    products = await getWooCommerceProducts({ 
+      category: categorySlug,
+      perPage: 50, // Limit high enough for this page
+    });
+  } catch (error) {
+    console.error("Error fetching products for Serigrafia page:", error);
+    // Silent fail -> renders empty product grid
+  }
 
   // Service Schema
   const serviceSchema = {
@@ -59,8 +67,8 @@ export default async function SerigrafiaPage() {
       "@id": `${BASE_URL}/#organization`
     },
     "areaServed": [
-      { "@type": "City", "name": "Roma" },
-      { "@type": "Country", "name": "Italia" }
+      { "@id": "https://www.wikidata.org/wiki/Q220", "@type": "City", "name": "Roma" },
+      { "@id": "https://www.wikidata.org/wiki/Q38", "@type": "Country", "name": "Italia" }
     ],
     "serviceType": "Stampa Serigrafica",
     // TODO: Insert Google Business Profile URL when available
@@ -195,7 +203,7 @@ export default async function SerigrafiaPage() {
 
       <HeroSerigrafia />
 
-      <main 
+      <main id="prodotti-serigrafia"
         className="bg-gray-200"
         style={{ '--brand-color': '#dc2626' }}
       >

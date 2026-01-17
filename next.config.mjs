@@ -5,7 +5,7 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'lodash', 'date-fns']
+    optimizePackageImports: ['lucide-react', 'lodash', 'date-fns'],
   },
   images: {
     remotePatterns: [

@@ -44,6 +44,12 @@ export const metadata = {
     locale: 'it_IT',
     siteName: 'DTF Italia',
   },
+  other: {
+    // Preload critical font for faster FCP
+    'link': [
+      { rel: 'preload', href: '/_next/static/media/ac374088683cf63a-s.p.woff2', as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' }
+    ]
+  }
 };
 
 export default function RootLayout({ children }) {

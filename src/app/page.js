@@ -141,8 +141,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
 
-      {/* Canonical */}
-      <link rel="canonical" href={BASE_URL} />
+
 
       <div 
         className="min-h-screen bg-white"

@@ -127,14 +127,21 @@ export default function HeroDTF({ product }) {
                         </div>
                         
                         {/* Main Heading - Single h1 per page */}
+                        {/* Main Heading - Single h1 per page */}
                         <h1 
                             id="hero-heading"
                             className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight break-words"
                         >
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">
-                                DTF
-                            </span>{' '}
-                            Italia
+                            {props.title ? (
+                                props.title
+                            ) : (
+                                <>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">
+                                        DTF
+                                    </span>{' '}
+                                    Italia
+                                </>
+                            )}
                         </h1>
                         
                         {/* Description */}

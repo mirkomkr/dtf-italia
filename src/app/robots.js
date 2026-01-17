@@ -20,8 +20,8 @@ export default function robots() {
         allow: '/',
         disallow: [
           // Next.js internal routes
-          '/_next/',
-          '/static/',
+          // '/_next/',  <-- REMOVED: Bots need this to render JS/CSS
+          // '/static/', <-- REMOVED: Bots need this for static assets
           
           // API endpoints (sensitive data)
           '/api/',

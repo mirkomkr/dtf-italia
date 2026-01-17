@@ -12,15 +12,16 @@ export const revalidate = 86400;
 const BASE_URL = "https://www.dtfitalia.it";
 
 // Metadata SEO
-export const metadata = {
-  title: "Stampa Serigrafica Roma - Abbigliamento e Gadget",
-  description: "Serigrafia professionale a Roma per abbigliamento e gadget: t-shirt, felpe, cappelli e shopper. Alta qualità, produzione rapida e spedizione in tutta Italia.",
+  title: {
+    absolute: "Stampa Serigrafica Roma - Abbigliamento e Gadget | DTF Italia"
+  },
+  description: "Serigrafia professionale a Roma: stampa t-shirt, felpe e gadget. Alta qualità, produzione rapida e spedizione 24h in tutta Italia.",
   keywords: "stampa serigrafica, abbigliamento personalizzato, gadget personalizzati, DTF Roma",
   authors: [{ name: "DTF Italia" }],
   robots: "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1",
   openGraph: {
     title: "Stampa Serigrafica Roma - Abbigliamento e Gadget",
-    description: "Serigrafia professionale a Roma specializzata in stampa su abbigliamento e gadget.",
+    description: "Serigrafia professionale a Roma: stampa t-shirt, felpe e gadget. Alta qualità e spedizione rapida.",
     url: `${BASE_URL}/stampa-serigrafica`,
     siteName: "DTF Italia",
     locale: "it_IT",

@@ -10,7 +10,7 @@ const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
   title: "Stampa Calendari Personalizzati 2026 Roma",
-  description: "Creazione calendari personalizzati da 1 a 1000+ pezzi. Soluzioni per privati (foto di famiglia) e aziende (eventi e promozione). Spedizione in tutta Italia.",
+  description: "Creazione calendari personalizzati (1-1000+ pz) per privati e aziende. Alta qualità di stampa e spedizione rapida in tutta Italia.",
   keywords: "calendari personalizzati, calendari aziendali, calendari 2026, stampa calendari Roma",
   authors: [{ name: "DTF Italia" }],
   robots: { index: true, follow: true, maxSnippet: -1, maxImagePreview: "large", maxVideoPreview: -1 },

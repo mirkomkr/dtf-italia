@@ -23,7 +23,9 @@ const ProductCard = memo(function ProductCard({ product, priority = false }) {
         aria-label={`Configura ${product.name}`}
         className="absolute inset-0 z-10"
         prefetch={false}
-      />
+      >
+        <span className="sr-only">Configura {product.name}</span>
+      </Link>
 
       {/* Immagine prodotto - aspect-square previene CLS */}
       <div 

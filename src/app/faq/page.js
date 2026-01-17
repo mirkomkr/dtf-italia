@@ -10,7 +10,7 @@ const BASE_URL = "https://www.dtfitalia.it";
 // Metadata SEO
 export const metadata = {
   title: "FAQ Stampa Professionale - Domande e Risposte",
-  description: "Tutte le risposte alle tue domande su stampa DTF, serigrafia, sublimazione, calendari personalizzati e pellicole serigrafiche. Guida completa per Roma e Italia.",
+  description: "Risposte su stampa DTF, serigrafia, sublimazione. La guida completa per i tuoi dubbi su stampa e spedizioni a Roma e in Italia.",
   keywords: "faq stampa dtf, domande serigrafia, sublimazione domande, calendari personalizzati faq, pellicole serigrafia",
   openGraph: {
     title: "FAQ Stampa Professionale - Domande e Risposte",

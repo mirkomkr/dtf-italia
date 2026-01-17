@@ -212,7 +212,17 @@ export default async function ServiceDTFPage() {
         className="min-h-screen bg-white"
         style={{ '--brand-color': '#4f46e5' }}
       >
-        <HeroDTF product={dtfProduct} />
+        <HeroDTF 
+          product={dtfProduct} 
+          title={
+            <>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">
+                DTF
+              </span>{' '}
+              Service Roma
+            </>
+          }
+        />
         <HowItWorks steps={dtfSteps} sectionTitle="Il tuo ordine DTF pronto in 3 semplici passaggi" />
         <Benefits benefits={dtfBenefits} sectionTitle="Perché i professionisti di Roma scelgono il nostro DTF Service" />
         <FAQ faqs={dtfFaqs} sectionTitle="Tutto quello che devi sapere sulla stampa DTF" />

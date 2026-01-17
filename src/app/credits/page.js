@@ -46,6 +46,8 @@ export default function CreditsPage() {
             Tutte le immagini presenti sul sito sono utilizzate con autorizzazione o provenienti da risorse libere.
           </p>
 
+          <h2 className="text-xl font-bold text-white mb-4">Elenco Fotografi e Risorse</h2>
+
           <ul className="list-disc list-inside text-gray-200 space-y-2 max-w-3xl">
             <li>
               Foto di <a href="https://unsplash.com/it/@badun?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Anastasiya Badun</a> su <a href="https://unsplash.com/it/foto/a-t-maglietta-con-limmagine-di-un-uomo-HXFFRDzZLH8?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" className="text-indigo-300 hover:underline">Unsplash</a>

@@ -49,11 +49,13 @@ export async function generateMetadata({ params }) {
   const image = product.images?.[0]?.src;
 
   return {
-    title: `${product.name} | Serigrafia Professionale`,
+    title: {
+      absolute: `${product.name} | Serigrafia Roma | DTF Italia`
+    },
     description:
       product.short_description
         ?.replace(/<[^>]+>/g, "")
-        .slice(0, 160) || product.name,
+        .slice(0, 150) || product.name,
     openGraph: {
       title: product.name,
       description: product.short_description || product.name,
@@ -139,7 +141,7 @@ export default async function ProductPage({ params }) {
       <section className="mt-12 bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-gray-100">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
           <span className="w-1.5 h-8 bg-red-600 rounded-full" aria-hidden="true"></span>
-          Descrizione prodotto:
+          Descrizione {product.name.split(' ').slice(0, 3).join(' ')}:
         </h2>
         
         <div 

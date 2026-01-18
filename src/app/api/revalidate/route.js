@@ -8,22 +8,21 @@ async function handleRevalidation(request) {
   const envSecret = process.env.REVALIDATE_SECRET;
 
   console.log('--- Revalidate Debug ---');
+  console.log('Full URL:', request.url);
   console.log('Received secret (param):', secret);
-  console.log('Env secret length:', envSecret ? envSecret.length : 'NOT SET');
   
   if (!envSecret) {
-    console.error('REVALIDATE_SECRET is not set in environment variables.');
     return NextResponse.json({ message: 'Server configuration error: REVALIDATE_SECRET missing' }, { status: 500 });
   }
 
   if (secret !== envSecret) {
-    // TEMPORARY DEBUG: Return hint about mismatch
     return NextResponse.json({ 
       message: 'Invalid token',
       debug: {
-        received: secret ? `${secret.substring(0,3)}... (len: ${secret.length})` : 'null',
-        expected: `${envSecret.substring(0,3)}... (len: ${envSecret.length})`,
-        match: secret === envSecret
+        url: request.url, // Vediamo l'URL completo che arriva al server
+        received: secret ? `${secret.substring(0,3)}...` : 'null',
+        expected_len: envSecret.length,
+        match: false
       }
     }, { status: 401 });
   }
@@ -31,6 +30,7 @@ async function handleRevalidation(request) {
   try {
     revalidateTag('products');
     console.log('Revalidation successful for tag: products');
+    // REMOVE DEBUG IN PROD: But keep simple success for now
     return NextResponse.json({ revalidated: true, now: Date.now() });
   } catch (err) {
     console.error('Revalidation error:', err);

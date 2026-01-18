@@ -92,15 +92,31 @@ export async function POST(request) {
         const orderData = {
             payment_method: body.paymentMethod === 'dev' ? 'bacs' : body.paymentMethod,
             set_paid: (body.paymentMethod === 'stripe' || body.paymentMethod === 'paypal' || (body.paymentMethod === 'dev' && IS_DEV_MODE)),
+            customer_note: customer?.notes || '', // Note cliente
             billing: {
-                first_name: customer?.firstName || 'Cliente',
-                last_name: customer?.lastName || 'Guest',
+                first_name: customer?.firstName || customer?.companyName || 'Cliente',
+                last_name: customer?.lastName || '',
+                company: customer?.companyName || '',
                 email: customer?.email || '',
+                phone: customer?.phone || '',
                 address_1: customer?.address || '',
                 city: customer?.city || '',
-                postcode: customer?.zip || '',
-                phone: customer?.phone || ''
+                postcode: customer?.zip || ''
             },
+            // Meta dati ordine per dati fiscali e fatturazione
+            meta_data: [
+                { key: '_billing_customer_type', value: customer?.customerType || 'private' },
+                { key: '_billing_codice_fiscale', value: customer?.codiceFiscale || '' },
+                { key: '_billing_company_name', value: customer?.companyName || '' },
+                { key: '_billing_partita_iva', value: customer?.partitaIva || '' },
+                { key: '_billing_sdi_code', value: customer?.sdiCode || '' },
+                { key: '_billing_pec', value: customer?.pec || '' },
+                { key: '_billing_reference_person', value: customer?.referencePerson || '' },
+                { key: '_billing_same_as_shipping', value: String(customer?.billingSameAsShipping ?? true) },
+                { key: '_billing_address_alt', value: customer?.billingAddress || '' },
+                { key: '_billing_city_alt', value: customer?.billingCity || '' },
+                { key: '_billing_zip_alt', value: customer?.billingZip || '' }
+            ],
             line_items: [{
                 product_id: items?.productId || (type === 'serigrafia' ? 240 : 488),
                 quantity: items?.totalQuantity || items?.quantity || 1,

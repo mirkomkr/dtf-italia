@@ -155,6 +155,76 @@ export default function CalendariPage() {
       </main>
 
       <HowItWorks steps={calendariSteps} sectionTitle="Pianifica il tuo successo: come creiamo i tuoi calendari" />
+      
+      {/* Formati e Specifiche - SEO Content */}
+      <section className="py-16 bg-white" aria-labelledby="calendari-details">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <h2 id="calendari-details" className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
+              Formati e Soluzioni per Calendari Aziendali 2026
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">📅 Formati Disponibili</h3>
+                <ul className="space-y-2 text-gray-700 list-disc list-inside">
+                  <li><strong>Olandese da muro</strong>: formato classico 29x47 cm</li>
+                  <li><strong>Trittico</strong>: 3 mesi visibili, ideale uffici</li>
+                  <li><strong>Da scrivania</strong>: compatto e funzionale</li>
+                  <li><strong>Poster</strong>: 50x70 cm, visione annuale</li>
+                </ul>
+              </div>
+              
+              <div className="bg-amber-50 rounded-2xl p-6 border border-amber-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">✨ Applicazioni Aziendali</h3>
+                <ul className="space-y-2 text-gray-700 list-disc list-inside">
+                  <li><strong>Marketing</strong>: logo e contatti sempre visibili</li>
+                  <li><strong>Regali clienti</strong>: pensiero utile e duraturo</li>
+                  <li><strong>Eventi</strong>: promozione manifestazioni annuali</li>
+                  <li><strong>Interno</strong>: pianificazione team e scadenze</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-100">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">🔧 Specifiche Tecniche</h3>
+              <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-700">
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Stampa</h4>
+                  <p>Offset professionale</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Carta</h4>
+                  <p>Patinata 170-300 gr/m²</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Rilegatura</h4>
+                  <p>Spirale metallica</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Quantità Minima</h4>
+                  <p>Da 1 pezzo</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Tempi Produzione</h4>
+                  <p>5-10 giorni lavorativi</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Personalizzazione</h4>
+                  <p>Logo, foto, grafiche custom</p>
+                </div>
+              </div>
+              <p className="mt-6 text-gray-700">
+                {/* PLACEHOLDER: Espandere con dettagli reali */}
+                I calendari personalizzati sono il miglior investimento marketing a Roma: 365 giorni di visibilità garantita. 
+                Forniamo tracciati di fustella per progettazione autonoma o servizio grafico completo. Ideali per aziende, 
+                studi professionali, associazioni e privati che vogliono un regalo unico.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <Benefits benefits={calendariBenefits} sectionTitle="Il modo più efficace per promuovere il tuo brand a Roma tutto l'anno" />
 
       {/* Related Services */}

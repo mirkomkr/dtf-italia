@@ -1,5 +1,6 @@
 // components/HeroSublimazione.js
 import Image from 'next/image';
+import { FaMugHot } from 'react-icons/fa';
 
 /**
  * CheckIcon - Inline SVG for performance optimization
@@ -162,7 +163,7 @@ export default function HeroSublimazione() {
               role="presentation"
             >
               <div className="text-center">
-                <span className="text-5xl mb-2 block">✨</span>
+                <FaMugHot className="text-5xl mb-2 mx-auto text-white/30" aria-hidden="true" />
                 <span className="text-white/30 text-sm font-medium">Hero Image Placeholder</span>
               </div>
             </div>

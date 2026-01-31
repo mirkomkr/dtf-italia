@@ -34,6 +34,7 @@ export default function Footer() {
           <nav aria-label="Link Supporto">
             <h4 className="text-white font-bold mb-4">Supporto</h4>
             <ul className="space-y-2 text-sm">
+              <li><Link href="/chi-siamo" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Chi Siamo</Link></li>
               <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Contattaci</Link></li>
               <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">FAQ</Link></li>
               <li><Link href="#" className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm">Guida ai File</Link></li>

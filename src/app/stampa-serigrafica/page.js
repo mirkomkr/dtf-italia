@@ -1,6 +1,6 @@
 // app/stampa-serigrafica/page.js
 import HeroSerigrafia from "./components/HeroSerigrafia";
-import ProductCard from "./components/ProductCard";
+import ProductCard from "@/components/catalog/ProductCard";
 import { getWooCommerceProducts } from "@/lib/woocommerce";
 import { generateBreadcrumbSchema } from "@/lib/schemas/breadcrumbs";
 import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
@@ -14,7 +14,7 @@ const BASE_URL = "https://www.dtfitalia.it";
 // Metadata SEO
 export const metadata = {
   title: {
-    absolute: "Stampa Serigrafica Roma - Abbigliamento e Gadget | DTF Italia"
+    absolute: "Stampa Serigrafica Roma - Abbigliamento e Gadget"
   },
   description: "Serigrafia professionale a Roma: stampa t-shirt, felpe e gadget. Alta qualità, produzione rapida e spedizione 24h in tutta Italia.",
   keywords: "stampa serigrafica, abbigliamento personalizzato, gadget personalizzati, DTF Roma",
@@ -268,6 +268,112 @@ export default async function SerigrafiaPage() {
               </tr>
             </tbody>
           </table>
+        </div>
+      </section>
+
+      {/* Quando Scegliere la Serigrafia - SEO Content Section */}
+      <section className="py-20 bg-white" aria-labelledby="when-choose-serigrafia">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            
+            <h2 
+              id="when-choose-serigrafia"
+              className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900"
+            >
+              Serigrafia Professionale: La Scelta Ideale per Grandi Quantità
+            </h2>
+
+            <div className="space-y-6 text-gray-700 leading-relaxed">
+              
+              {/* Quando Scegliere */}
+              <div className="bg-orange-50 rounded-2xl p-6 md:p-8 border border-orange-100">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  Quando Scegliere la Serigrafia
+                </h3>
+                <p className="mb-4">
+                  La stampa serigrafica è la tecnica perfetta per <strong className="text-gray-900">ordini da 30 pezzi in su</strong>. 
+                  Più alta è la quantità, più il costo unitario si riduce, rendendola la soluzione più economica per grandi tirature. 
+                  Ideale per magliette aziendali, eventi sportivi, merchandising, divise scolastiche e gadget promozionali.
+                </p>
+                <p>
+                  Con la serigrafia ottieni <strong className="text-gray-900">colori Pantone certificati</strong>, garantendo la perfetta corrispondenza 
+                  con la tua brand identity. La durabilità è eccezionale: oltre <strong className="text-gray-900">100 lavaggi</strong> senza perdita di intensità cromatica.
+                </p>
+              </div>
+
+              {/* Materiali e Applicazioni */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    📦 Materiali Utilizzati
+                  </h3>
+                  <ul className="space-y-2 list-disc list-inside text-gray-700">
+                    <li><strong>Inchiostri plastisol</strong>: massima opacità e durata</li>
+                    <li><strong>Inchiostri ad acqua</strong>: mano morbida, eco-friendly</li>
+                    <li><strong>Inchiostri speciali</strong>: glitter, fluo, puff (effetto 3D)</li>
+                    <li><strong>Supporti</strong>: cotone, poliestere, misti, canvas</li>
+                  </ul>
+                </div>
+
+                <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    ✨ Applicazioni Ideali
+                  </h3>
+                  <ul className="space-y-2 list-disc list-inside text-gray-700">
+                    <li><strong>Abbigliamento aziendale</strong>: t-shirt, polo, felpe</li>
+                    <li><strong>Eventi</strong>: concerti, festival, manifestazioni</li>
+                    <li><strong>Sport</strong>: divise squadre, maglie tecniche</li>
+                    <li><strong>Gadget</strong>: shopper, zaini, cappellini</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Specifiche Tecniche */}
+              <div className="bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-100">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                  🔧 Specifiche Tecniche
+                </h3>
+                <div className="grid md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-2">Quantità Minima</h4>
+                    <p>30 pezzi per colore</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-2">Colori Disponibili</h4>
+                    <p>Fino a 6 colori spot Pantone</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-2">Tempi Produzione</h4>
+                    <p>5-7 giorni lavorativi</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-2">Dimensione Max</h4>
+                    <p>40x50 cm (A3+)</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-2">Resistenza</h4>
+                    <p>100+ lavaggi a 40°C</p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 mb-2">Finitura</h4>
+                    <p>Opaca, lucida, glitter</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA Box */}
+              <div className="mt-8 text-center p-8 bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl border border-orange-100">
+                <p className="text-lg text-gray-700 mb-2">
+                  <strong className="text-gray-900">Hai bisogno di grandi quantità?</strong>
+                </p>
+                <p className="text-gray-600">
+                  {/* PLACEHOLDER: Inserire contatto reale quando disponibile */}
+                  Contattaci per un preventivo personalizzato. Più ordini, più risparmi con la serigrafia professionale a Roma.
+                </p>
+              </div>
+
+            </div>
+          </div>
         </div>
       </section>
 

@@ -1,30 +1,48 @@
 // app/page.js (Home)
-import Hero from "@/app/service-dtf/components/HeroDTF";
-import { getWooCommerceProducts } from "@/lib/woocommerce";
-import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
-import { Zap, ShieldCheck, Truck } from 'lucide-react';
+import HeroHome from "@/components/HeroHome";
+import LandingSection from "@/components/LandingSection";
+import { Benefits, FAQ } from '@/components/Sections';
+import { FaPrint, FaTshirt, FaMugHot, FaCalendarAlt, FaFilm } from 'react-icons/fa';
+import { BASE_URL } from '@/lib/config';
 
-// ISR: Revalidate every 24 hours (86400 seconds)
-// On-demand revalidation via /api/revalidate when products change
+// ISR: Revalidate every 24 hours
 export const revalidate = 86400;
-
-// Base URL pubblico
-// Base URL pubblico (Forzato su www per evitare redirect chain sui canonical)
-const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
   title: {
-    absolute: "DTF Italia - Stampa Direct-To-Film Premium 24h"
+    absolute: "DTF Italia - Stampa Professionale Roma | DTF, Serigrafia, Sublimazione"
   },
   description:
-    "Servizio di stampa DTF professionale per aziende e creativi. Alta qualità, spedizione in 24h, nessun minimo d'ordine. Carica il tuo file e ordina subito.",
+    "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole. Qualità garantita, spedizione 24h, ritiro gratuito. Preventivo online immediato.",
   keywords: [
-    "stampa dtf",
-    "direct to film",
-    "stampa magliette",
-    "stampa tessuti",
-    "dtf service",
-    "stampa 24h",
+    // Local Roma
+    "stampa dtf roma",
+    "service dtf roma",
+    "serigrafia roma",
+    "serigrafia magliette",
+    "stampa sublimazione roma",
+    "stampa sublimazione tazze",
+    "stampa sublimazione su tessuto",
+    "stampa calendari personalizzati roma",
+    "stampa calendari online",
+    "stampa calendario personalizzato",
+    "stampa calendario aziende",
+    "pellicole serigrafia roma",
+    "service pellicole serigrafia",
+    "service stampa professionale roma",
+    "stampa tessuti roma",
+    "transfer digitale roma",
+    // Near Me
+    "stampa dtf vicino a me",
+    "serigrafia vicino a me",
+    "stampa sublimazione vicino a me",
+    "service stampa vicino a me",
+    // Nazionale
+    "stampa dtf italia",
+    "service dtf",
+    "service dtf professionale",
+    "serigrafia professionale",
+    "stampa sublimazione italia",
   ],
   authors: [{ name: "DTF Italia" }],
   robots: {
@@ -35,9 +53,9 @@ export const metadata = {
     maxVideoPreview: -1,
   },
   openGraph: {
-    title: "DTF Italia - Stampa Direct-To-Film Premium",
+    title: "DTF Italia - Stampa Professionale Roma",
     description:
-      "Servizio di stampa DTF professionale. Alta qualità, spedizione in 24h.",
+      "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole. Qualità garantita, spedizione 24h.",
     url: BASE_URL,
     siteName: "DTF Italia",
     locale: "it_IT",
@@ -47,7 +65,7 @@ export const metadata = {
         url: `${BASE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: "DTF Italia - Stampa Direct-To-Film Premium",
+        alt: "DTF Italia - Stampa Professionale Roma",
       },
     ],
   },
@@ -57,18 +75,82 @@ export const metadata = {
 };
 
 export default async function Home() {
-  // Fetch DTF product for Hero Configurator (Server Side)
-  let dtfProduct = null;
-  try {
-    const products = await getWooCommerceProducts({ slug: 'stampa-dtf-service-professionale' });
-    if (products && products.length > 0) {
-      dtfProduct = products[0];
+  // LocalBusiness Schema with geo coordinates for "near me" optimization
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${BASE_URL}/#organization`,
+    "name": "DTF Italia",
+    "description": "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Roma",
+      "addressRegion": "RM",
+      "addressCountry": "IT"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "41.9028",
+      "longitude": "12.4964"
+    },
+    "areaServed": [
+      { "@type": "City", "name": "Roma" },
+      { "@type": "Country", "name": "Italia" }
+    ],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Servizi di Stampa",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Stampa DTF Roma",
+            "description": "Service professionale di stampa Direct-To-Film",
+            "url": `${BASE_URL}/service-dtf`
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Stampa Serigrafica Roma",
+            "description": "Serigrafia su magliette e tessuti",
+            "url": `${BASE_URL}/stampa-serigrafica`
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Stampa Sublimazione Roma",
+            "description": "Sublimazione su tazze e tessuti",
+            "url": `${BASE_URL}/stampa-sublimazione`
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Stampa Calendari Roma",
+            "description": "Calendari personalizzati per aziende",
+            "url": `${BASE_URL}/stampa-calendari`
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Pellicole Serigrafia Roma",
+            "description": "Pellicole inkjet e laser per serigrafia",
+            "url": `${BASE_URL}/pellicole-serigrafia`
+          }
+        }
+      ]
     }
-  } catch (error) {
-    console.error("Error fetching DTF product for Home:", error);
-  }
+  };
 
-  // Schema WebSite (SEO base)
+  // WebSite Schema
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -82,76 +164,135 @@ export default async function Home() {
     },
   };
 
-  const dtfSteps = [
+  // Benefits data (ottimizzata, contenuto naturale)
+  const homeBenefits = [
     {
-      num: '01',
-      title: 'Carica il File',
-      desc: 'Trascina il tuo design in formato PNG o PDF. Il nostro sistema verificherà all\'istante se è pronto per la stampa.',
+      icon: 'Zap',
+      title: 'Velocità e Affidabilità',
+      desc: 'Ordini processati in giornata con spedizione express in tutta Italia. Ritiro gratuito a Roma.',
     },
     {
-      num: '02',
-      title: 'Stampa Express',
-      desc: 'Stampiamo il tuo design in giornata con inchiostri premium, garantendo colori brillanti e un bianco coprente.',
+      icon: 'ShieldCheck',
+      title: 'Qualità Professionale',
+      desc: 'Tecnologie all\'avanguardia e materiali premium per risultati impeccabili su ogni progetto.',
     },
     {
-      num: '03',
-      title: 'Pronto per te',
-      desc: 'Ricevi la tua stampa DTF in 24h oppure passa a ritirarla direttamente nel nostro punto vendita di Roma.',
-    },
-  ];
-
-  const dtfBenefits = [
-    {
-      icon: <Zap className="w-6 h-6 text-yellow-500" aria-hidden="true" />,
-      title: 'Semplicità Totale',
-      desc: 'Un processo d\'ordine fluido pensato per farti risparmiare tempo prezioso ogni giorno.',
-    },
-    {
-      icon: <ShieldCheck className="w-6 h-6 text-green-500" aria-hidden="true" />,
-      title: 'Affidabilità Roma',
-      desc: 'Siamo il partner tecnico di centinaia di professionisti romani che richiedono puntualità e qualità.',
-    },
-    {
-      icon: <Truck className="w-6 h-6 text-blue-500" aria-hidden="true" />,
-      title: 'Consegna Rapidissima',
-      desc: 'Grazie alla nostra logistica ottimizzata, garantiamo consegne lampo su tutta Roma e provincia.',
-    },
-  ];
-
-  const dtfFaqs = [
-    {
-      q: 'Di che tipo di file ho bisogno per il DTF?',
-      a: 'L\'ideale è un PNG con sfondo trasparente a 300 DPI, ma accettiamo anche PDF vettoriali per risultati definiti.',
-    },
-    {
-      q: 'Come posso applicare le stampe sui tessuti?',
-      a: 'È semplicissimo: bastano 15 secondi a 160°C con una termopressa. Una soluzione versatile per ogni materiale.',
-    },
-    {
-      q: 'Quali sono i tempi di ritiro a Roma?',
-      a: 'Se scegli il ritiro in sede, solitamente il tuo ordine è pronto in poche ore lavorative dalla conferma.',
+      icon: 'Truck',
+      title: 'Flessibilità Totale',
+      desc: 'Nessun minimo d\'ordine. Dalla singola stampa alle grandi quantità, siamo il tuo partner ideale.',
     },
   ];
 
   return (
     <>
-      {/* JSON-LD Schema */}
+      {/* JSON-LD Schemas */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
 
-
-
-      <div 
-        className="min-h-screen bg-white"
-        style={{ '--brand-color': '#4f46e5' }}
-      >
-        <Hero product={dtfProduct} /> 
-        <HowItWorks steps={dtfSteps} sectionTitle="Il tuo ordine DTF pronto in 3 semplici passaggi" />
-        <Benefits benefits={dtfBenefits} sectionTitle="Perché i professionisti di Roma scelgono il nostro DTF" />
-        <FAQ faqs={dtfFaqs} sectionTitle="Tutto quello che devi sapere sulla stampa DTF" />
-      </div>
+      {/* Hero Section (Fullscreen) */}
+      <HeroHome />
+      
+      {/* DTF Section */}
+      <LandingSection
+        id="dtf"
+        title="Stampa DTF Roma"
+        description="Service professionale di stampa Direct-To-Film per terzi e professionisti della personalizzazione. Stampe nitide, colori vibranti, consegne rapide."
+        features={[
+          "Spedizione 24h in tutta Italia",
+          "Nessun minimo d'ordine",
+          "Qualità professionale garantita",
+          "Ritiro gratuito a Roma"
+        ]}
+        ctaText="Configura Ordine DTF"
+        ctaHref="/service-dtf"
+        brandColor="indigo"
+        ServiceIcon={FaPrint}
+      />
+      
+      {/* Serigrafia Section */}
+      <LandingSection
+        id="serigrafia"
+        title="Stampa Serigrafica Roma"
+        description="Stampa serigrafica professionale su tessuti, magliette e materiali promozionali. Ideale per grandi quantità con colori Pantone certificati."
+        features={[
+          "Stampa su tessuti e gadget",
+          "Ideale per grandi quantità",
+          "Colori Pantone certificati",
+          "Preventivo online immediato"
+        ]}
+        ctaText="Scopri Prodotti Serigrafia"
+        ctaHref="/stampa-serigrafica"
+        brandColor="orange"
+        reverse
+        ServiceIcon={FaTshirt}
+      />
+      
+      {/* Sublimazione Section */}
+      <LandingSection
+        id="sublimazione"
+        title="Stampa Sublimazione Roma"
+        description="Stampa sublimatica per tessuti tecnici, tazze e gadget personalizzati. Colori brillanti e duraturi, resistenti ai lavaggi."
+        features={[
+          "Colori brillanti e duraturi",
+          "Ideale per tessuti tecnici",
+          "Stampa fotografica HD",
+          "Resistente ai lavaggi"
+        ]}
+        ctaText="Scopri Prodotti Sublimazione"
+        ctaHref="/stampa-sublimazione"
+        brandColor="violet"
+        ServiceIcon={FaMugHot}
+      />
+      
+      {/* Calendari Section */}
+      <LandingSection
+        id="calendari"
+        title="Stampa Calendari Roma"
+        description="Calendari personalizzati per aziende e professionisti. Stampa offset di alta qualità con formati multipli disponibili."
+        features={[
+          "Calendari aziendali personalizzati",
+          "Stampa offset professionale",
+          "Formati multipli disponibili",
+          "Consegna rapida"
+        ]}
+        ctaText="Scopri Prodotti Calendari"
+        ctaHref="/stampa-calendari"
+        brandColor="amber"
+        reverse
+        ServiceIcon={FaCalendarAlt}
+      />
+      
+      {/* Pellicole Section */}
+      <LandingSection
+        id="pellicole"
+        title="Pellicole Serigrafia Roma"
+        description="Pellicole per serigrafia inkjet e laser. Qualità professionale per serigrafisti con alta opacità garantita."
+        features={[
+          "Pellicole inkjet e laser",
+          "Alta opacità garantita",
+          "Compatibilità universale",
+          "Spedizione immediata"
+        ]}
+        ctaText="Configura Ordine Pellicole"
+        ctaHref="/pellicole-serigrafia"
+        brandColor="slate"
+        ServiceIcon={FaFilm}
+      />
+      
+      {/* Benefits Section */}
+      <Benefits 
+        benefits={homeBenefits} 
+        sectionTitle="Perché Scegliere DTF Italia" 
+      />
+      
+      {/* FAQ Section */}
+      <FAQ />
     </>
   );
 }

@@ -3,6 +3,14 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * On-Demand Revalidation API
+ * 
+ * ✅ ENHANCED: Supports granular tags
+ * - Global: ?tag=products
+ * - Category: ?tag=category:serigrafia
+ * - Product: ?tag=product:felpa-roma
+ */
 async function handleRevalidation(request) {
   const secret = request.nextUrl.searchParams.get('secret');
   const envSecret = process.env.REVALIDATE_SECRET;
@@ -17,8 +25,18 @@ async function handleRevalidation(request) {
   }
 
   try {
-    revalidateTag('products');
-    return NextResponse.json({ revalidated: true, now: Date.now() });
+    // ✅ GRANULAR TAGS: Support tag parameter
+    const tag = request.nextUrl.searchParams.get('tag') || 'products';
+    
+    revalidateTag(tag);
+    
+    console.log(`[Revalidation] Tag revalidated: ${tag}`);
+    
+    return NextResponse.json({ 
+      revalidated: true, 
+      tag,
+      now: Date.now() 
+    });
   } catch (err) {
     return NextResponse.json({ message: 'Error revalidating', error: err.message }, { status: 500 });
   }

@@ -8,6 +8,28 @@ const consumerSecret = process.env.WC_CONSUMER_SECRET;
 const CATEGORY_ID_CACHE = new Map();
 
 /**
+ * Generate granular revalidation tags based on query parameters
+ * 
+ * @param {Object} params - Query parameters
+ * @returns {Array<string>} Array of cache tags
+ */
+function generateTags(params = {}) {
+  const tags = ['products']; // Base tag for global revalidation
+  
+  // Add category-specific tag
+  if (params.category) {
+    tags.push(`category:${params.category}`);
+  }
+  
+  // Add product-specific tag
+  if (params.slug) {
+    tags.push(`product:${params.slug}`);
+  }
+  
+  return tags;
+}
+
+/**
  * Helper to perform authenticated WooCommerce fetch with Next.js caching options.
  */
 /**
@@ -36,6 +58,9 @@ const authHeader = `Basic ${btoa(`${consumerKey}:${consumerSecret}`)}`;
 const defaultRevalidate = process.env.NODE_ENV === 'development' ? 30 : 86400;
 const revalidateTime = options.revalidate !== undefined ? options.revalidate : defaultRevalidate;
 
+// ✅ GRANULAR TAGS: Generate tags based on query params
+const tags = options.tags || generateTags(params);
+
 const fetchOptions = {
     method,
     headers: {
@@ -44,7 +69,7 @@ const fetchOptions = {
     },
     next: { 
       revalidate: revalidateTime,
-      tags: ['products'] 
+      tags // ✅ Use granular tags
     },
   };
 

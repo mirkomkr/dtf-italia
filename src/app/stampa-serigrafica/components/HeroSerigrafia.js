@@ -1,4 +1,5 @@
 // components/HeroSerigrafia.jsx
+import { FaTshirt } from 'react-icons/fa';
 
 /**
  * CheckIcon - Inline SVG for performance optimization
@@ -150,7 +151,7 @@ export default function HeroSerigrafia() {
               role="presentation"
             >
               <div className="text-center">
-                <span className="text-5xl mb-2 block">🎨</span>
+                <FaTshirt className="text-5xl mb-2 mx-auto text-white/30" aria-hidden="true" />
                 <span className="text-white/30 text-sm font-medium">Hero Image Placeholder</span>
               </div>
             </div>

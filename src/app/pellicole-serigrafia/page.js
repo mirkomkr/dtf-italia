@@ -157,6 +157,76 @@ export default function PellicolePage() {
       </main>
 
       <HowItWorks steps={pellicoleSteps} sectionTitle="Precisione micrometrica: dalla tua grafica alla pellicola" />
+      
+      {/* Specifiche Tecniche B2B - SEO Content */}
+      <section className="py-16 bg-white" aria-labelledby="pellicole-details">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <h2 id="pellicole-details" className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
+              Pellicole Professionali per Laboratori Serigrafici
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">🎯 Tipologie Pellicole</h3>
+                <ul className="space-y-2 text-gray-700 list-disc list-inside">
+                  <li><strong>Inkjet</strong>: alta densità ottica Dmax &gt;4.0</li>
+                  <li><strong>Laser</strong>: compatibilità universale stampanti</li>
+                  <li><strong>Formato A3+</strong>: fino a 33x48 cm</li>
+                  <li><strong>Stabilità dimensionale</strong>: zero deformazioni</li>
+                </ul>
+              </div>
+              
+              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">✨ Applicazioni Professionali</h3>
+                <ul className="space-y-2 text-gray-700 list-disc list-inside">
+                  <li><strong>Serigrafia tessile</strong>: abbigliamento e gadget</li>
+                  <li><strong>Serigrafia industriale</strong>: cartelli, insegne</li>
+                  <li><strong>Circuiti stampati</strong>: elettronica</li>
+                  <li><strong>Vetro e ceramica</strong>: decorazioni artistiche</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-100">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">🔧 Specifiche Tecniche</h3>
+              <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-700">
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Densità Ottica</h4>
+                  <p>Dmax superiore a 4.0</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Risoluzione</h4>
+                  <p>Fino a 1440 DPI</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Spessore</h4>
+                  <p>100-125 micron</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Formato Max</h4>
+                  <p>A3+ (33x48 cm)</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Compatibilità</h4>
+                  <p>Inkjet e Laser</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Quantità Minima</h4>
+                  <p>10 fogli</p>
+                </div>
+              </div>
+              <p className="mt-6 text-gray-700">
+                {/* PLACEHOLDER: Espandere con dettagli tecnici reali */}
+                Le nostre pellicole garantiscono uno stop perfetto alla luce UV, essenziale per l'incisione di telai serigrafici. 
+                Nero coprente al 100%, nessuna velatura, stabilità dimensionale garantita. Ideali per laboratori professionali a Roma 
+                che richiedono precisione assoluta e risultati ripetibili.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <Benefits benefits={pellicoleBenefits} sectionTitle="Pellicole Inkjet ad alta densità: lo standard per i laboratori romani" />
 
       {/* Related Services */}

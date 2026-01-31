@@ -16,7 +16,7 @@ export const metadata = {
   robots: { index: true, follow: true, maxSnippet: -1, maxImagePreview: "large", maxVideoPreview: -1 },
   openGraph: {
     title: "Stampa Sublimazione Roma - Gadget e Sport",
-    description: "Personalizzazione tramite sublimazione per tazze, cuscini, mousepad e maglie sportive.",
+    description: "Personalizzazione tramite sublimazione per tazze, cuscini, calzini, mousepad e maglie sportive.",
     url: `${BASE_URL}/stampa-sublimazione`,
     siteName: "DTF Italia",
     locale: "it_IT",
@@ -42,7 +42,7 @@ export default function SublimationPage() {
     "@type": "Service",
     "@id": `${BASE_URL}/stampa-sublimazione#service`,
     "name": "Stampa a Sublimazione Roma (Gadget e Abbigliamento Tecnico)",
-    "description": "Personalizzazione tramite sublimazione per tazze, cuscini, mousepad e maglie sportive. Ideale per regali e promozioni.",
+    "description": "Personalizzazione tramite sublimazione per tazze, cuscini, calzini, mousepad e maglie sportive. Ideale per regali e promozioni.",
     "provider": {
       "@id": `${BASE_URL}/#organization`
     },
@@ -155,6 +155,75 @@ export default function SublimationPage() {
       </main>
 
       <HowItWorks steps={sublimazioneSteps} sectionTitle="Come trasformiamo le tue idee in oggetti unici" />
+      
+      {/* Materiali e Specifiche - SEO Content */}
+      <section className="py-16 bg-white" aria-labelledby="sublimazione-details">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <h2 id="sublimazione-details" className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">
+              Materiali e Applicazioni della Sublimazione
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="bg-violet-50 rounded-2xl p-6 border border-violet-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">🎨 Materiali Utilizzati</h3>
+                <ul className="space-y-2 text-gray-700 list-disc list-inside">
+                  <li><strong>Inchiostri sublimazione</strong>: colori brillanti e duraturi</li>
+                  <li><strong>Carta transfer</strong>: alta definizione fotografica</li>
+                  <li><strong>Supporti poliestere</strong>: tessuti tecnici 100% poliestere</li>
+                  <li><strong>Rivestimenti speciali</strong>: ceramica, metallo, plastica</li>
+                </ul>
+              </div>
+              
+              <div className="bg-violet-50 rounded-2xl p-6 border border-violet-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">✨ Applicazioni Ideali</h3>
+                <ul className="space-y-2 text-gray-700 list-disc list-inside">
+                  <li><strong>Gadget rigidi</strong>: tazze, mousepad, piastre</li>
+                  <li><strong>Abbigliamento tecnico</strong>: maglie sportive, divise</li>
+                  <li><strong>Regali personalizzati</strong>: cuscini, coperte</li>
+                  <li><strong>Promozioni aziendali</strong>: gadget brandizzati</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="bg-gray-50 rounded-2xl p-6 md:p-8 border border-gray-100">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">🔧 Specifiche Tecniche</h3>
+              <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-700">
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Temperatura</h4>
+                  <p>180-200°C</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Tempo Pressatura</h4>
+                  <p>45-60 secondi</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Risoluzione</h4>
+                  <p>Fino a 1440 DPI</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Resistenza</h4>
+                  <p>50+ lavaggi a 40°C</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Colori</h4>
+                  <p>Quadricromia CMYK</p>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900 mb-2">Quantità Minima</h4>
+                  <p>1 pezzo</p>
+                </div>
+              </div>
+              <p className="mt-6 text-gray-700">
+                {/* PLACEHOLDER: Espandere con dettagli tecnici reali */}
+                La sublimazione è ideale per tessuti bianchi o chiari in poliestere. Il calore trasforma l'inchiostro in gas che penetra nelle fibre, 
+                creando stampe fotografiche permanenti e resistenti. Perfetta per abbigliamento sportivo e gadget promozionali a Roma.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <Benefits benefits={sublimazioneBenefits} sectionTitle="Massima resa cromatica per i tuoi gadget a Roma" />
 
       {/* Related Services */}

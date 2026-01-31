@@ -32,10 +32,18 @@ export function HowItWorks({ steps = [], sectionTitle = "Come Funziona" }) {
 /**
  * Benefits - Componente dinamico per i vantaggi del servizio.
  * @param {Object} props
- * @param {Array} props.benefits - Array di vantaggi { icon, title, desc }
+ * @param {Array} props.benefits - Array di vantaggi { icon: string, title, desc }
  * @param {string} props.sectionTitle - Titolo personalizzato della sezione
  */
 export function Benefits({ benefits = [], sectionTitle = "Perché Scegliere Noi" }) {
+  // Icon mapping: string → Component
+  const iconMap = {
+    Truck,
+    ShieldCheck,
+    Zap,
+    HelpCircle
+  };
+
   return (
     <section className="py-20 bg-gray-900 text-white" aria-labelledby="benefits-title" style={{ contentVisibility: 'auto' }}>
       <div className="container mx-auto px-4">
@@ -43,15 +51,26 @@ export function Benefits({ benefits = [], sectionTitle = "Perché Scegliere Noi"
           {sectionTitle}
         </h2>
         <ul className="grid md:grid-cols-3 gap-8">
-          {benefits.map((benefit, i) => (
-            <li key={i} className="flex flex-col items-center text-center p-6 rounded-xl bg-gray-800 border border-gray-700">
-              <div className="p-3 bg-gray-700 rounded-full mb-4">
-                {benefit.icon}
-              </div>
-              <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
-              <p className="text-gray-300">{benefit.desc}</p>
-            </li>
-          ))}
+          {benefits.map((benefit, i) => {
+            // Map string to component, fallback to Zap
+            const IconComponent = typeof benefit.icon === 'string' 
+              ? (iconMap[benefit.icon] || Zap)
+              : null;
+
+            return (
+              <li key={i} className="flex flex-col items-center text-center p-6 rounded-xl bg-gray-800 border border-gray-700">
+                <div className="p-3 bg-gray-700 rounded-full mb-4">
+                  {IconComponent ? (
+                    <IconComponent className="w-6 h-6 text-indigo-400" aria-hidden="true" />
+                  ) : (
+                    benefit.icon
+                  )}
+                </div>
+                <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
+                <p className="text-gray-300">{benefit.desc}</p>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </section>

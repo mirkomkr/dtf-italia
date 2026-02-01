@@ -1,6 +1,5 @@
 import HeroCalendari from './components/HeroCalendari';
 import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
-import { generateBreadcrumbSchema } from '@/lib/schemas/breadcrumbs';
 import { Zap, ShieldCheck, Truck } from 'lucide-react';
 
 // ISR: Revalidate every 24 hours
@@ -125,8 +124,7 @@ export default function CalendariPage() {
     }))
   };
 
-  // Breadcrumb Schema
-  const breadcrumbSchema = generateBreadcrumbSchema('Calendari Personalizzati', '/stampa-calendari');
+
 
   return (
     <>
@@ -138,10 +136,6 @@ export default function CalendariPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <HeroCalendari />

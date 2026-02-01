@@ -13,7 +13,7 @@ export const metadata = {
     absolute: "DTF Italia - Stampa Professionale Roma | DTF, Serigrafia, Sublimazione"
   },
   description:
-    "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole. Qualità garantita, spedizione 24h, ritiro gratuito. Preventivo online immediato.",
+    "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole serigrafiche. Qualità garantita, spedizione 24h, ritiro gratuito. Preventivo online immediato.",
   keywords: [
     // Local Roma
     "stampa dtf roma",

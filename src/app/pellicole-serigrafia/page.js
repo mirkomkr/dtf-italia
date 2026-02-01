@@ -1,6 +1,5 @@
 import HeroPellicoleSerigrafia from './components/HeroPellicoleSerigrafia';
 import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
-import { generateBreadcrumbSchema } from '@/lib/schemas/breadcrumbs';
 import { Zap, ShieldCheck, Truck } from 'lucide-react';
 
 // ISR: Revalidate every 24 hours
@@ -127,8 +126,7 @@ export default function PellicolePage() {
     }))
   };
 
-  // Breadcrumb Schema
-  const breadcrumbSchema = generateBreadcrumbSchema('Pellicole Serigrafia', '/pellicole-serigrafia');
+
 
   return (
     <>
@@ -140,10 +138,6 @@ export default function PellicolePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <HeroPellicoleSerigrafia />

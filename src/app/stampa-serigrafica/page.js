@@ -2,7 +2,6 @@
 import HeroSerigrafia from "./components/HeroSerigrafia";
 import ProductCard from "@/components/shared/ProductCard";
 import { getWooCommerceProducts } from "@/lib/woocommerce";
-import { generateBreadcrumbSchema } from "@/lib/schemas/breadcrumbs";
 import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
 import { Zap, ShieldCheck, Truck } from 'lucide-react';
 
@@ -115,8 +114,7 @@ export default async function SerigrafiaPage() {
     }))
   };
 
-  // Breadcrumb Schema
-  const breadcrumbSchema = generateBreadcrumbSchema('Stampa Serigrafica', '/stampa-serigrafica');
+
 
   // Products Schema (existing)
   const schemaProducts = products.map(product => ({
@@ -193,10 +191,6 @@ export default async function SerigrafiaPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <script
         type="application/ld+json"

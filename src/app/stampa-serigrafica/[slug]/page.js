@@ -102,19 +102,6 @@ export default async function ProductPage({ params }) {
       style={{ '--brand-color': '#dc2626' }}
     >
       <div className=" container mx-auto px-4 py-12">
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="mb-6 text-sm text-gray-700">
-        <ol className="flex gap-1 flex-wrap">
-          <li><a href="/" className="hover:underline">Home</a></li>
-          <li>/</li>
-          <li><a href="/stampa-serigrafica" className="hover:underline">Serigrafia</a></li>
-          <li>/</li>
-          <li aria-current="page" className="text-gray-900 font-semibold">
-            {product.name}
-          </li>
-        </ol>
-      </nav>
-
       {/* Titolo Principale H1 */}
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
         {product.name}

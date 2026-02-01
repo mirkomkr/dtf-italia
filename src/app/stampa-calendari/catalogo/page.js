@@ -1,5 +1,6 @@
 import { getWooCommerceProducts } from '@/lib/woocommerce';
 import ProductCard from '@/components/shared/ProductCard';
+import Breadcrumb from '@/components/shared/Breadcrumb';
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -66,6 +67,11 @@ export default async function CalendariCatalogoPage() {
           </div>
         </div>
       </section>
+
+      {/* Breadcrumb Navigation */}
+      <div className="container mx-auto px-4 pt-6">
+        <Breadcrumb />
+      </div>
 
       {/* Products Grid */}
       <section id="prodotti-calendari" className="py-20 bg-gray-50">

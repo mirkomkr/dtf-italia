@@ -2,7 +2,6 @@ import localFont from 'next/font/local';
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Breadcrumb from "@/components/shared/Breadcrumb";
 
 const inter = localFont({
   src: '../../public/fonts/inter/Inter-VariableFont.woff2',
@@ -53,14 +52,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="it" suppressHydrationWarning>
 
-      <body className={`${inter.className} text-gray-900 antialiased min-h-screen flex flex-col`}>
+      <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col`}>
         <Header />
-        
-        {/* Global Breadcrumb Navigation - Hidden visually, present for SEO */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 bg-transparent">
-          <Breadcrumb />
-        </div>
-        
         <main id="main-content" className="relative flex-1 flex flex-col">
           {children}
         </main>

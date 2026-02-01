@@ -75,9 +75,9 @@ export default function HeroHome() {
           
           {/* Description */}
           <p className="text-xl sm:text-2xl lg:text-3xl text-gray-200 max-w-3xl mx-auto leading-relaxed">
-            DTF, Serigrafia, Sublimazione, Calendari e Pellicole.
+            <span className="md:whitespace-nowrap text-white font-semibold">DTF, Serigrafia, Sublimazione, Calendari e Pellicole Serigrafiche.</span>
             <br />
-            <span className="text-white font-semibold">Qualità garantita, spedizione 24h, ritiro gratuito a Roma.</span>
+            <span className="md:whitespace-nowrap text-white font-semibold">Qualità garantita, spedizione 24h, ritiro gratuito a Roma.</span>
           </p>
 
           {/* Services Grid - Clickable Icons */}

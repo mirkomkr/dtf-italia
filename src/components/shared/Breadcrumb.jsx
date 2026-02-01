@@ -48,13 +48,10 @@ export default function Breadcrumb({ customLabels = {}, className }) {
   
   return (
     <>
-      {/* Visual Breadcrumb - Hidden visually but accessible to screen readers and search engines */}
+      {/* Visual Breadcrumb */}
       <nav 
         aria-label="Breadcrumb" 
-        className={cn("sr-only", className)}
-        style={{ 
-          textShadow: '0 1px 2px rgba(255, 255, 255, 0.8), 0 0 8px rgba(255, 255, 255, 0.6)' 
-        }}
+        className={cn("mb-6", className)}
       >
         <ol className="flex items-center flex-wrap gap-2 text-sm">
           {breadcrumbItems.map((item, index) => (
@@ -77,9 +74,8 @@ export default function Breadcrumb({ customLabels = {}, className }) {
                 <Link
                   href={item.path}
                   className={cn(
-                    "text-gray-800 hover:text-gray-900 transition-colors font-medium",
-                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded-sm",
-                    "px-2 py-2 -mx-1" // Improved touch target size for mobile (44x44px minimum)
+                    "text-gray-600 hover:text-gray-900 transition-colors",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded-sm px-1"
                   )}
                 >
                   {item.isHome ? (

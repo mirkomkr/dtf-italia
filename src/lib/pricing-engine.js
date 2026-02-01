@@ -8,7 +8,16 @@ import { PRICING_CONFIG } from './pricing-config';
 class SerigrafiaStrategy {
   calculate(params) {
     const config = PRICING_CONFIG.serigrafia;
-    const { quantity, frontPrint, backPrint, fileCheck, proCheck, autoOutline } = params;
+    const { 
+      quantity, 
+      frontPrint, 
+      backPrint, 
+      fileCheck, 
+      proCheck, 
+      autoOutline,
+      frontPosition,  // NEW: Front print position
+      backPosition    // NEW: Back print position
+    } = params;
     
     // Supportiamo entrambi i nomi (backward compatibility)
     const activeProCheck = proCheck || fileCheck;
@@ -32,6 +41,22 @@ class SerigrafiaStrategy {
     
     const unitPrintCost = frontCost + backCost;
     
+    // ========================================
+    // POSITION-BASED PRICING (FUTURE USE)
+    // ========================================
+    // Uncomment to enable position-based surcharges
+    // const positionCosts = config.position_costs || {};
+    // const frontPosCost = (frontPrint !== 'none' && frontPosition) 
+    //   ? (positionCosts[frontPosition] || 0) 
+    //   : 0;
+    // const backPosCost = (backPrint !== 'none' && backPosition) 
+    //   ? (positionCosts[backPosition] || 0) 
+    //   : 0;
+    // const unitPositionCost = frontPosCost + backPosCost;
+    
+    // Currently: No position surcharge
+    const unitPositionCost = 0;
+    
     // 3. Setup Fees (Impianti)
     let setupCost = 0;
     // Solo per Serigrafia si pagano gli impianti (se sotto soglia gratis)
@@ -49,7 +74,8 @@ class SerigrafiaStrategy {
       
     if (tier) discount = tier.discount;
 
-    let subTotalUnit = (unitBase + unitPrintCost);
+    // Calculate subtotal including position costs
+    let subTotalUnit = (unitBase + unitPrintCost + unitPositionCost);
     let discountedUnit = subTotalUnit * (1 - discount);
     
     // Totale Parziale

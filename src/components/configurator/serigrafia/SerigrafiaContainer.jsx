@@ -34,12 +34,15 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   const [files, setFiles] = useState({ front: null, back: null });
 
   // --- Stato Configurazione Serigrafica ---
+  const [orderType, setOrderType] = useState('grandi_ordini'); // 'senza_minimo' | 'grandi_ordini'
   const [activeGender, setActiveGender] = useState('uomo'); 
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantities, setQuantities] = useState({}); // Per prodotti con varianti
   const [singleQuantity, setSingleQuantity] = useState(0); // Per prodotti senza varianti
   const [frontPrint, setFrontPrint] = useState('1_color');
   const [backPrint, setBackPrint] = useState('none');
+  const [frontPosition, setFrontPosition] = useState('center'); // 'right' | 'heart' | 'center'
+  const [backPosition, setBackPosition] = useState('classic'); // 'internal_label' | 'external_label' | 'classic'
   const [fileCheck, setFileCheck] = useState(false);
   const [autoOutline, setAutoOutline] = useState(false); // New State
   const [price, setPrice] = useState({ unitPrice: 0, totalPrice: 0 });
@@ -117,7 +120,27 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
   const totalQuantity = useMemo(() => getTotalQty(quantities, singleQuantity), [quantities, singleQuantity, getTotalQty]);
 
-  const updatePrice = useCallback((q, s, f, b, c, ao) => {
+  // --- Order Type Logic ---
+  const getQuantityLimits = useCallback(() => {
+    return orderType === 'senza_minimo' 
+      ? { min: 1, max: 10 }
+      : { min: 11, max: Infinity };
+  }, [orderType]);
+
+  const getAllowedColors = useCallback(() => {
+    return orderType === 'senza_minimo'
+      ? ['bianco', 'nero']
+      : ['nero', 'bianco', 'blu_notte', 'blu_royal', 'giallo', 'verde', 'viola'];
+  }, [orderType]);
+
+  const allowedColors = useMemo(() => getAllowedColors(), [getAllowedColors]);
+
+  // ========================================
+  // PRICE CALCULATION
+  // ========================================
+  // Updated to support position-based pricing (currently disabled in pricing-engine.js)
+  // To enable position pricing: uncomment position_costs in pricing-config.js
+  const updatePrice = useCallback((q, s, f, b, fp, bp, c, ao) => {
     const qty = getTotalQty(q, s);
     if (qty === 0) {
       setPrice({ unitPrice: 0, totalPrice: 0 });
@@ -127,13 +150,14 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
       quantity: qty,
       frontPrint: f,
       backPrint: b,
+      frontPosition: fp,  // Pass front position to pricing engine
+      backPosition: bp,   // Pass back position to pricing engine
       fileCheck: c,
       autoOutline: ao
     });
     setPrice(result);
   }, [getTotalQty]);
 
-  // --- Handlers ---
   // --- Handlers ---
   const handleQuantityChange = useCallback((size, value) => {
     if (!selectedColor) return;
@@ -147,10 +171,47 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
           [activeGender]: { ...prev[selectedColor]?.[activeGender], [size]: newVal }
         }
       };
-      updatePrice(newState, singleQuantity, frontPrint, backPrint, fileCheck, autoOutline);
+      
+      // Validate total quantity against limits
+      const newTotal = getTotalQty(newState, singleQuantity);
+      const limits = getQuantityLimits();
+      
+      if (newTotal > limits.max) {
+        alert(`Limite massimo per "${orderType === 'senza_minimo' ? 'Senza Minimo' : 'Grandi Ordini'}": ${limits.max} pezzi`);
+        return prev;
+      }
+      
+      updatePrice(newState, singleQuantity, frontPrint, backPrint, frontPosition, backPosition, fileCheck, autoOutline);
       return newState;
     });
-  }, [selectedColor, activeGender, singleQuantity, frontPrint, backPrint, fileCheck, autoOutline, updatePrice]);
+  }, [selectedColor, activeGender, singleQuantity, frontPrint, backPrint, frontPosition, backPosition, fileCheck, autoOutline, updatePrice, getTotalQty, getQuantityLimits, orderType]);
+
+  const handleOrderTypeChange = useCallback((newType) => {
+    const currentTotal = totalQuantity;
+    
+    // Validate if switching is allowed
+    if (newType === 'senza_minimo' && currentTotal > 10) {
+      if (!confirm('Passando a "Senza Minimo" il limite è 10 pezzi. Vuoi azzerare le quantità?')) {
+        return;
+      }
+      setQuantities({});
+      setSingleQuantity(0);
+    }
+    
+    if (newType === 'grandi_ordini' && currentTotal < 11 && currentTotal > 0) {
+      if (!confirm('Per "Grandi Ordini" servono almeno 11 pezzi. Le quantità attuali verranno mantenute.')) {
+        return;
+      }
+    }
+    
+    // Reset color if not allowed in new mode
+    const newAllowedColors = newType === 'senza_minimo' ? ['bianco', 'nero'] : ['nero', 'bianco', 'blu_notte', 'blu_royal', 'giallo', 'verde', 'viola'];
+    if (selectedColor && !newAllowedColors.includes(selectedColor)) {
+      setSelectedColor(null);
+    }
+    
+    setOrderType(newType);
+  }, [totalQuantity, selectedColor]);
 
   const handleOrderSuccess = (newId, meta = {}) => {
     setOrderId(newId);
@@ -210,6 +271,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
         {/* STEP 1: CONFIGURAZIONE PRODOTTO */}
         {currentStep === 1 && (
           <ConfigStep 
+            orderType={orderType}
+            onOrderTypeChange={handleOrderTypeChange}
+            quantityLimits={getQuantityLimits()}
+            allowedColors={allowedColors}
             genderLayout={genderLayout}
             enableVariants={enableVariants}
             activeGender={activeGender}
@@ -222,23 +287,38 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             singleQuantity={singleQuantity}
             setSingleQuantity={(val) => {
               const n = val === '' ? '' : Math.max(0, parseInt(val) || 0);
+              const limits = getQuantityLimits();
+              if (n > limits.max) {
+                alert(`Limite massimo per "${orderType === 'senza_minimo' ? 'Senza Minimo' : 'Grandi Ordini'}": ${limits.max} pezzi`);
+                return;
+              }
               setSingleQuantity(n);
-              updatePrice(quantities, n, frontPrint, backPrint, fileCheck, autoOutline);
+              updatePrice(quantities, n, frontPrint, backPrint, frontPosition, backPosition, fileCheck, autoOutline);
             }}
             frontPrint={frontPrint}
-            setFrontPrint={(val) => { setFrontPrint(val); updatePrice(quantities, singleQuantity, val, backPrint, fileCheck, autoOutline); }}
+            setFrontPrint={(val) => { setFrontPrint(val); updatePrice(quantities, singleQuantity, val, backPrint, frontPosition, backPosition, fileCheck, autoOutline); }}
             backPrint={backPrint}
-            setBackPrint={(val) => { setBackPrint(val); updatePrice(quantities, singleQuantity, frontPrint, val, fileCheck, autoOutline); }}
+            setBackPrint={(val) => { setBackPrint(val); updatePrice(quantities, singleQuantity, frontPrint, val, frontPosition, backPosition, fileCheck, autoOutline); }}
+            
+            frontPosition={frontPosition}
+            setFrontPosition={setFrontPosition}
+            backPosition={backPosition}
+            setBackPosition={setBackPosition}
             
             fileCheck={fileCheck}
-            setFileCheck={(val) => { setFileCheck(val); updatePrice(quantities, singleQuantity, frontPrint, backPrint, val, autoOutline); }}
+            setFileCheck={(val) => { setFileCheck(val); updatePrice(quantities, singleQuantity, frontPrint, backPrint, frontPosition, backPosition, val, autoOutline); }}
             
             autoOutline={autoOutline}
-            setAutoOutline={(val) => { setAutoOutline(val); updatePrice(quantities, singleQuantity, frontPrint, backPrint, fileCheck, val); }}
+            setAutoOutline={(val) => { setAutoOutline(val); updatePrice(quantities, singleQuantity, frontPrint, backPrint, frontPosition, backPosition, fileCheck, val); }}
 
             price={price}
             totalQuantity={totalQuantity}
             onNext={() => {
+                const limits = getQuantityLimits();
+                if (totalQuantity < limits.min) {
+                  alert(`Quantit\u00e0 minima per "${orderType === 'grandi_ordini' ? 'Grandi Ordini' : 'Senza Minimo'}": ${limits.min} pezzi`);
+                  return;
+                }
                 setCurrentStep(2);
                 scrollToTop();
             }}
@@ -297,7 +377,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                                 onClick={() => {
                                     const val = !autoOutline;
                                     setAutoOutline(val);
-                                    updatePrice(quantities, singleQuantity, frontPrint, backPrint, fileCheck, val);
+                                    updatePrice(quantities, singleQuantity, frontPrint, backPrint, frontPosition, backPosition, fileCheck, val);
                                 }}
                                 className={cn(
                                     "p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 w-fit",
@@ -342,6 +422,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                   <FileUploader 
                     uploadMode="s3"
                     brandColor="red"
+                    position={frontPosition}
                     file={files.front}
                     onFileSelect={(f) => {
                         setFiles(prev => ({ ...prev, front: f }));
@@ -367,6 +448,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                   <FileUploader 
                     uploadMode="s3"
                     brandColor="red"
+                    position={backPosition}
                     file={files.back}
                     onFileSelect={(f) => {
                         setFiles(prev => ({ ...prev, back: f }));
@@ -426,7 +508,9 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                 quantities, 
                 singleQuantity, 
                 frontPrint, 
-                backPrint, 
+                backPrint,
+                frontPosition,
+                backPosition,
                 fileCheck, 
                 autoOutline,
                 totalQuantity,
@@ -443,7 +527,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             isProCheck={fileCheck}
             onToggleProCheck={(val) => {
                 setFileCheck(val);
-                updatePrice(quantities, singleQuantity, frontPrint, backPrint, val, autoOutline);
+                updatePrice(quantities, singleQuantity, frontPrint, backPrint, frontPosition, backPosition, val, autoOutline);
             }}
           />
         )}

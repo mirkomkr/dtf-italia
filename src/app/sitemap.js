@@ -9,9 +9,9 @@ const STATIC_ROUTES = [
   { path: '/stampa-sublimazione', changeFreq: 'weekly', priority: 0.8 },
   { path: '/stampa-calendari', changeFreq: 'weekly', priority: 0.8 },
   { path: '/pellicole-serigrafia', changeFreq: 'monthly', priority: 0.8 },
-  { path: '/catalog/serigrafia', changeFreq: 'weekly', priority: 0.8 },
-  { path: '/catalog/sublimazione', changeFreq: 'weekly', priority: 0.8 },
-  { path: '/catalog/calendari', changeFreq: 'weekly', priority: 0.8 },
+  { path: '/stampa-serigrafica/catalogo', changeFreq: 'weekly', priority: 0.8 },
+  { path: '/stampa-sublimazione/catalogo', changeFreq: 'weekly', priority: 0.8 },
+  { path: '/stampa-calendari/catalogo', changeFreq: 'weekly', priority: 0.8 },
   { path: '/faq', changeFreq: 'weekly', priority: 0.9 },
   { path: '/carica-file', changeFreq: 'monthly', priority: 0.6 },
   { path: '/credits', changeFreq: 'yearly', priority: 0.3 },
@@ -44,14 +44,14 @@ export default async function sitemap() {
     }));
 
     const sublimazioneRoutes = sublimazioneProducts.map((product) => ({
-      url: `${BASE_URL}/catalog/sublimazione/${product.slug}`,
+      url: `${BASE_URL}/stampa-sublimazione/${product.slug}`,
       lastModified,
       changeFrequency: 'weekly',
       priority: 0.7,
     }));
 
     const calendariRoutes = calendariProducts.map((product) => ({
-      url: `${BASE_URL}/catalog/calendari/${product.slug}`,
+      url: `${BASE_URL}/stampa-calendari/${product.slug}`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.6,

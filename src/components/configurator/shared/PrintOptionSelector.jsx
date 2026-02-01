@@ -33,7 +33,12 @@ export default function PrintOptionSelector({
     frontValue, 
     backValue, 
     onFrontChange, 
-    onBackChange, 
+    onBackChange,
+    frontPosition,
+    backPosition,
+    onFrontPositionChange,
+    onBackPositionChange,
+    enablePositions = true, // New prop to control position visibility
     options = DEFAULT_OPTIONS,
     showBack = true,
     brandColor = 'indigo'
@@ -57,7 +62,58 @@ export default function PrintOptionSelector({
 
     const currentStyle = brandStyles[brandColor] || brandStyles.indigo;
 
-    const renderOption = (value, onChange, legendText, groupId) => (
+    const FRONT_POSITIONS = [
+      { id: 'right', label: 'Lato Destro' },
+      { id: 'heart', label: 'Lato Cuore' },
+      { id: 'center', label: 'Al Centro' },
+    ];
+
+    const BACK_POSITIONS = [
+      { id: 'internal_label', label: 'Etichetta Interna' },
+      { id: 'external_label', label: 'Etichetta Esterna' },
+      { id: 'classic', label: 'Retro Classico' },
+    ];
+
+    const renderPositionSelector = (positions, value, onChange) => (
+        <div className="space-y-3 mt-4 pt-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
+          <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">
+            Posizione
+          </label>
+          <div className="grid grid-cols-1 gap-2">
+            {positions.map((pos) => {
+              const isSelected = value === pos.id;
+              return (
+                <button
+                  key={pos.id}
+                  type="button"
+                  onClick={() => onChange(pos.id)}
+                  aria-pressed={isSelected}
+                  className={cn(
+                    "relative p-3 rounded-xl border-2 transition-all duration-200 text-xs font-bold leading-tight outline-none flex items-center justify-center",
+                    currentStyle.focusVisible,
+                    isSelected 
+                      ? currentStyle.active 
+                      : cn("border-gray-200 bg-white text-gray-600", currentStyle.hover)
+                  )}
+                >
+                  <span className="text-center">{pos.label}</span>
+                  {isSelected && (
+                    <div className={cn(
+                      "absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-white",
+                      currentStyle.iconContainer
+                    )}>
+                      <CheckIcon className="w-3 h-3" />
+                      <span className="sr-only">Selezionato</span>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+    );
+
+    const renderOption = (value, onChange, legendText, groupId, showPosition, positions, positionValue, onPositionChange) => (
         <fieldset className="flex-1">
             <legend className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">
                 {legendText} <span className="text-[10px] font-bold text-gray-600 pl-1">(Max 28x38cm)</span>
@@ -90,14 +146,15 @@ export default function PrintOptionSelector({
                     );
                 })}
             </div>
+            {showPosition && renderPositionSelector(positions, positionValue, onPositionChange)}
         </fieldset>
     );
 
     return (
         <div className="space-y-6 pt-6 border-t border-gray-100/50">
             <div className="flex flex-col md:flex-row gap-6">
-                {renderOption(frontValue, onFrontChange, "Stampa Fronte", "front-print")}
-                {showBack && renderOption(backValue, onBackChange, "Stampa Retro", "back-print")}
+                {renderOption(frontValue, onFrontChange, "Stampa Fronte", "front-print", enablePositions && frontValue !== 'none', FRONT_POSITIONS, frontPosition, onFrontPositionChange)}
+                {showBack && renderOption(backValue, onBackChange, "Stampa Retro", "back-print", enablePositions && backValue !== 'none', BACK_POSITIONS, backPosition, onBackPositionChange)}
             </div>
         </div>
     );

@@ -1,5 +1,5 @@
 import { getWooCommerceProducts } from '@/lib/woocommerce';
-import ProductCard from '@/components/catalog/ProductCard';
+import ProductCard from '@/components/shared/ProductCard';
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -27,17 +27,17 @@ export const metadata = {
   openGraph: {
     title: "Catalogo Calendari Personalizzati Roma 2026",
     description: "Calendari personalizzati con stampa offset professionale. Ideali per promozione aziendale e merchandising.",
-    url: `${BASE_URL}/catalog/calendari`,
+    url: `${BASE_URL}/stampa-calendari/catalogo`,
     siteName: "DTF Italia",
     locale: "it_IT",
     type: "website",
   },
   alternates: {
-    canonical: `${BASE_URL}/catalog/calendari`
+    canonical: `${BASE_URL}/stampa-calendari/catalogo`
   }
 };
 
-export default async function CalendariListingPage() {
+export default async function CalendariCatalogoPage() {
   const categorySlug = "calendari-personalizzati";
   
   let products = [];
@@ -78,7 +78,7 @@ export default async function CalendariListingPage() {
                   key={product.id} 
                   product={product}
                   priority={i < 3} // LCP optimization
-                  basePath="/catalog/calendari"
+                  basePath="/stampa-calendari"
                 />
               ))}
             </div>

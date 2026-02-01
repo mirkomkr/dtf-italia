@@ -88,6 +88,23 @@ const nextConfig = {
         destination: '/service-dtf',
         permanent: true,
       },
+      
+      // Catalog Structure Refactor (2026-02-01)
+      {
+        source: '/catalog/sublimazione',
+        destination: '/stampa-sublimazione/catalogo',
+        permanent: true,
+      },
+      {
+        source: '/catalog/calendari',
+        destination: '/stampa-calendari/catalogo',
+        permanent: true,
+      },
+      {
+        source: '/catalog/serigrafia',
+        destination: '/stampa-serigrafica/catalogo',
+        permanent: true,
+      },
     ]
   },
   async headers() {

@@ -1,5 +1,5 @@
 import { getWooCommerceProducts } from '@/lib/woocommerce';
-import ProductCard from '@/components/catalog/ProductCard';
+import ProductCard from '@/components/shared/ProductCard';
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -27,17 +27,17 @@ export const metadata = {
   openGraph: {
     title: "Catalogo Sublimazione Roma - Abbigliamento Sportivo",
     description: "Stampa sublimazione professionale su abbigliamento sportivo. Colori vibranti, alta definizione, resistenza ai lavaggi.",
-    url: `${BASE_URL}/catalog/sublimazione`,
+    url: `${BASE_URL}/stampa-sublimazione/catalogo`,
     siteName: "DTF Italia",
     locale: "it_IT",
     type: "website",
   },
   alternates: {
-    canonical: `${BASE_URL}/catalog/sublimazione`
+    canonical: `${BASE_URL}/stampa-sublimazione/catalogo`
   }
 };
 
-export default async function SublimazioneListingPage() {
+export default async function SublimazioneCatalogoPage() {
   const categorySlug = "stampa-sublimazione";
   
   let products = [];
@@ -78,7 +78,7 @@ export default async function SublimazioneListingPage() {
                   key={product.id} 
                   product={product}
                   priority={i < 4} // LCP optimization
-                  basePath="/catalog/sublimazione"
+                  basePath="/stampa-sublimazione"
                 />
               ))}
             </div>

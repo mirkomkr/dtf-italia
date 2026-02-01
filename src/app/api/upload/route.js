@@ -5,15 +5,28 @@ import { s3Client } from '@/lib/s3-client';
 
 export async function POST(request) {
   try {
-    const { filename, contentType, orderId } = await request.json();
+    const { filename, contentType, orderId, position } = await request.json();
 
     if (!filename) {
       return NextResponse.json({ error: 'Missing filename' }, { status: 400 });
     }
 
+    // Map position IDs to readable labels
+    const positionLabels = {
+      'right': 'lato-destro',
+      'heart': 'lato-cuore',
+      'center': 'al-centro',
+      'internal_label': 'etichetta-interna',
+      'external_label': 'etichetta-esterna',
+      'classic': 'retro-classico'
+    };
+
+    const positionLabel = position && positionLabels[position] ? `-${positionLabels[position]}` : '';
+    const sanitizedFilename = filename.replace(/\s+/g, '_');
+
     const key = orderId 
-  ? `uploads/orders/${orderId}/ordine-${orderId}-SOLLECITO-${Date.now()}-${filename.replace(/\s+/g, '_')}`
-  : `uploads/temp/${Date.now()}-${filename.replace(/\s+/g, '_')}`;
+      ? `uploads/orders/${orderId}/ordine-${orderId}-SOLLECITO${positionLabel}-${Date.now()}-${sanitizedFilename}`
+      : `uploads/temp/${Date.now()}${positionLabel}-${sanitizedFilename}`;
     
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME,

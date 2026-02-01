@@ -15,6 +15,7 @@ export default function FileUploader({
     allowedExtensions = ALLOWED_EXTENSIONS,
     uploadMode = 'local', // 'local' | 's3'
     orderId = null,
+    position = null, // Print position: 'right', 'heart', 'center', 'internal_label', 'external_label', 'classic'
     brandColor = 'indigo', // 'indigo' | 'red'
     onUploadComplete
 }) {
@@ -56,7 +57,8 @@ export default function FileUploader({
                  body: JSON.stringify({ 
                      filename: fileToUpload.name, 
                      contentType: fileToUpload.type,
-                     orderId // Optional: if null, backend uses 'temp' prefix
+                     orderId, // Optional: if null, backend uses 'temp' prefix
+                     position // Pass position to backend for filename generation
                  })
              });
 

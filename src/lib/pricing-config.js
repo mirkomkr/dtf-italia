@@ -29,7 +29,25 @@ export const PRICING_CONFIG = {
       { min: 50, discount: 0.15 },
       { min: 100, discount: 0.20 },
       { min: 300, discount: 0.30 }
-    ]
+    ],
+    
+    // ========================================
+    // POSITION-BASED PRICING (FUTURE USE)
+    // ========================================
+    // Uncomment to enable position-based pricing surcharges
+    // Current status: Positions are included in base price (no surcharge)
+    // 
+    // position_costs: {
+    //   // Front positions
+    //   'center': 0,        // Standard position, no surcharge
+    //   'right': 0.50,      // Right side: +€0.50 per unit
+    //   'heart': 0.50,      // Heart side: +€0.50 per unit
+    //   
+    //   // Back positions
+    //   'classic': 0,       // Classic back: standard, no surcharge
+    //   'internal_label': 1.00,  // Internal label: +€1.00 per unit (more complex)
+    //   'external_label': 0.75   // External label: +€0.75 per unit
+    // }
   },
   dtf: {
     BASE_PRICE_METER: 18.00,

@@ -1,6 +1,6 @@
 // app/stampa-serigrafica/page.js
 import HeroSerigrafia from "./components/HeroSerigrafia";
-import ProductCard from "@/components/catalog/ProductCard";
+import ProductCard from "@/components/shared/ProductCard";
 import { getWooCommerceProducts } from "@/lib/woocommerce";
 import { generateBreadcrumbSchema } from "@/lib/schemas/breadcrumbs";
 import { HowItWorks, Benefits, FAQ } from '@/components/Sections';

@@ -25,6 +25,10 @@ const SingleSizeSelector = dynamic(() => import('../shared/SingleSizeSelector'),
 const PrintOptionSelector = dynamic(() => import('../shared/PrintOptionSelector'), { ssr: false });
 
 export default function ConfigStep({
+  orderType,
+  onOrderTypeChange,
+  quantityLimits,
+  allowedColors,
   genderLayout = 'clothing',
   enableVariants = true,
   activeGender,
@@ -39,12 +43,20 @@ export default function ConfigStep({
   setFrontPrint,
   backPrint,
   setBackPrint,
+  frontPosition,
+  setFrontPosition,
+  backPosition,
+  setBackPosition,
   price,
   totalQuantity,
   sizes = SHIRT_SIZES,
   onNext,
   brandColor = 'red',
 }) {
+  
+  // Determine if position selection should be enabled
+  // Caps and bags don't have specific positioning
+  const enablePositions = genderLayout === 'clothing';
   
   const getColorTotal = (colorId) => {
       const colorData = quantities[colorId];
@@ -67,13 +79,71 @@ export default function ConfigStep({
         {/* Intestazione */}
         <header>
             <h2 className="text-2xl font-bold text-gray-900">Configura il tuo prodotto</h2>
-            <p className="text-sm text-gray-500 font-medium">Seleziona i colori e inserisci le quantità desiderate.</p>
+            <p className="text-sm text-gray-500 font-medium">Seleziona il tipo di ordine, i colori e inserisci le quantità desiderate.</p>
         </header>
 
-        {/* 1. Selezione Genere/Modello */}
+        {/* 1. Order Type Switch */}
+        <section className="space-y-3" aria-label="Tipo Ordine">
+          <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">1. Tipo di Ordine</label>
+          
+          <div className="grid grid-cols-2 gap-4">
+            {/* Senza Minimo */}
+            <button
+              onClick={() => onOrderTypeChange('senza_minimo')}
+              className={cn(
+                "p-4 rounded-xl border-2 transition-all text-left",
+                orderType === 'senza_minimo'
+                  ? "border-red-600 bg-red-50"
+                  : "border-gray-200 bg-white hover:border-gray-300"
+              )}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-bold text-gray-900">Senza Minimo</span>
+                {orderType === 'senza_minimo' && <CheckIcon className="text-red-600" />}
+              </div>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Da 1 a 10 pezzi<br/>
+                Solo bianco e nero
+                Lavorazione 24/48H
+              </p>
+            </button>
+
+            {/* Grandi Ordini */}
+            <button
+              onClick={() => onOrderTypeChange('grandi_ordini')}
+              className={cn(
+                "p-4 rounded-xl border-2 transition-all text-left",
+                orderType === 'grandi_ordini'
+                  ? "border-red-600 bg-red-50"
+                  : "border-gray-200 bg-white hover:border-gray-300"
+              )}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-bold text-gray-900">Grandi Ordini</span>
+                {orderType === 'grandi_ordini' && <CheckIcon className="text-red-600" />}
+              </div>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Da 11 pezzi in su<br/>
+                Tutti i colori disponibili
+                Lavorazione 7/12 giorni
+              </p>
+            </button>
+          </div>
+
+          {/* Info Message */}
+          <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 flex gap-3">
+            <span className="text-xl">ℹ️</span>
+            <p className="text-blue-800 text-xs font-medium leading-relaxed">
+              <strong>Senza Minimo</strong>: ideale per ordini da 1 a 10 pezzi (solo bianco/nero).<br/>
+              <strong>Grandi Ordini</strong>: per ordini da 11 pezzi in su (tutti i colori disponibili).
+            </p>
+          </div>
+        </section>
+
+        {/* 2. Selezione Genere/Modello */}
         {showGenderSelector && (
             <section className="space-y-3" aria-label="Selezione Modello">
-                <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">1. Scegli il Modello</label>
+                <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">2. Scegli il Modello</label>
                 <div className="grid grid-cols-3 gap-2">
                     {genderOptions.map(gender => (
                         <button
@@ -93,11 +163,15 @@ export default function ConfigStep({
             </section>
         )}
 
-        {/* 2. Selezione Colore */}
+        {/* 3. Selezione Colore */}
          <section className="space-y-3" aria-label="Selezione Colore">
-            <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">2. Scegli il Colore</label>
+            <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">
+              {showGenderSelector ? '3' : '2'}. Scegli il Colore
+            </label>
             <div className="flex flex-wrap gap-3">
-            {SHIRT_COLORS.map((color) => {
+            {SHIRT_COLORS
+              .filter(color => allowedColors.includes(color.id))
+              .map((color) => {
                 const isSelected = selectedColor === color.id;
                 const itemsInColor = getColorTotal(color.id);
 
@@ -129,9 +203,16 @@ export default function ConfigStep({
                 );
             })}
             </div>
+            
+            {/* Disabled Colors Message */}
+            {orderType === 'senza_minimo' && (
+              <p className="text-xs text-gray-500 italic">
+                Altri colori disponibili con "Grandi Ordini" (11+ pezzi)
+              </p>
+            )}
         </section>
 
-        {/* 3. Selezione Quantità */}
+        {/* 4. Selezione Quantità */}
         <section className="bg-gray-50 rounded-2xl p-4 md:p-6 border border-gray-100" aria-label="Inserimento Quantità">
             {enableVariants && genderLayout === 'clothing' ? (
                 <SizeMatrix 
@@ -144,7 +225,7 @@ export default function ConfigStep({
                 />
             ) : (
                 <div className="space-y-3">
-                    <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">3. Quantità</label>
+                    <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">4. Quantità</label>
                     <SingleSizeSelector 
                         brandColor="red"
                         quantity={
@@ -162,18 +243,9 @@ export default function ConfigStep({
                 </div>
             )}
             
-            {/* Dynamic Info Message for Digital Printing */}
-            {(totalQuantity > 0 && totalQuantity < 30) && (
-                <div className="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200 flex gap-3 animate-in fade-in slide-in-from-top-1">
-                    <span className="text-xl">💡</span>
-                    <p className="text-amber-800 text-xs font-bold leading-relaxed">
-                        Per ordini inferiori a 30 pezzi, la stampa viene eseguita in <span className="underline decoration-amber-500/50 underline-offset-2">Digitale</span> per garantire una qualità ottimale senza costi di impianto.
-                    </p>
-                </div>
-            )}
         </section>
 
-        {/* 4. Opzioni Stampa */}
+        {/* 5. Opzioni Stampa */}
         <section aria-label="Configurazione Stampa">
             <PrintOptionSelector 
                 brandColor="red"
@@ -181,6 +253,11 @@ export default function ConfigStep({
                 backValue={backPrint}
                 onFrontChange={setFrontPrint}
                 onBackChange={setBackPrint}
+                frontPosition={frontPosition}
+                backPosition={backPosition}
+                onFrontPositionChange={setFrontPosition}
+                onBackPositionChange={setBackPosition}
+                enablePositions={enablePositions}
                 showBack={genderLayout !== 'caps'}
             />
         </section>

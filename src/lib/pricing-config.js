@@ -83,5 +83,23 @@ export const PRICING_CONFIG = {
       { max: 500, unit_price: 2.50 },
       { max: 1000, unit_price: 2.10 }
     ]
+  },
+  
+  // ========================================
+  // SHIPPING CONFIGURATION
+  // ========================================
+  shipping: {
+    // Costo fisso spedizione (tutte le destinazioni Italia)
+    fixedCost: 10.00,
+    
+    // Soglia spedizione gratuita (opzionale, commentato per ora)
+    // freeThreshold: 100.00,
+    
+    // Informazioni corriere
+    // carrier: 'BRT',
+    // estimatedDays: '3-5 giorni lavorativi',
+    
+    // Note: Per implementazione futura con opzioni multiple (Express/Standard/Economy)
+    // vedere: .agent/docs/shipping_system_plan.md
   }
 };

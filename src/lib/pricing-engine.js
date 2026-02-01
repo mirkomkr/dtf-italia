@@ -101,15 +101,25 @@ class SerigrafiaStrategy {
     // Recalculate effective unit price for display
     let finalUnitPrice = totalParams / quantity;
 
+    // Get shipping cost
+    const shippingCost = PRICING_CONFIG.shipping.fixedCost;
+
     return {
       unitPrice: Number(finalUnitPrice.toFixed(2)),
       totalPrice: Number(totalParams.toFixed(2)),
+      shippingCost: Number(shippingCost.toFixed(2)),
+      grandTotal: Number((totalParams + shippingCost).toFixed(2)),
       details: {
         setupCost,
         autoOutlineCost,
         proCheckCost,
         discountPercentage: discount * 100,
-        technique // Pass technique info specifically
+        technique, // Pass technique info specifically
+        shipping: {
+          cost: shippingCost,
+          carrier: PRICING_CONFIG.shipping.carrier,
+          estimatedDays: PRICING_CONFIG.shipping.estimatedDays
+        }
       }
     };
   }
@@ -197,9 +207,14 @@ class DTFStrategy {
     const nextTierMeters = (discountSteps + 1) * config.DISCOUNT_STEP_METERS;
     const savingsNextTier = Number((nextTierMeters - totalMeters).toFixed(2));
 
+    // Get shipping cost
+    const shippingCost = PRICING_CONFIG.shipping.fixedCost;
+
     return {
       totalPrice: Number(finalTotal.toFixed(2)),
-      unitPrice: Number(unitPricePerPiece.toFixed(2)), // Standard interface property
+      unitPrice: Number(unitPricePerPiece.toFixed(2)),
+      shippingCost: Number(shippingCost.toFixed(2)),
+      grandTotal: Number((finalTotal + shippingCost).toFixed(2)),
       details: {
          effectiveMeterPrice,
          totalMeters: Number(totalMeters.toFixed(2)),
@@ -207,7 +222,12 @@ class DTFStrategy {
          savingsNextTier,
          rowsNeeded,
          piecesPerRow: effectivePiecesPerRow,
-         baseTotal: Number(baseTotal.toFixed(2))
+         baseTotal: Number(baseTotal.toFixed(2)),
+         shipping: {
+           cost: shippingCost,
+           carrier: PRICING_CONFIG.shipping.carrier,
+           estimatedDays: PRICING_CONFIG.shipping.estimatedDays
+         }
       }
     };
   }

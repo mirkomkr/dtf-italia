@@ -23,14 +23,35 @@ export default function OrderSummary({
         <div className={cn("rounded-xl p-4 border mb-6 overflow-hidden", bgClass, borderClass)}>
             
              {/* Header */}
-             <div className={cn("flex justify-between items-center mb-4 border-b pb-2", borderBottomClass)}>
-                 <span className={cn("font-bold", titleClass)}>
-                    Totale Ordine
-                    {data.quantity || data.totalQuantity ? ` (${data.quantity || data.totalQuantity} pz)` : ''}
-                 </span>
-                 <span className={cn("font-bold text-lg", totalClass)}>
-                     {formatCurrency(priceData.totalPrice + (data.shippingCost || 0))}
-                 </span>
+             <div className={cn("mb-4")}>
+                 <div className="flex justify-between items-center text-sm text-gray-700 mb-2">
+                     <span>Prodotto personalizzato</span>
+                     <span className="font-semibold">{formatCurrency(priceData.totalPrice)}</span>
+                 </div>
+                 
+                 {/* Shipping Cost */}
+                 <div className="flex justify-between items-center text-sm text-gray-700 mb-2 pb-2 border-b border-gray-200">
+                     <div>
+                         <div>Spedizione</div>
+                         {priceData.details?.shipping?.carrier && (
+                             <div className="text-xs text-gray-500">
+                                 {priceData.details.shipping.carrier} • {priceData.details.shipping.estimatedDays}
+                             </div>
+                         )}
+                     </div>
+                     <span className="font-semibold">{formatCurrency(priceData.shippingCost || 0)}</span>
+                 </div>
+                 
+                 {/* Grand Total */}
+                 <div className={cn("flex justify-between items-center pt-2", borderBottomClass)}>
+                     <span className={cn("font-black text-lg", titleClass)}>
+                        TOTALE
+                        {data.quantity || data.totalQuantity ? ` (${data.quantity || data.totalQuantity} pz)` : ''}
+                     </span>
+                     <span className={cn("font-black text-2xl", totalClass)}>
+                         {formatCurrency(priceData.grandTotal || (priceData.totalPrice + (priceData.shippingCost || 0)))}
+                     </span>
+                 </div>
              </div>
              
              {/* SERIGRAFIA LOGIC */}

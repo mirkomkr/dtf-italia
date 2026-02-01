@@ -112,19 +112,18 @@ export default function ShippingSelector({
 
             {/* Address Info for Pickup */}
             {selectedOption === 'pickup' && (
-                <a 
-                    href="https://www.google.com/maps/dir/?api=1&destination=Via+Margutta,+Roma"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Avvia navigazione verso Via Margutta, Roma su Google Maps"
+                <geolocation
+                    latitude="41.9028"
+                    longitude="12.4964"
                     className={cn(
                         "block text-center p-4 rounded-xl border text-sm animate-in fade-in slide-in-from-top-2 group relative overflow-hidden",
-                        "transition-all duration-300 hover:shadow-md active:scale-[0.98]",
+                        "transition-all duration-300 hover:shadow-md active:scale-[0.98] cursor-pointer",
                         "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
                         isRed 
                             ? "bg-red-50 border-red-100 text-red-900 hover:border-red-300 focus-visible:ring-red-500" 
                             : "bg-indigo-50 border-indigo-100 text-indigo-900 hover:border-indigo-300 focus-visible:ring-indigo-500"
                     )}
+                    aria-label="Avvia navigazione GPS verso Via Margutta, Roma"
                 >
                     <div className="flex flex-col items-center gap-1 relative z-10">
                         <div className="flex items-center gap-2 font-bold uppercase tracking-wide text-xs opacity-70 mb-1">
@@ -140,7 +139,7 @@ export default function ShippingSelector({
                         </div>
                         
                         <span className="text-[10px] uppercase font-bold tracking-widest mt-2 px-2 py-1 bg-white/50 rounded-md border border-black/5 group-hover:bg-white/80 transition-colors">
-                            Clicca per avviare navigazione GPS
+                            Clicca per navigazione GPS
                         </span>
                     </div>
 
@@ -151,7 +150,7 @@ export default function ShippingSelector({
                             ? "bg-gradient-to-r from-transparent via-red-100/20 to-transparent" 
                             : "bg-gradient-to-r from-transparent via-indigo-100/20 to-transparent"
                     )} />
-                </a>
+                </geolocation>
             )}
         </fieldset>
     );

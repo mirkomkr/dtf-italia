@@ -41,6 +41,9 @@ export default function PrintOptionSelector({
     enablePositions = true, // New prop to control position visibility
     options = DEFAULT_OPTIONS,
     showBack = true,
+    sleevePrints = { sleeve_right: 'none', sleeve_left: 'none' },
+    onSleevePrintsChange,
+    showSleeves = false,
     brandColor = 'indigo'
 }) {
     const isRed = brandColor === 'red';
@@ -66,6 +69,10 @@ export default function PrintOptionSelector({
       { id: 'right', label: 'Lato Destro' },
       { id: 'heart', label: 'Lato Cuore' },
       { id: 'center', label: 'Al Centro' },
+      ...(showSleeves ? [
+          { id: 'sleeve_right', label: 'Manica Dx' },
+          { id: 'sleeve_left', label: 'Manica Sx' }
+      ] : [])
     ];
 
     const BACK_POSITIONS = [
@@ -74,44 +81,54 @@ export default function PrintOptionSelector({
       { id: 'classic', label: 'Retro Classico' },
     ];
 
-    const renderPositionSelector = (positions, value, onChange) => (
-        <div className="space-y-3 mt-4 pt-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
-          <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">
-            Posizione
-          </label>
-          <div className="grid grid-cols-1 gap-2">
-            {positions.map((pos) => {
-              const isSelected = value === pos.id;
-              return (
-                <button
-                  key={pos.id}
-                  type="button"
-                  onClick={() => onChange(pos.id)}
-                  aria-pressed={isSelected}
-                  className={cn(
-                    "relative p-3 rounded-xl border-2 transition-all duration-200 text-xs font-bold leading-tight outline-none flex items-center justify-center",
-                    currentStyle.focusVisible,
-                    isSelected 
-                      ? currentStyle.active 
-                      : cn("border-gray-200 bg-white text-gray-600", currentStyle.hover)
-                  )}
-                >
-                  <span className="text-center">{pos.label}</span>
-                  {isSelected && (
-                    <div className={cn(
-                      "absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-white",
-                      currentStyle.iconContainer
-                    )}>
-                      <CheckIcon className="w-3 h-3" />
-                      <span className="sr-only">Selezionato</span>
-                    </div>
-                  )}
-                </button>
-              );
-            })}
+    const renderPositionSelector = (positions, value, onChange) => {
+        const selectedArr = Array.isArray(value) ? value : (value ? [value] : []);
+        return (
+          <div className="space-y-3 mt-4 pt-4 border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
+            <label className="text-xs font-bold text-gray-600 uppercase tracking-widest flex items-center justify-between">
+              <span>Posizioni {selectedArr.length > 0 && `(${selectedArr.length})`}</span>
+              <span className="text-[10px] text-gray-400 font-medium normal-case">(selezione multipla)</span>
+            </label>
+            <div className="grid grid-cols-1 gap-2">
+              {positions.map((pos) => {
+                const isSelected = selectedArr.includes(pos.id);
+                return (
+                  <button
+                    key={pos.id}
+                    type="button"
+                    onClick={() => {
+                        if (isSelected) {
+                            onChange(selectedArr.filter(id => id !== pos.id));
+                        } else {
+                            onChange([...selectedArr, pos.id]);
+                        }
+                    }}
+                    aria-pressed={isSelected}
+                    className={cn(
+                      "relative p-3 rounded-xl border-2 transition-all duration-200 text-xs font-bold leading-tight outline-none flex items-center justify-center",
+                      currentStyle.focusVisible,
+                      isSelected 
+                        ? currentStyle.active 
+                        : cn("border-gray-200 bg-white text-gray-600", currentStyle.hover)
+                    )}
+                  >
+                    <span className="text-center">{pos.label}</span>
+                    {isSelected && (
+                      <div className={cn(
+                        "absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-white",
+                        currentStyle.iconContainer
+                      )}>
+                        <CheckIcon className="w-3 h-3" />
+                        <span className="sr-only">Selezionato</span>
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-    );
+        );
+    };
 
     const renderOption = (value, onChange, legendText, groupId, showPosition, positions, positionValue, onPositionChange) => (
         <fieldset className="flex-1">

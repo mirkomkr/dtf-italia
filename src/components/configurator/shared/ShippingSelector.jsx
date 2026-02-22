@@ -95,7 +95,7 @@ export default function ShippingSelector({
                         checked={selectedOption === 'pickup'} 
                         onChange={(e) => onOptionChange(e.target.value)} 
                         className="peer sr-only"
-                        aria-label="Ritiro gratuito in sede a Pomezia"
+                        aria-label="Ritiro gratuito in sede a Via Margutta, Roma"
                     />
                     <MapPin className={cn("w-6 h-6 mb-1 text-gray-400", isRed ? "peer-checked:text-red-600" : "peer-checked:text-indigo-600")} aria-hidden="true" />
                     <span className={cn("font-bold text-sm text-gray-600", isRed ? "peer-checked:text-red-900" : "peer-checked:text-indigo-900")}>

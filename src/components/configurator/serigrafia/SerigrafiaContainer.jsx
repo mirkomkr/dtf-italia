@@ -9,8 +9,7 @@ import { cn } from '@/lib/utils';
 
 // Componenti Shared
 import StepNavigation from '../shared/StepNavigation';
-import UnifiedCheckout from '../shared/UnifiedCheckout';
-import SuccessStep from '../shared/SuccessStep';
+import CartSummaryStep from '../shared/CartSummaryStep';
 
 // Componente Specifico
 import ConfigStep from './ConfigStep';
@@ -27,24 +26,26 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
   // --- Stato Navigazione ---
   const [currentStep, setCurrentStep] = useState(1);
-  const [orderId, setOrderId] = useState(null);
-  const [isUploadComplete, setIsUploadComplete] = useState(false);
-  // Refactor: replaced single uploadedFileKey with dual keys
-  const [fileKeys, setFileKeys] = useState({ front: null, back: null });
-  const [files, setFiles] = useState({ front: null, back: null });
+  // isUploadComplete non più necessario nel flusso 3-step
+  // fileKeys traccia quale file è stato caricato per ogni posizione selezionata
+  const [fileKeys, setFileKeys] = useState({});
+  const [files, setFiles] = useState({});
+  // Generato una volta sola per tutta la sessione configuratore;
+  // fronte e retro condividono lo stesso cartItemId (stesso prodotto nel carrello)
+  const [cartItemId] = useState(() => crypto.randomUUID());
 
   // --- Stato Configurazione Serigrafica ---
-  const [orderType, setOrderType] = useState('grandi_ordini'); // 'senza_minimo' | 'grandi_ordini'
+  const [orderType, setOrderType] = useState(null); // stato zero
   const [activeGender, setActiveGender] = useState('uomo'); 
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantities, setQuantities] = useState({}); // Per prodotti con varianti
   const [singleQuantity, setSingleQuantity] = useState(0); // Per prodotti senza varianti
-  const [frontPrint, setFrontPrint] = useState('1_color');
+  const [frontPrint, setFrontPrint] = useState('none');
   const [backPrint, setBackPrint] = useState('none');
-  const [frontPosition, setFrontPosition] = useState('center'); // 'right' | 'heart' | 'center'
-  const [backPosition, setBackPosition] = useState('classic'); // 'internal_label' | 'external_label' | 'classic'
+  const [frontPosition, setFrontPosition] = useState([]); // array di posizioni
+  const [backPosition, setBackPosition] = useState([]); // array di posizioni
   const [fileCheck, setFileCheck] = useState(false);
-  const [autoOutline, setAutoOutline] = useState(false); // New State
+  const [autoOutline, setAutoOutline] = useState(false);
   const [price, setPrice] = useState({ unitPrice: 0, totalPrice: 0 });
 
   // --- Analisi Colori (Tono su Tono) ---
@@ -223,28 +224,19 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     const target = document.getElementById('configurator-top');
     if (!target) return;
 
-    if (window.innerWidth < 1024) {
-      const offset = 100;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = target.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'instant'
-      });
-      target.focus({ preventScroll: true });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
+    const HEADER_OFFSET = 100;
+    const elementTop = target.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({
+      top: elementTop - HEADER_OFFSET,
+      behavior: 'instant'
+    });
+    target.focus({ preventScroll: true });
   };
 
   const steps = [
     { id: 1, label: 'Configura' },
     { id: 2, label: 'Upload' },
-    { id: 3, label: 'Checkout' },
-    { id: 4, label: 'Completato' }
+    { id: 3, label: 'Riepilogo' },
   ];
 
   return (
@@ -263,7 +255,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
               scrollToTop();
           }
         }}
-        isStepCompleted={!!orderId}
+        isStepCompleted={false}
         brandColor="red"
       />
       
@@ -304,6 +296,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             setFrontPosition={setFrontPosition}
             backPosition={backPosition}
             setBackPosition={setBackPosition}
+            showSleeves={genderLayout === 'clothing'}
             
             fileCheck={fileCheck}
             setFileCheck={(val) => { setFileCheck(val); updatePrice(quantities, singleQuantity, frontPrint, backPrint, frontPosition, backPosition, val, autoOutline); }}
@@ -314,9 +307,25 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             price={price}
             totalQuantity={totalQuantity}
             onNext={() => {
+                if (!orderType) {
+                  alert("Seleziona una tipologia di ordine (Senza Minimo o Grandi Ordini).");
+                  return;
+                }
                 const limits = getQuantityLimits();
                 if (totalQuantity < limits.min) {
                   alert(`Quantit\u00e0 minima per "${orderType === 'grandi_ordini' ? 'Grandi Ordini' : 'Senza Minimo'}": ${limits.min} pezzi`);
+                  return;
+                }
+                if (frontPrint !== 'none' && frontPosition.length === 0) {
+                  alert("Seleziona almeno una posizione per la stampa frontale.");
+                  return;
+                }
+                if (backPrint !== 'none' && backPosition.length === 0) {
+                  alert("Seleziona almeno una posizione per la stampa retro.");
+                  return;
+                }
+                if (frontPrint === 'none' && backPrint === 'none') {
+                  alert("Seleziona almeno una tecnica di stampa (Fronte o Retro).");
                   return;
                 }
                 setCurrentStep(2);
@@ -410,59 +419,65 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             )}
 
 
-            <div className={`grid grid-cols-1 ${frontPrint !== 'none' && backPrint !== 'none' ? 'md:grid-cols-2 gap-8' : 'gap-0 max-w-xl mx-auto'}`}>
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-8`}>
               
-              {/* UPLOAD FRONTE - Solo se Front Print != none */}
-              {frontPrint !== 'none' && (
-                <div className="space-y-4">
+              {/* UPLOAD FRONTE */}
+              {frontPrint !== 'none' && frontPosition.map(pos => {
+                const posLabels = { right: 'Lato Destro', heart: 'Lato Cuore', center: 'Al Centro', sleeve_right: 'Manica Dx', sleeve_left: 'Manica Sx', internal_label: 'Etichetta Interna', external_label: 'Etichetta Esterna', classic: 'Retro Classico' };
+                return (
+                <div key={`front-${pos}`} className="space-y-4">
                   <div className="flex items-center gap-2 text-red-900 font-bold uppercase text-sm border-b pb-2 border-red-100">
                     <Shirt className="w-5 h-5" />
-                    <span>Stampa Fronte</span>
+                    <span>Stampa Fronte ({posLabels[pos] || pos})</span>
                   </div>
                   <FileUploader 
                     uploadMode="s3"
                     brandColor="red"
-                    position={frontPosition}
-                    file={files.front}
+                    position={pos}
+                    cartItemId={cartItemId}
+                    file={files[pos]}
                     onFileSelect={(f) => {
-                        setFiles(prev => ({ ...prev, front: f }));
-                        setFileKeys(prev => ({ ...prev, front: null })); 
+                        setFiles(prev => ({ ...prev, [pos]: f }));
+                        setFileKeys(prev => ({ ...prev, [pos]: null })); 
                     }}
                     onFileRemove={() => {
-                        setFiles(prev => ({ ...prev, front: null }));
-                        setFileKeys(prev => ({ ...prev, front: null }));
+                        setFiles(prev => ({ ...prev, [pos]: null }));
+                        setFileKeys(prev => ({ ...prev, [pos]: null }));
                     }}
-                    onUploadComplete={(key) => setFileKeys(prev => ({ ...prev, front: key }))}
+                    onUploadComplete={(key) => setFileKeys(prev => ({ ...prev, [pos]: key }))}
                   />
-                   {fileKeys.front && <p className="text-xs text-green-600 font-bold text-center">✅ File Fronte Caricato</p>}
+                   {fileKeys[pos] && <p className="text-xs text-green-600 font-bold text-center">✅ File Caricato</p>}
                 </div>
-              )}
+              )})}
 
-              {/* UPLOAD RETRO - Solo se Back Print != none */}
-              {backPrint !== 'none' && (
-                 <div className="space-y-4">
+              {/* UPLOAD RETRO */}
+              {backPrint !== 'none' && backPosition.map(pos => {
+                 const posLabels = { right: 'Lato Destro', heart: 'Lato Cuore', center: 'Al Centro', sleeve_right: 'Manica Dx', sleeve_left: 'Manica Sx', internal_label: 'Etichetta Interna', external_label: 'Etichetta Esterna', classic: 'Retro Classico' };
+                 return (
+                 <div key={`back-${pos}`} className="space-y-4">
                   <div className="flex items-center gap-2 text-red-900 font-bold uppercase text-sm border-b pb-2 border-red-100">
                     <RefreshCw className="w-5 h-5" />
-                    <span>Stampa Retro</span>
+                    <span>Stampa Retro ({posLabels[pos] || pos})</span>
                   </div>
                   <FileUploader 
                     uploadMode="s3"
                     brandColor="red"
-                    position={backPosition}
-                    file={files.back}
+                    position={pos}
+                    cartItemId={cartItemId}
+                    file={files[pos]}
                     onFileSelect={(f) => {
-                        setFiles(prev => ({ ...prev, back: f }));
-                        setFileKeys(prev => ({ ...prev, back: null }));
+                        setFiles(prev => ({ ...prev, [pos]: f }));
+                        setFileKeys(prev => ({ ...prev, [pos]: null }));
                     }}
                     onFileRemove={() => {
-                        setFiles(prev => ({ ...prev, back: null }));
-                        setFileKeys(prev => ({ ...prev, back: null }));
+                        setFiles(prev => ({ ...prev, [pos]: null }));
+                        setFileKeys(prev => ({ ...prev, [pos]: null }));
                     }}
-                    onUploadComplete={(key) => setFileKeys(prev => ({ ...prev, back: key }))}
+                    onUploadComplete={(key) => setFileKeys(prev => ({ ...prev, [pos]: key }))}
                   />
-                  {fileKeys.back && <p className="text-xs text-green-600 font-bold text-center">✅ File Retro Caricato</p>}
+                  {fileKeys[pos] && <p className="text-xs text-green-600 font-bold text-center">✅ File Caricato</p>}
                 </div>
-              )}
+              )})}
             </div>
 
             <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-gray-100">
@@ -478,63 +493,62 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
               
               <button
                 disabled={
-                    (frontPrint !== 'none' && !fileKeys.front) || 
-                    (backPrint !== 'none' && !fileKeys.back)
+                    (frontPrint !== 'none' && (frontPosition.length === 0 || frontPosition.some(p => !fileKeys[p]))) || 
+                    (backPrint !== 'none' && (backPosition.length === 0 || backPosition.some(p => !fileKeys[p])))
                 }
                 onClick={() => {
+                    // Pulizia dei fileKeys: mantiene solo le chiavi delle posizioni selezionate attualmente
+                    const activeKeys = {};
+                    if (frontPrint !== 'none') {
+                        frontPosition.forEach(pos => { if (fileKeys[pos]) activeKeys[pos] = fileKeys[pos]; });
+                    }
+                    if (backPrint !== 'none') {
+                        backPosition.forEach(pos => { if (fileKeys[pos]) activeKeys[pos] = fileKeys[pos]; });
+                    }
+                    setFileKeys(activeKeys);
                     setCurrentStep(3);
                     scrollToTop();
                 }}
                 className={cn(
                     "order-1 md:order-2 w-full md:w-auto px-8 py-4 rounded-xl font-bold text-white transition-all uppercase tracking-widest text-sm shadow-lg shadow-red-100",
                     "focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
-                    ((frontPrint !== 'none' && !fileKeys.front) || (backPrint !== 'none' && !fileKeys.back))
+                    ((frontPrint !== 'none' && (frontPosition.length === 0 || frontPosition.some(p => !fileKeys[p]))) || 
+                     (backPrint !== 'none' && (backPosition.length === 0 || backPosition.some(p => !fileKeys[p]))))
                         ? "opacity-30 cursor-not-allowed bg-red-600" 
                         : "bg-red-600 hover:bg-red-700 hover:shadow-2xl hover:-translate-y-1"
                 )}
               >
-                Procedi al Checkout
+                Riepilogo ordine →
               </button>
             </div>
           </div>
         )}
 
-        {/* STEP 3: CHECKOUT */}
-        {currentStep === 3 && !orderId && (
-          <UnifiedCheckout 
+        {/* STEP 3: RIEPILOGO + AGGIUNGI AL CARRELLO */}
+        {currentStep === 3 && (
+          <CartSummaryStep
             type="serigrafia"
             priceData={price}
-            productData={{ 
-                quantities, 
-                singleQuantity, 
-                frontPrint, 
+            productData={{
+                quantities,
+                singleQuantity,
+                frontPrint,
                 backPrint,
                 frontPosition,
                 backPosition,
-                fileCheck, 
+                fileCheck,
                 autoOutline,
                 totalQuantity,
-                technique: price?.details?.technique || 'N/D' // Pass technique info
+                technique: price?.details?.technique || 'N/D'
             }}
-            uploadedFileKey={fileKeys} 
+            fileKey={fileKeys}
+            cartItemId={cartItemId}
             brandColor="red"
-            onSuccess={handleOrderSuccess}
             onBack={() => {
                 setCurrentStep(2);
                 scrollToTop();
             }}
-            // Pro Check Upgrade (+7€)
-            isProCheck={fileCheck}
-            onToggleProCheck={(val) => {
-                setFileCheck(val);
-                updatePrice(quantities, singleQuantity, frontPrint, backPrint, frontPosition, backPosition, val, autoOutline);
-            }}
           />
-        )}
-
-        {/* STEP 4: SUCCESS */}
-        {currentStep === 4 && orderId && (
-          <SuccessStep orderId={orderId} brandColor="red" />
         )}
       </div>
     </div>

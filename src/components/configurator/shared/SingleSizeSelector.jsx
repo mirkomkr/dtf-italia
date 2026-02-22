@@ -34,6 +34,7 @@ return (
       placeholder="0"
       value={quantity === 0 ? '' : quantity}
       onFocus={(e) => e.target.select()}
+      onWheel={(e) => e.currentTarget.blur()}
       onChange={(e) => {
         const valStr = e.target.value;
         if (valStr === '') {

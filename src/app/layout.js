@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Providers from "@/components/Providers";
 
 const inter = localFont({
   src: "../../public/fonts/inter/Inter-VariableFont.woff2",
@@ -61,11 +62,13 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className} bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col`}
       >
-        <Header />
-        <main id="main-content" className="relative flex-1 flex flex-col">
-          {children}
-        </main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main id="main-content" className="relative flex-1 flex flex-col">
+            {children}
+          </main>
+          <Footer />
+        </Providers>
         <SpeedInsights />
       </body>
     </html>

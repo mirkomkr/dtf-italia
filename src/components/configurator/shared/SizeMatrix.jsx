@@ -76,6 +76,7 @@ function SizeInput({ size, parentValue, onCommit, brandColor }) {
               placeholder="0"
               value={displayValue}
               onFocus={(e) => e.target.select()}
+              onWheel={(e) => e.currentTarget.blur()}
               onChange={(e) => {
                 const valStr = e.target.value;
                 if (valStr === '') {

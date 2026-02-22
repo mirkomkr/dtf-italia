@@ -1,7 +1,7 @@
 // app/service-dtf/components/HeroDTF.js
-import Image from 'next/image';
-import HeroScrollButton from './HeroScrollButton';
-import { FaPrint } from 'react-icons/fa';
+import Image from "next/image";
+import HeroScrollButton from "./HeroScrollButton";
+import { FaPrint } from "react-icons/fa";
 
 /**
  * CheckIcon - Inline SVG for performance optimization
@@ -9,16 +9,16 @@ import { FaPrint } from 'react-icons/fa';
  * @param {string} props.className - Tailwind classes for styling
  */
 const CheckIcon = ({ className }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width="24" 
-    height="24" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className={className}
     aria-hidden="true"
   >
@@ -28,7 +28,7 @@ const CheckIcon = ({ className }) => (
 
 /**
  * HeroDTF - Hero section for DTF printing service
- * 
+ *
  * Architecture:
  * - ✅ Server Component (zero client JS except scroll button)
  * - 50/50 Grid layout with column isolation (min-w-0)
@@ -36,20 +36,19 @@ const CheckIcon = ({ className }) => (
  * - Semantic HTML5 structure
  * - Mobile-first responsive design
  * - Indigo/Purple brand palette
- * 
+ *
  * @param {Object} props
  * @param {string} props.title - Optional custom title
  */
 export default function HeroDTF({ title }) {
   return (
-    <main 
+    <main
       className="relative bg-gradient-to-br from-indigo-900 via-slate-900 to-black min-h-screen flex items-center py-20 overflow-hidden"
       aria-labelledby="hero-heading"
     >
-      
       {/* Decorative Background Elements - Hidden from screen readers */}
-      <div 
-        className="absolute inset-0 opacity-30 pointer-events-none" 
+      <div
+        className="absolute inset-0 opacity-30 pointer-events-none"
         aria-hidden="true"
         role="presentation"
       >
@@ -61,14 +60,13 @@ export default function HeroDTF({ title }) {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* 50/50 Grid Layout with Column Isolation */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          
           {/* Left Column: Marketing Content */}
-          <section 
+          <section
             className="min-w-0 space-y-6 lg:space-y-8 text-center lg:text-left"
             aria-labelledby="hero-heading"
           >
             {/* Status Badge */}
-            <div 
+            <div
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/25 border border-white/10 text-white text-sm font-bold backdrop-blur-sm"
               role="status"
               aria-label="Servizio numero 1 a Roma"
@@ -79,9 +77,9 @@ export default function HeroDTF({ title }) {
               </span>
               Service DTF N.1 a Roma
             </div>
-            
+
             {/* Main Heading */}
-            <h1 
+            <h1
               id="hero-heading"
               className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight break-words"
             >
@@ -91,20 +89,21 @@ export default function HeroDTF({ title }) {
                 <>
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">
                     Stampa DTF
-                  </span>{' '}
+                  </span>{" "}
                   Roma
                 </>
               )}
             </h1>
-            
+
             {/* Description */}
             <p className="text-lg sm:text-xl text-gray-300 max-w-lg leading-relaxed mx-auto lg:mx-0 break-words">
-              Service di stampa DTF professionale a Roma. Stampe nitide, colori vibranti e consegne rapide in 24h.
+              Service di stampa DTF professionale a Roma. Stampe nitide, colori
+              vibranti e consegne rapide in 24h.
             </p>
 
             {/* Benefits List */}
-            <ul 
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto lg:mx-0"
+            <ul
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               role="list"
               aria-label="Vantaggi del servizio"
             >
@@ -112,7 +111,6 @@ export default function HeroDTF({ title }) {
                 "Spedizione 24h",
                 "Nessun minimo d'ordine",
                 "Alta qualità garantita",
-                "Assistenza dedicata"
               ].map((item, i) => (
                 <li
                   key={i}
@@ -125,7 +123,7 @@ export default function HeroDTF({ title }) {
             </ul>
 
             {/* CTA Buttons Group */}
-            <div 
+            <div
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               role="group"
               aria-label="Azioni principali"
@@ -144,7 +142,7 @@ export default function HeroDTF({ title }) {
           </section>
 
           {/* Right Column: Image Placeholder */}
-          <aside 
+          <aside
             className="min-w-0 flex items-center justify-center"
             aria-label="Immagine rappresentativa del servizio"
           >
@@ -152,7 +150,7 @@ export default function HeroDTF({ title }) {
             <h2 id="placeholder-heading" className="sr-only">
               Immagine rappresentativa stampa DTF professionale
             </h2>
-            
+
             {/* 
               TODO: Replace placeholder with actual hero image
               Example implementation:
@@ -167,18 +165,22 @@ export default function HeroDTF({ title }) {
                 className="rounded-2xl shadow-2xl"
               />
             */}
-            <div 
+            <div
               className="w-full max-w-md aspect-[4/3] rounded-2xl bg-white/5 border border-indigo-500/20 backdrop-blur-sm flex items-center justify-center"
               aria-hidden="true"
               role="presentation"
             >
               <div className="text-center">
-                <FaPrint className="text-5xl mb-2 mx-auto text-white/30" aria-hidden="true" />
-                <span className="text-white/30 text-sm font-medium">Hero Image Placeholder</span>
+                <FaPrint
+                  className="text-5xl mb-2 mx-auto text-white/30"
+                  aria-hidden="true"
+                />
+                <span className="text-white/30 text-sm font-medium">
+                  Hero Image Placeholder
+                </span>
               </div>
             </div>
           </aside>
-
         </div>
       </div>
     </main>

@@ -9,8 +9,7 @@ import { calculatePrice } from '@/lib/pricing-engine';
 
 // Componenti Shared
 import StepNavigation from '../shared/StepNavigation';
-import UnifiedCheckout from '../shared/UnifiedCheckout';
-import SuccessStep from '../shared/SuccessStep';
+import CartSummaryStep from '../shared/CartSummaryStep';
 
 // Componenti Specifici DTF
 import DTFConfigStep from './DTFConfigStep';
@@ -28,10 +27,11 @@ export default function DTFContainer({ product }) {
 
   // --- Stato Principale ---
   const [currentStep, setCurrentStep] = useState(1);
-  const [orderId, setOrderId] = useState(null);
-  const [isUploadComplete, setIsUploadComplete] = useState(false);
   const [files, setFiles] = useState([]);
   const [uploadedFileKey, setUploadedFileKey] = useState(null);
+  // Generato una volta sola per questa sessione di configurazione;
+  // identifica univocamente il prodotto nel carrello e il suo file S3
+  const [cartItemId] = useState(() => crypto.randomUUID());
 
   // --- Stato Configurazione ---
   const [config, setConfig] = useState({
@@ -44,55 +44,35 @@ export default function DTFContainer({ product }) {
     price: null
   });
 
-  // Recovery Mode: se l'URL contiene un order_id, vai direttamente all'upload
+  // Recovery Mode: se l'URL contiene un order_id, salta direttamente all'upload
   useEffect(() => {
-    if (urlOrderId) {
-      setOrderId(urlOrderId);
-      setCurrentStep(3);
-    }
+    if (urlOrderId) setCurrentStep(2);
   }, [urlOrderId]);
 
   // --- Handlers ---
   const scrollToTop = () => {
-    // Cerchiamo l'elemento target
     const target = document.getElementById('configurator-top');
     if (!target) return;
 
-    if (window.innerWidth < 1024) {
-      // Su mobile calcoliamo la posizione esatta sottraendo un offset per l'header
-      const offset = 100; // 80px header + 20px respiro
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = target.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'instant'
-      });
-      
-      // Portiamo il focus sul contenitore per evitare che il browser scorra altrove
-      target.focus({ preventScroll: true });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
+    // Offset fisso per l'header (80px) + respiro (20px)
+    const HEADER_OFFSET = 100;
+    const elementTop = target.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({
+      top: elementTop - HEADER_OFFSET,
+      behavior: 'instant'
+    });
+    // Focus sul contenitore per accessibility senza ulteriore scroll
+    target.focus({ preventScroll: true });
   };
 
   const handleConfigUpdate = (newConfig) => {
     setConfig(prev => ({ ...prev, ...newConfig }));
   };
 
-  const handleOrderSuccess = (newOrderId, meta = {}) => {
-    setOrderId(newOrderId);
-    setCurrentStep(4);
-    scrollToTop();
-  };
-
   const steps = [
     { id: 1, label: 'Configura' },
     { id: 2, label: 'Upload' },
-    { id: 3, label: 'Checkout' },
-    { id: 4, label: 'Completato' }
+    { id: 3, label: 'Riepilogo' },
   ];
 
   return (
@@ -113,7 +93,7 @@ export default function DTFContainer({ product }) {
                 scrollToTop();
             }
         }}
-        isStepCompleted={!!orderId} 
+        isStepCompleted={false}
       />
       
       <div className="mt-8">
@@ -170,8 +150,8 @@ export default function DTFContainer({ product }) {
                     files={files}
                     onFilesChange={setFiles}
                     maxSize={100 * 1024 * 1024}
-                    // accept={{ 'image/*': ['.png', '.tif', '.tiff'], 'application/pdf': ['.pdf'], 'application/postscript': ['.ai', '.eps'], 'image/svg+xml': ['.svg'] }}
                     uploadMode="s3"
+                    cartItemId={cartItemId}
                     brandColor="indigo"
                     onUploadComplete={(key) => {
                         setUploadedFileKey(key);
@@ -199,57 +179,26 @@ export default function DTFContainer({ product }) {
                                 : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-2xl hover:-translate-y-1"
                         )}
                     >
-                        Procedi al Checkout
+                        Riepilogo ordine →
                     </button>
                 </div>
             </div>
         )}
 
-        {/* STEP 3: CHECKOUT */}
-        {currentStep === 3 && !orderId && (
-            <UnifiedCheckout 
+        {/* STEP 3: RIEPILOGO + AGGIUNGI AL CARRELLO */}
+        {currentStep === 3 && (
+            <CartSummaryStep
                 type="dtf"
                 priceData={config.price}
                 productData={{ ...config }}
-                uploadedFileKey={uploadedFileKey}
+                fileKey={uploadedFileKey}
+                cartItemId={cartItemId}
                 brandColor="indigo"
-                onSuccess={handleOrderSuccess}
                 onBack={() => {
                     setCurrentStep(2);
                     scrollToTop();
                 }}
-                isProCheck={config.isFullService}
-                onToggleProCheck={(val) => {
-                    const newConfig = { ...config, isFullService: val };
-                    const computed = calculatePrice('dtf', {
-                        quantity: config.quantity,
-                        format: config.format,
-                        width: config.width,
-                        height: config.height,
-                        isFullService: val,
-                        isFlashOrder: config.isFlashOrder
-                    });
-                    setConfig({ ...newConfig, price: computed });
-                }}
-                isFlashOrder={config.isFlashOrder}
-                onToggleFlashOrder={(val) => {
-                    const newConfig = { ...config, isFlashOrder: val };
-                    const computed = calculatePrice('dtf', {
-                        quantity: config.quantity,
-                        format: config.format,
-                        width: config.width,
-                        height: config.height,
-                        isFullService: config.isFullService,
-                        isFlashOrder: val
-                    });
-                    setConfig({ ...newConfig, price: computed });
-                }}
             />
-        )}
-
-        {/* STEP 4: CARICAMENTO FILE */}
-        {currentStep === 4 && orderId && (
-            <SuccessStep orderId={orderId} brandColor="indigo" />
         )}
       </div>
     </div>

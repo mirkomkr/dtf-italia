@@ -15,6 +15,7 @@ export default function FileUploader({
     allowedExtensions = ALLOWED_EXTENSIONS,
     uploadMode = 'local', // 'local' | 's3'
     orderId = null,
+    cartItemId = null,   // UUID associato al prodotto nel carrello
     position = null, // Print position: 'right', 'heart', 'center', 'internal_label', 'external_label', 'classic'
     brandColor = 'indigo', // 'indigo' | 'red'
     onUploadComplete
@@ -57,8 +58,9 @@ export default function FileUploader({
                  body: JSON.stringify({ 
                      filename: fileToUpload.name, 
                      contentType: fileToUpload.type,
-                     orderId, // Optional: if null, backend uses 'temp' prefix
-                     position // Pass position to backend for filename generation
+                     orderId,     // Modalità sollecito (recovery)
+                     cartItemId,  // Modalità carrello → uploads/cart/{cartItemId}/
+                     position     // Posizione stampa per label nel path
                  })
              });
 

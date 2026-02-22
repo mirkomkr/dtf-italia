@@ -134,6 +134,7 @@ export default function DTFConfigStep({
                                         type="number" 
                                         value={customDims.w}
                                         onFocus={(e) => e.target.select()}
+                                        onWheel={(e) => e.currentTarget.blur()}
                                         onChange={(e) => {
                                             const val = e.target.value;
                                             if (val <= PRICING_CONFIG.dtf.BOBINA_WIDTH) {
@@ -173,6 +174,7 @@ export default function DTFConfigStep({
                                         type="number" 
                                         value={customDims.h}
                                         onFocus={(e) => e.target.select()}
+                                        onWheel={(e) => e.currentTarget.blur()}
                                         onChange={(e) => {
                                             const val = e.target.value;
                                             if (val <= PRICING_CONFIG.dtf.MAX_CUSTOM_HEIGHT) {
@@ -210,6 +212,7 @@ export default function DTFConfigStep({
                         type="number"
                         value={quantity === 0 ? '' : quantity}
                         onFocus={(e) => e.target.select()}
+                        onWheel={(e) => e.currentTarget.blur()}
                         onChange={(e) => handleQuantityInput(e.target.value)}
                         className={cn(
                             "w-32 h-12 rounded-xl border-2 border-gray-200 bg-white text-gray-900 text-lg font-bold text-center transition-all focus:outline-none",

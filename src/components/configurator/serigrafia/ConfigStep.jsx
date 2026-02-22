@@ -47,6 +47,9 @@ export default function ConfigStep({
   setFrontPosition,
   backPosition,
   setBackPosition,
+  sleevePrints,
+  setSleevePrints,
+  showSleeves = false,
   price,
   totalQuantity,
   sizes = SHIRT_SIZES,
@@ -221,11 +224,14 @@ export default function ConfigStep({
                     quantities={getCurrentViewQuantities()}
                     onQuantityChange={onQuantityChange}
                     visible={!!selectedColor}
-                    title={`Quantità ${activeGender} - ${selectedColor || 'Seleziona colore'}`}
+                    title={`Taglie e Quantità — ${selectedColor ? selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1) : 'Seleziona colore'} / ${activeGender}`}
                 />
             ) : (
                 <div className="space-y-3">
-                    <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">4. Quantità</label>
+                    <div className="space-y-1 mb-3">
+                        <label className="text-xs font-bold text-gray-600 uppercase tracking-widest">4. Quantità per Taglia e Colore</label>
+                        <p className="text-xs text-gray-500">Seleziona un colore sopra, poi inserisci la quantità per ogni taglia.</p>
+                    </div>
                     <SingleSizeSelector 
                         brandColor="red"
                         quantity={
@@ -259,6 +265,9 @@ export default function ConfigStep({
                 onBackPositionChange={setBackPosition}
                 enablePositions={enablePositions}
                 showBack={genderLayout !== 'caps'}
+                sleevePrints={sleevePrints}
+                onSleevePrintsChange={setSleevePrints}
+                showSleeves={showSleeves}
             />
         </section>
 

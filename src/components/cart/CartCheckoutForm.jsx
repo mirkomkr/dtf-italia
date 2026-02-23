@@ -169,18 +169,25 @@ export default function CartCheckoutForm({ shippingCost, subtotal }) {
     <div className="space-y-6">
       {/* Shipping */}
       <ShippingSelector
-        value={shippingOption}
-        onChange={setShippingOption}
+        selectedOption={shippingOption}
+        onOptionChange={setShippingOption}
         brandColor="indigo"
       />
 
       {/* Customer form */}
       <CustomerForm
         formData={formData}
-        onChange={(name, value) => setFormData(prev => ({ ...prev, [name]: value }))}
+        onChange={(e) => {
+          setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+          if (errors[e.target.name]) setErrors(prev => ({ ...prev, [e.target.name]: null }));
+        }}
         onBlur={handleBlur}
         errors={errors}
-        shippingOption={shippingOption}
+        onAddressSelect={(addr) => {
+          setFormData(prev => ({ ...prev, ...addr }));
+          setErrors(prev => ({ ...prev, address: null, city: null, zip: null }));
+        }}
+        showAddress={shippingOption === 'shipping'}
         brandColor="indigo"
       />
 

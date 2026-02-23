@@ -38,21 +38,32 @@ const CartContext = createContext(null);
 
 const STORAGE_KEY = 'dtf-cart';
 
-function initCart() {
-  if (typeof window === 'undefined') return { items: [] };
-  try {
-    const saved = sessionStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : { items: [] };
-  } catch {
-    return { items: [] };
-  }
-}
+
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 export function CartProvider({ children }) {
-  const [cart, dispatch] = useReducer(cartReducer, undefined, initCart);
+  // Inizializzazione VUOTA uguale sia su server che su client (evita hydration mismatch #418)
+  const [cart, dispatch] = useReducer(cartReducer, { items: [] });
 
-  // Sincronizza con sessionStorage ad ogni cambiamento
+  // Solo client-side: ripristina eventuale carrello salvato in sessionStorage
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.items?.length > 0) {
+          parsed.items.forEach(item => {
+            dispatch({ type: 'ADD_ITEM', payload: item });
+          });
+        }
+      }
+    } catch {
+      // sessionStorage non disponibile o JSON non valido
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Solo al mount — non ri-eseguire
+
+  // Sincronizza con sessionStorage ad ogni cambiamento successivo
   useEffect(() => {
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(cart));

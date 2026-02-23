@@ -20,6 +20,18 @@ const FileUploader = dynamic(() => import('../shared/FileUploader'), {
   ssr: false
 });
 
+// Mappa posizione → label italiano (usata nell'upload step e nel carrello)
+const POS_LABELS = {
+  right:          'Lato Destro',
+  heart:          'Lato Cuore',
+  center:         'Al Centro',
+  sleeve_right:   'Manica Dx',
+  sleeve_left:    'Manica Sx',
+  internal_label: 'Etichetta Interna',
+  external_label: 'Etichetta Esterna',
+  classic:        'Retro Classico',
+};
+
 export default function SerigrafiaContainer({ product, enableVariants = true }) {
   const searchParams = useSearchParams();
   const urlOrderId = searchParams.get('order_id');
@@ -30,9 +42,12 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
   // fileKeys traccia quale file è stato caricato per ogni posizione selezionata
   const [fileKeys, setFileKeys] = useState({});
   const [files, setFiles] = useState({});
-  // Generato una volta sola per tutta la sessione configuratore;
-  // fronte e retro condividono lo stesso cartItemId (stesso prodotto nel carrello)
-  const [cartItemId] = useState(() => crypto.randomUUID());
+  // Generato una volta sola solo lato client (non durante SSR)
+  // per evitare hydration mismatch (React #418)
+  const [cartItemId, setCartItemId] = useState(null);
+  useEffect(() => {
+    setCartItemId(crypto.randomUUID());
+  }, []);
 
   // --- Stato Configurazione Serigrafica ---
   const [orderType, setOrderType] = useState(null); // stato zero
@@ -102,11 +117,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     if (genderLayout === 'none') setActiveGender('unico'); 
   }, [genderLayout]);
 
-  // Recovery Mode
+  // Recovery Mode: se l'URL contiene un order_id, salta all'upload (step 2)
   useEffect(() => {
     if (urlOrderId) {
-      setOrderId(urlOrderId);
-      setCurrentStep(3);
+      setCurrentStep(2);
     }
   }, [urlOrderId]);
 
@@ -123,9 +137,9 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
   // --- Order Type Logic ---
   const getQuantityLimits = useCallback(() => {
-    return orderType === 'senza_minimo' 
-      ? { min: 1, max: 10 }
-      : { min: 11, max: Infinity };
+    if (orderType === 'senza_minimo') return { min: 1, max: 10 };
+    if (orderType === 'grandi_ordini') return { min: 11, max: Infinity };
+    return { min: 0, max: Infinity }; // null = nessun tipo selezionato, nessun limite attivo
   }, [orderType]);
 
   const getAllowedColors = useCallback(() => {
@@ -214,11 +228,6 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     setOrderType(newType);
   }, [totalQuantity, selectedColor]);
 
-  const handleOrderSuccess = (newId, meta = {}) => {
-    setOrderId(newId);
-    setCurrentStep(4);
-    scrollToTop();
-  };
 
   const scrollToTop = () => {
     const target = document.getElementById('configurator-top');
@@ -422,13 +431,11 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-8`}>
               
               {/* UPLOAD FRONTE */}
-              {frontPrint !== 'none' && frontPosition.map(pos => {
-                const posLabels = { right: 'Lato Destro', heart: 'Lato Cuore', center: 'Al Centro', sleeve_right: 'Manica Dx', sleeve_left: 'Manica Sx', internal_label: 'Etichetta Interna', external_label: 'Etichetta Esterna', classic: 'Retro Classico' };
-                return (
+              {frontPrint !== 'none' && frontPosition.map(pos => (
                 <div key={`front-${pos}`} className="space-y-4">
                   <div className="flex items-center gap-2 text-red-900 font-bold uppercase text-sm border-b pb-2 border-red-100">
                     <Shirt className="w-5 h-5" />
-                    <span>Stampa Fronte ({posLabels[pos] || pos})</span>
+                    <span>Stampa Fronte ({POS_LABELS[pos] || pos})</span>
                   </div>
                   <FileUploader 
                     uploadMode="s3"
@@ -446,18 +453,16 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                     }}
                     onUploadComplete={(key) => setFileKeys(prev => ({ ...prev, [pos]: key }))}
                   />
-                   {fileKeys[pos] && <p className="text-xs text-green-600 font-bold text-center">✅ File Caricato</p>}
-                </div>
-              )})}
+                  {fileKeys[pos] && <p className="text-xs text-green-600 font-bold text-center">✅ File Caricato</p>}
+                 </div>
+              ))}
 
               {/* UPLOAD RETRO */}
-              {backPrint !== 'none' && backPosition.map(pos => {
-                 const posLabels = { right: 'Lato Destro', heart: 'Lato Cuore', center: 'Al Centro', sleeve_right: 'Manica Dx', sleeve_left: 'Manica Sx', internal_label: 'Etichetta Interna', external_label: 'Etichetta Esterna', classic: 'Retro Classico' };
-                 return (
+              {backPrint !== 'none' && backPosition.map(pos => (
                  <div key={`back-${pos}`} className="space-y-4">
                   <div className="flex items-center gap-2 text-red-900 font-bold uppercase text-sm border-b pb-2 border-red-100">
                     <RefreshCw className="w-5 h-5" />
-                    <span>Stampa Retro ({posLabels[pos] || pos})</span>
+                    <span>Stampa Retro ({POS_LABELS[pos] || pos})</span>
                   </div>
                   <FileUploader 
                     uploadMode="s3"
@@ -477,7 +482,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                   />
                   {fileKeys[pos] && <p className="text-xs text-green-600 font-bold text-center">✅ File Caricato</p>}
                 </div>
-              )})}
+              ))}
             </div>
 
             <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-gray-100">

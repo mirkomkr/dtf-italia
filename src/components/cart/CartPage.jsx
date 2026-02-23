@@ -28,6 +28,18 @@ const FORMAT_LABELS = {
   meter:                  'Bobina al Metro Lineare — 58×100 cm',
 };
 
+// ─── Label italiano per posizioni di stampa serigrafia ───────────────────────
+const POS_LABELS = {
+  right:          'Lato Destro',
+  heart:          'Lato Cuore',
+  center:         'Al Centro',
+  sleeve_right:   'Manica Dx',
+  sleeve_left:    'Manica Sx',
+  internal_label: 'Etichetta Interna',
+  external_label: 'Etichetta Esterna',
+  classic:        'Retro Classico',
+};
+
 // ─── Breakdown quantità serigrafia ─────────────────────────────────────────
 function buildSerigrafiaQuantityDetails(cfg) {
   if (!cfg) return null;
@@ -127,9 +139,8 @@ function CartItemCard({ item, onRemove }) {
         {/* Serigrafia */}
         {item.type === 'serigrafia' && (() => {
           const breakdown = buildSerigrafiaQuantityDetails(cfg);
-          const posLabels = { right: 'Lato Destro', heart: 'Lato Cuore', center: 'Al Centro', sleeve_right: 'Manica Dx', sleeve_left: 'Manica Sx', internal_label: 'Etichetta Interna', external_label: 'Etichetta Esterna', classic: 'Retro Classico' };
-          const frontPos = Array.isArray(cfg.frontPosition) ? cfg.frontPosition.map(p => posLabels[p] || p) : [];
-          const backPos = Array.isArray(cfg.backPosition) ? cfg.backPosition.map(p => posLabels[p] || p) : [];
+          const frontPos = Array.isArray(cfg.frontPosition) ? cfg.frontPosition.map(p => POS_LABELS[p] || p) : [];
+          const backPos = Array.isArray(cfg.backPosition) ? cfg.backPosition.map(p => POS_LABELS[p] || p) : [];
           return (
             <>
               {cfg?.totalQuantity > 0 && <Detail label="Quantità totale" value={`${cfg.totalQuantity} pz`} />}

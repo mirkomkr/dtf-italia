@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -29,9 +29,12 @@ export default function DTFContainer({ product }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [files, setFiles] = useState([]);
   const [uploadedFileKey, setUploadedFileKey] = useState(null);
-  // Generato una volta sola per questa sessione di configurazione;
-  // identifica univocamente il prodotto nel carrello e il suo file S3
-  const [cartItemId] = useState(() => crypto.randomUUID());
+  // Generato una volta sola solo lato client (non durante SSR)
+  // per evitare hydration mismatch (React #418)
+  const [cartItemId, setCartItemId] = useState(null);
+  useEffect(() => {
+    setCartItemId(crypto.randomUUID());
+  }, []);
 
   // --- Stato Configurazione ---
   const [config, setConfig] = useState({

@@ -1,7 +1,7 @@
 // app/page.js (Home)
-import HeroHome from "@/components/HeroHome";
-import LandingSection from "@/components/LandingSection";
-import { Benefits, FAQ } from '@/components/Sections';
+import HeroHome from "@/components/home/HeroHome";
+import LandingSection from "@/components/home/LandingSection";
+import { Benefits, FAQ } from '@/components/home/Sections';
 import { FaPrint, FaTshirt, FaMugHot, FaCalendarAlt, FaFilm } from 'react-icons/fa';
 import { BASE_URL } from '@/lib/config';
 

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import GraziePage from "@/components/GraziePage";
+import GraziePage from "@/components/pages/GraziePage";
 
 export const metadata = {
   title: "Grazie per il tuo ordine! — DTF Italia",

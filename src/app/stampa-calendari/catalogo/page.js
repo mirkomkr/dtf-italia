@@ -1,6 +1,6 @@
 import { getWooCommerceProducts } from '@/lib/woocommerce';
-import ProductCard from '@/components/shared/ProductCard';
-import Breadcrumb from '@/components/shared/Breadcrumb';
+import ProductCard from '@/components/common/ProductCard';
+import Breadcrumb from '@/components/common/Breadcrumb';
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;

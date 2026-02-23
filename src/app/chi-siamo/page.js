@@ -1,5 +1,5 @@
 // app/chi-siamo/page.js
-import AboutSection from "@/components/AboutSection";
+import AboutSection from "@/components/home/AboutSection";
 import { BASE_URL } from '@/lib/config';
 
 // Metadata SEO

@@ -1,8 +1,8 @@
 import localFont from "next/font/local";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import Providers from "@/components/Providers";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import Providers from "@/components/layout/Providers";
 
 const inter = localFont({
   src: "../../public/fonts/inter/Inter-VariableFont.woff2",

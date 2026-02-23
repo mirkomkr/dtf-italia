@@ -1,5 +1,5 @@
 import HeroSublimazione from './components/HeroSublimazione';
-import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
+import { HowItWorks, Benefits, FAQ } from '@/components/home/Sections';
 import { Zap, ShieldCheck, Truck } from 'lucide-react';
 
 // ISR: Revalidate every 24 hours

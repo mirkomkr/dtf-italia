@@ -1,7 +1,7 @@
 // app/service-dtf/page.js
 import HeroDTF from "./components/HeroDTF";
 import { getWooCommerceProducts } from "@/lib/woocommerce";
-import { HowItWorks, Benefits, FAQ } from '@/components/Sections';
+import { HowItWorks, Benefits, FAQ } from '@/components/home/Sections';
 import dynamic from 'next/dynamic';
 
 // Lazy load configurator (not critical for initial render)

@@ -1,6 +1,6 @@
 // components/HeroSublimazione.js
-import Image from 'next/image';
-import { FaMugHot } from 'react-icons/fa';
+import Image from "next/image";
+import { FaMugHot } from "react-icons/fa";
 
 /**
  * CheckIcon - Inline SVG for performance optimization
@@ -8,26 +8,26 @@ import { FaMugHot } from 'react-icons/fa';
  * @param {string} props.className - Tailwind classes for styling
  */
 const CheckIcon = ({ className }) => (
-    <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        width="24" 
-        height="24" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="2" 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        className={className} 
-        aria-hidden="true"
-    >
-        <polyline points="20 6 9 17 4 12" />
-    </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
 );
 
 /**
  * HeroSublimazione - Hero section for sublimation printing services
- * 
+ *
  * Architecture:
  * - 50/50 Grid layout with column isolation (min-w-0)
  * - WCAG 2.1 Level AA compliant
@@ -37,14 +37,13 @@ const CheckIcon = ({ className }) => (
  */
 export default function HeroSublimazione() {
   return (
-    <main 
+    <main
       className="relative bg-gradient-to-br from-violet-800 via-purple-700 to-fuchsia-700 min-h-screen flex items-center py-20 overflow-hidden"
       aria-labelledby="hero-heading"
     >
-      
       {/* Decorative Background Elements - Hidden from screen readers */}
-      <div 
-        className="absolute inset-0 opacity-20 pointer-events-none" 
+      <div
+        className="absolute inset-0 opacity-20 pointer-events-none"
         aria-hidden="true"
         role="presentation"
       >
@@ -56,15 +55,13 @@ export default function HeroSublimazione() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* 50/50 Grid Layout with Column Isolation */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          
           {/* Left Column: Marketing Content */}
-          <section 
+          <section
             className="min-w-0 space-y-6 lg:space-y-8 text-center lg:text-left"
             aria-labelledby="hero-heading"
           >
-
             {/* Status Badge */}
-            <div 
+            <div
               className="inline-block px-3 py-1 rounded-full bg-black/25 border border-white/10 text-white text-sm font-bold backdrop-blur-sm"
               role="status"
               aria-label="Servizio stampa sublimazione professionale"
@@ -73,7 +70,7 @@ export default function HeroSublimazione() {
             </div>
 
             {/* Main Heading - Single h1 per page */}
-            <h1 
+            <h1
               id="hero-heading"
               className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight break-words"
             >
@@ -85,13 +82,15 @@ export default function HeroSublimazione() {
 
             {/* Description */}
             <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">
-              Ideale per abbigliamento sportivo, gadget e tessuti sintetici.</p>
+              Ideale per abbigliamento sportivo, gadget e tessuti sintetici.
+            </p>
             <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">
-              Stampa fotografica ad alta definizione con risultati che resistono al tempo e ai lavaggi.</p>
-            
+              Stampa fotografica ad alta definizione con risultati che resistono
+              al tempo e ai lavaggi.
+            </p>
 
             {/* Benefits List */}
-            <ul 
+            <ul
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               role="list"
               aria-label="Vantaggi della sublimazione"
@@ -99,7 +98,7 @@ export default function HeroSublimazione() {
               {[
                 "Stampa fotografica HD",
                 "Perfetta su poliestere",
-                "Nessun limite di colori"
+                "Nessun limite di colori",
               ].map((item, i) => (
                 <li
                   key={i}
@@ -112,7 +111,7 @@ export default function HeroSublimazione() {
             </ul>
 
             {/* CTA Buttons Group */}
-            <div 
+            <div
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               role="group"
               aria-label="Azioni principali"
@@ -133,11 +132,10 @@ export default function HeroSublimazione() {
                 Come funziona
               </a>
             </div>
-
           </section>
 
           {/* Right Column: Visual Placeholder */}
-          <aside 
+          <aside
             className="min-w-0 flex items-center justify-center"
             aria-labelledby="placeholder-heading"
           >
@@ -145,30 +143,50 @@ export default function HeroSublimazione() {
             <h2 id="placeholder-heading" className="sr-only">
               Immagine rappresentativa sublimazione
             </h2>
-            
-            {/* 
-              Future: Add priority image for LCP optimization
-              <Image 
-                src="/images/sublimazione-hero.webp"
-                alt="Esempio di stampa sublimazione su maglietta sportiva"
-                width={600}
-                height={500}
-                priority
-                className="rounded-2xl shadow-2xl"
-              />
-            */}
-            <div 
+
+            {/*
+             * ─── HERO IMAGE ─────────────────────────────────────────────────────────
+             * Sostituire il <div> placeholder qui sotto con questo blocco <Image>
+             * non appena l'asset è disponibile in /public/images/hero-sublimazione.webp
+             *
+             * Specifiche asset richieste:
+             *   • Formato  : WebP (con fallback JPG per Safari < 14)
+             *   • Dimensioni: 800 × 600 px  (aspect-ratio 4/3)
+             *   • Qualità  : 85 — ottimale per immagini di stampa
+             *   • `priority`: OBBLIGATORIO — è LCP above-the-fold
+             *   • `sizes`  : (max-width: 1024px) 100vw, 50vw
+             *                corrisponde al layout grid 50/50
+             *
+             * <Image
+             *   src="/images/hero-sublimazione.webp"
+             *   alt="Stampa sublimazione su tessuti sportivi e gadget personalizzati - DTF Italia Roma"
+             *   width={800}
+             *   height={600}
+             *   priority
+             *   quality={85}
+             *   sizes="(max-width: 1024px) 100vw, 50vw"
+             *   className="w-full h-auto rounded-2xl shadow-2xl object-cover"
+             * />
+             * ────────────────────────────────────────────────────────────────────────
+             */}
+
+            {/* Placeholder visivo — rimuovere quando l'<Image> sopra è attivo */}
+            <div
               className="w-full max-w-md aspect-[4/3] rounded-2xl bg-white/5 border border-violet-500/20 backdrop-blur-sm flex items-center justify-center"
               aria-hidden="true"
               role="presentation"
             >
               <div className="text-center">
-                <FaMugHot className="text-5xl mb-2 mx-auto text-white/30" aria-hidden="true" />
-                <span className="text-white/30 text-sm font-medium">Hero Image Placeholder</span>
+                <FaMugHot
+                  className="text-5xl mb-2 mx-auto text-white/30"
+                  aria-hidden="true"
+                />
+                <span className="text-white/30 text-sm font-medium">
+                  Hero Image Placeholder
+                </span>
               </div>
             </div>
           </aside>
-
         </div>
       </div>
     </main>

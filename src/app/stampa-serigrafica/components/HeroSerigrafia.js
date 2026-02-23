@@ -1,5 +1,5 @@
 // components/HeroSerigrafia.jsx
-import { FaTshirt } from 'react-icons/fa';
+import { FaTshirt } from "react-icons/fa";
 
 /**
  * CheckIcon - Inline SVG for performance optimization
@@ -7,26 +7,26 @@ import { FaTshirt } from 'react-icons/fa';
  * @param {string} props.className - Tailwind classes for styling
  */
 const CheckIcon = ({ className }) => (
-    <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        width="24" 
-        height="24" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="2" 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        className={className}
-        aria-hidden="true"
-    >
-        <polyline points="20 6 9 17 4 12" />
-    </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
 );
 
 /**
  * HeroSerigrafia - Hero section for screen printing service
- * 
+ *
  * Architecture:
  * - 50/50 Grid layout with column isolation (min-w-0)
  * - WCAG 2.1 Level AA compliant
@@ -36,14 +36,13 @@ const CheckIcon = ({ className }) => (
  */
 export default function HeroSerigrafia() {
   return (
-    <main 
-        className="relative bg-gradient-to-br from-orange-700 via-red-700 to-pink-700 min-h-screen flex items-center py-20 overflow-hidden"
-        aria-labelledby="hero-heading"
+    <main
+      className="relative bg-gradient-to-br from-orange-700 via-red-700 to-pink-700 min-h-screen flex items-center py-20 overflow-hidden"
+      aria-labelledby="hero-heading"
     >
-      
       {/* Decorative Background Elements - Hidden from screen readers */}
-      <div 
-        className="absolute inset-0 opacity-20 pointer-events-none" 
+      <div
+        className="absolute inset-0 opacity-20 pointer-events-none"
         aria-hidden="true"
         role="presentation"
       >
@@ -55,26 +54,24 @@ export default function HeroSerigrafia() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* 50/50 Grid Layout with Column Isolation */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          
           {/* Left Column: Marketing Content */}
-          <section 
+          <section
             className="min-w-0 space-y-6 lg:space-y-8 text-center lg:text-left"
             aria-labelledby="hero-heading"
           >
-
             {/* Status Badge */}
-            <div 
-                className="inline-block px-3 py-1 rounded-full bg-black/25 border border-white/10 text-white text-sm font-bold backdrop-blur-sm"
-                role="status"
-                aria-label="Servizio stampa serigrafica professionale"
+            <div
+              className="inline-block px-3 py-1 rounded-full bg-black/25 border border-white/10 text-white text-sm font-bold backdrop-blur-sm"
+              role="status"
+              aria-label="Servizio stampa serigrafica professionale"
             >
               🎨 Stampa Serigrafica Professionale
             </div>
 
             {/* Main Heading - Single h1 per page */}
-            <h1 
-                id="hero-heading"
-                className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight break-words"
+            <h1
+              id="hero-heading"
+              className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight break-words"
             >
               Serigrafia su Abbigliamento <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-300 to-pink-300">
@@ -84,21 +81,24 @@ export default function HeroSerigrafia() {
 
             {/* Description */}
             <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">
-              Ideale per felpe, t-shirt, cappelli, shopping bag e capi personalizzati.
+              Ideale per felpe, t-shirt, cappelli, shopping bag e capi
+              personalizzati.
             </p>
-            <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">Colori pieni, alta resistenza ai lavaggi e risultati professionali
-            per brand, aziende ed eventi.</p>
+            <p className="text-lg sm:text-xl text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium break-words">
+              Colori pieni, alta resistenza ai lavaggi e risultati professionali
+              per brand, aziende ed eventi.
+            </p>
 
             {/* Benefits List */}
-            <ul 
-                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-                role="list"
-                aria-label="Vantaggi della serigrafia"
+            <ul
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              role="list"
+              aria-label="Vantaggi della serigrafia"
             >
               {[
                 "Perfetta per grandi quantità",
                 "Colori intensi e coprenti",
-                "Alta durata nel tempo"
+                "Alta durata nel tempo",
               ].map((item, i) => (
                 <li
                   key={i}
@@ -111,10 +111,10 @@ export default function HeroSerigrafia() {
             </ul>
 
             {/* CTA Buttons Group */}
-            <div 
-                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-                role="group"
-                aria-label="Azioni principali"
+            <div
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              role="group"
+              aria-label="Azioni principali"
             >
               <a
                 href="#prodotti-serigrafia"
@@ -132,11 +132,10 @@ export default function HeroSerigrafia() {
                 Come funziona
               </a>
             </div>
-
           </section>
 
           {/* Right Column: Visual Placeholder */}
-          <aside 
+          <aside
             className="min-w-0 flex items-center justify-center"
             aria-labelledby="placeholder-heading"
           >
@@ -144,19 +143,50 @@ export default function HeroSerigrafia() {
             <h2 id="placeholder-heading" className="sr-only">
               Immagine rappresentativa serigrafia
             </h2>
-            
-            <div 
+
+            {/*
+             * ─── HERO IMAGE ─────────────────────────────────────────────────────────
+             * Sostituire il <div> placeholder qui sotto con questo blocco <Image>
+             * non appena l'asset è disponibile in /public/images/hero-serigrafia.webp
+             *
+             * Specifiche asset richieste:
+             *   • Formato  : WebP (con fallback JPG per Safari < 14)
+             *   • Dimensioni: 800 × 600 px  (aspect-ratio 4/3)
+             *   • Qualità  : 85 — ottimale per immagini di stampa
+             *   • `priority`: OBBLIGATORIO — è LCP above-the-fold
+             *   • `sizes`  : (max-width: 1024px) 100vw, 50vw
+             *                corrisponde al layout grid 50/50
+             *
+             * <Image
+             *   src="/images/hero-serigrafia.webp"
+             *   alt="Stampa serigrafica su magliette e abbigliamento personalizzato - DTF Italia Roma"
+             *   width={800}
+             *   height={600}
+             *   priority
+             *   quality={85}
+             *   sizes="(max-width: 1024px) 100vw, 50vw"
+             *   className="w-full h-auto rounded-2xl shadow-2xl object-cover"
+             * />
+             * ────────────────────────────────────────────────────────────────────────
+             */}
+
+            {/* Placeholder visivo — rimuovere quando l'<Image> sopra è attivo */}
+            <div
               className="w-full max-w-md aspect-[4/3] rounded-2xl bg-white/5 border border-red-500/20 backdrop-blur-sm flex items-center justify-center"
               aria-hidden="true"
               role="presentation"
             >
               <div className="text-center">
-                <FaTshirt className="text-5xl mb-2 mx-auto text-white/30" aria-hidden="true" />
-                <span className="text-white/30 text-sm font-medium">Hero Image Placeholder</span>
+                <FaTshirt
+                  className="text-5xl mb-2 mx-auto text-white/30"
+                  aria-hidden="true"
+                />
+                <span className="text-white/30 text-sm font-medium">
+                  Hero Image Placeholder
+                </span>
               </div>
             </div>
           </aside>
-
         </div>
       </div>
     </main>

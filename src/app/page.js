@@ -1,16 +1,23 @@
 // app/page.js (Home)
 import HeroHome from "@/components/home/HeroHome";
 import LandingSection from "@/components/home/LandingSection";
-import { Benefits, FAQ } from '@/components/home/Sections';
-import { FaPrint, FaTshirt, FaMugHot, FaCalendarAlt, FaFilm } from 'react-icons/fa';
-import { BASE_URL } from '@/lib/config';
+import { Benefits, FAQ } from "@/components/home/Sections";
+import {
+  FaPrint,
+  FaTshirt,
+  FaMugHot,
+  FaCalendarAlt,
+  FaFilm,
+} from "react-icons/fa";
+import { BASE_URL } from "@/lib/config";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
 export const metadata = {
   title: {
-    absolute: "DTF Italia - Stampa Professionale Roma | DTF, Serigrafia, Sublimazione"
+    absolute:
+      "DTF Italia - Stampa Professionale Roma | DTF, Serigrafia, Sublimazione",
   },
   description:
     "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole serigrafiche. Qualità garantita, spedizione 24h, ritiro gratuito. Preventivo online immediato.",
@@ -30,8 +37,9 @@ export const metadata = {
     "pellicole serigrafia roma",
     "service pellicole serigrafia",
     "service stampa professionale roma",
-    "stampa tessuti roma",
+    "stampa magliette roma",
     "transfer digitale roma",
+    "maglietta personalizzata",
     // Near Me
     "stampa dtf vicino a me",
     "serigrafia vicino a me",
@@ -80,74 +88,75 @@ export default async function Home() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `${BASE_URL}/#organization`,
-    "name": "DTF Italia",
-    "description": "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole",
-    "address": {
+    name: "DTF Italia",
+    description:
+      "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole",
+    address: {
       "@type": "PostalAddress",
-      "addressLocality": "Roma",
-      "addressRegion": "RM",
-      "addressCountry": "IT"
+      addressLocality: "Roma",
+      addressRegion: "RM",
+      addressCountry: "IT",
     },
-    "geo": {
+    geo: {
       "@type": "GeoCoordinates",
-      "latitude": "41.9028",
-      "longitude": "12.4964"
+      latitude: "41.9028",
+      longitude: "12.4964",
     },
-    "areaServed": [
-      { "@type": "City", "name": "Roma" },
-      { "@type": "Country", "name": "Italia" }
+    areaServed: [
+      { "@type": "City", name: "Roma" },
+      { "@type": "Country", name: "Italia" },
     ],
-    "hasOfferCatalog": {
+    hasOfferCatalog: {
       "@type": "OfferCatalog",
-      "name": "Servizi di Stampa",
-      "itemListElement": [
+      name: "Servizi di Stampa",
+      itemListElement: [
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Stampa DTF Roma",
-            "description": "Service professionale di stampa Direct-To-Film",
-            "url": `${BASE_URL}/service-dtf`
-          }
+            name: "Stampa DTF Roma",
+            description: "Service professionale di stampa Direct-To-Film",
+            url: `${BASE_URL}/service-dtf`,
+          },
         },
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Stampa Serigrafica Roma",
-            "description": "Serigrafia su magliette e tessuti",
-            "url": `${BASE_URL}/stampa-serigrafica`
-          }
+            name: "Stampa Serigrafica Roma",
+            description: "Serigrafia su magliette e tessuti",
+            url: `${BASE_URL}/stampa-serigrafica`,
+          },
         },
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Stampa Sublimazione Roma",
-            "description": "Sublimazione su tazze e tessuti",
-            "url": `${BASE_URL}/stampa-sublimazione`
-          }
+            name: "Stampa Sublimazione Roma",
+            description: "Sublimazione su tazze e tessuti",
+            url: `${BASE_URL}/stampa-sublimazione`,
+          },
         },
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Stampa Calendari Roma",
-            "description": "Calendari personalizzati per aziende",
-            "url": `${BASE_URL}/stampa-calendari`
-          }
+            name: "Stampa Calendari Roma",
+            description: "Calendari personalizzati per aziende",
+            url: `${BASE_URL}/stampa-calendari`,
+          },
         },
         {
           "@type": "Offer",
-          "itemOffered": {
+          itemOffered: {
             "@type": "Service",
-            "name": "Pellicole Serigrafia Roma",
-            "description": "Pellicole inkjet e laser per serigrafia",
-            "url": `${BASE_URL}/pellicole-serigrafia`
-          }
-        }
-      ]
-    }
+            name: "Pellicole Serigrafia Roma",
+            description: "Pellicole inkjet e laser per serigrafia",
+            url: `${BASE_URL}/pellicole-serigrafia`,
+          },
+        },
+      ],
+    },
   };
 
   // WebSite Schema
@@ -155,11 +164,11 @@ export default async function Home() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${BASE_URL}/#website`,
-    "name": "DTF Italia",
-    "url": BASE_URL,
-    "potentialAction": {
+    name: "DTF Italia",
+    url: BASE_URL,
+    potentialAction: {
       "@type": "SearchAction",
-      "target": `${BASE_URL}/search?q={search_term_string}`,
+      target: `${BASE_URL}/search?q={search_term_string}`,
       "query-input": "required name=search_term_string",
     },
   };
@@ -167,19 +176,19 @@ export default async function Home() {
   // Benefits data (ottimizzata, contenuto naturale)
   const homeBenefits = [
     {
-      icon: 'Zap',
-      title: 'Velocità e Affidabilità',
-      desc: 'Ordini processati in giornata con spedizione express in tutta Italia. Ritiro gratuito a Roma.',
+      icon: "Zap",
+      title: "Velocità e Affidabilità",
+      desc: "Ordini processati in giornata con spedizione express in tutta Italia. Ritiro gratuito a Roma.",
     },
     {
-      icon: 'ShieldCheck',
-      title: 'Qualità Professionale',
-      desc: 'Tecnologie all\'avanguardia e materiali premium per risultati impeccabili su ogni progetto.',
+      icon: "ShieldCheck",
+      title: "Qualità Professionale",
+      desc: "Tecnologie all'avanguardia e materiali premium per risultati impeccabili su ogni progetto.",
     },
     {
-      icon: 'Truck',
-      title: 'Flessibilità Totale',
-      desc: 'Nessun minimo d\'ordine. Dalla singola stampa alle grandi quantità, siamo il tuo partner ideale.',
+      icon: "Truck",
+      title: "Flessibilità Totale",
+      desc: "Nessun minimo d'ordine. Dalla singola stampa alle grandi quantità, siamo il tuo partner ideale.",
     },
   ];
 
@@ -188,7 +197,9 @@ export default async function Home() {
       {/* JSON-LD Schemas */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(localBusinessSchema),
+        }}
       />
       <script
         type="application/ld+json"
@@ -197,7 +208,7 @@ export default async function Home() {
 
       {/* Hero Section (Fullscreen) */}
       <HeroHome />
-      
+
       {/* DTF Section */}
       <LandingSection
         id="dtf"
@@ -207,14 +218,14 @@ export default async function Home() {
           "Spedizione 24h in tutta Italia",
           "Nessun minimo d'ordine",
           "Qualità professionale garantita",
-          "Ritiro gratuito a Roma"
+          "Ritiro gratuito a Roma",
         ]}
         ctaText="Configura Ordine DTF"
         ctaHref="/service-dtf"
         brandColor="indigo"
         ServiceIcon={FaPrint}
       />
-      
+
       {/* Serigrafia Section */}
       <LandingSection
         id="serigrafia"
@@ -224,7 +235,7 @@ export default async function Home() {
           "Stampa su tessuti e gadget",
           "Ideale per grandi quantità",
           "Colori Pantone certificati",
-          "Preventivo online immediato"
+          "Preventivo online immediato",
         ]}
         ctaText="Scopri Prodotti Serigrafia"
         ctaHref="/stampa-serigrafica"
@@ -232,7 +243,7 @@ export default async function Home() {
         reverse
         ServiceIcon={FaTshirt}
       />
-      
+
       {/* Sublimazione Section */}
       <LandingSection
         id="sublimazione"
@@ -242,14 +253,14 @@ export default async function Home() {
           "Colori brillanti e duraturi",
           "Ideale per tessuti tecnici",
           "Stampa fotografica HD",
-          "Resistente ai lavaggi"
+          "Resistente ai lavaggi",
         ]}
         ctaText="Scopri Prodotti Sublimazione"
         ctaHref="/stampa-sublimazione"
         brandColor="violet"
         ServiceIcon={FaMugHot}
       />
-      
+
       {/* Calendari Section */}
       <LandingSection
         id="calendari"
@@ -259,7 +270,7 @@ export default async function Home() {
           "Calendari aziendali personalizzati",
           "Stampa offset professionale",
           "Formati multipli disponibili",
-          "Consegna rapida"
+          "Consegna rapida",
         ]}
         ctaText="Scopri Prodotti Calendari"
         ctaHref="/stampa-calendari"
@@ -267,7 +278,7 @@ export default async function Home() {
         reverse
         ServiceIcon={FaCalendarAlt}
       />
-      
+
       {/* Pellicole Section */}
       <LandingSection
         id="pellicole"
@@ -277,20 +288,20 @@ export default async function Home() {
           "Pellicole inkjet e laser",
           "Alta opacità garantita",
           "Compatibilità universale",
-          "Spedizione immediata"
+          "Spedizione immediata",
         ]}
         ctaText="Configura Ordine Pellicole"
         ctaHref="/pellicole-serigrafia"
         brandColor="slate"
         ServiceIcon={FaFilm}
       />
-      
+
       {/* Benefits Section */}
-      <Benefits 
-        benefits={homeBenefits} 
-        sectionTitle="Perché Scegliere DTF Italia" 
+      <Benefits
+        benefits={homeBenefits}
+        sectionTitle="Perché Scegliere DTF Italia"
       />
-      
+
       {/* FAQ Section */}
       <FAQ />
     </>

@@ -151,20 +151,33 @@ export default function HeroDTF({ title }) {
               Immagine rappresentativa stampa DTF professionale
             </h2>
 
-            {/* 
-              TODO: Replace placeholder with actual hero image
-              Example implementation:
-              <Image 
-                src="/images/hero-dtf.webp"
-                alt="Stampa DTF professionale - DTF Italia Roma"
-                width={600}
-                height={600}
-                priority
-                quality={90}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="rounded-2xl shadow-2xl"
-              />
-            */}
+            {/*
+             * ─── HERO IMAGE ─────────────────────────────────────────────────────────
+             * Sostituire il <div> placeholder qui sotto con questo blocco <Image>
+             * non appena l'asset è disponibile in /public/images/hero-dtf.webp
+             *
+             * Specifiche asset richieste:
+             *   • Formato  : WebP (con fallback JPG per Safari < 14)
+             *   • Dimensioni: 800 × 600 px  (aspect-ratio 4/3)
+             *   • Qualità  : 85 — ottimale per immagini di stampa
+             *   • `priority`: OBBLIGATORIO — è LCP above-the-fold
+             *   • `sizes`  : (max-width: 1024px) 100vw, 50vw
+             *                corrisponde al layout grid 50/50
+             *
+             * <Image
+             *   src="/images/hero-dtf.webp"
+             *   alt="Stampa DTF professionale a Roma - DTF Italia: transfer digitale su magliette"
+             *   width={800}
+             *   height={600}
+             *   priority
+             *   quality={85}
+             *   sizes="(max-width: 1024px) 100vw, 50vw"
+             *   className="w-full h-auto rounded-2xl shadow-2xl object-cover"
+             * />
+             * ────────────────────────────────────────────────────────────────────────
+             */}
+
+            {/* Placeholder visivo — rimuovere quando l'<Image> sopra è attivo */}
             <div
               className="w-full max-w-md aspect-[4/3] rounded-2xl bg-white/5 border border-indigo-500/20 backdrop-blur-sm flex items-center justify-center"
               aria-hidden="true"

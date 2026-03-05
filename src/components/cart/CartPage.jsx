@@ -50,7 +50,6 @@ function buildSerigrafiaQuantityDetails(cfg) {
   if (cfg.quantities && typeof cfg.quantities === 'object') {
     const colorKeys = Object.keys(cfg.quantities);
     if (colorKeys.length > 0) {
-      // Totale per taglia (somma su tutti i colori e generi)
       const sizeMap = {};
       let colorCount = 0;
       colorKeys.forEach(colorId => {
@@ -68,17 +67,30 @@ function buildSerigrafiaQuantityDetails(cfg) {
         });
         if (colorHasItems) colorCount++;
       });
-      const sizes = Object.entries(sizeMap).filter(([, v]) => v > 0).map(([s, v]) => `${s}×${v}`);
-      if (sizes.length > 0) lines.push(sizes.join('  '));
-      if (colorCount > 0) lines.push(`${colorCount} ${colorCount === 1 ? 'colore' : 'colori'}`);
+
+      const sizeEntries = Object.entries(sizeMap).filter(([, v]) => v > 0);
+
+      // Prodotti con taglia UNICA (cappello, shopper…): mostra solo il totale pezzi
+      const isUnicaOnly = sizeEntries.length === 1 && sizeEntries[0][0].toUpperCase() === 'UNICA';
+      if (isUnicaOnly) {
+        lines.push(`${sizeEntries[0][1]} pz`);
+      } else {
+        // T-shirt, felpe ecc.: mostra breakdown taglie
+        const sizes = sizeEntries.map(([s, v]) => `${s}×${v}`);
+        if (sizes.length > 0) lines.push(sizes.join('  '));
+        if (colorCount > 0) lines.push(`${colorCount} ${colorCount === 1 ? 'colore' : 'colori'}`);
+      }
     }
   } else if (cfg.singleQuantity > 0) {
-    // Prodotti senza taglie (cappello, shopper)
+    // Prodotti senza struttura taglie
     lines.push(`${cfg.singleQuantity} pz`);
+  } else if (cfg.totalQuantity > 0) {
+    lines.push(`${cfg.totalQuantity} pz`);
   }
 
   return lines.length > 0 ? lines.join(' — ') : null;
 }
+
 
 // ─── Card singolo item ────────────────────────────────────────────────────
 function CartItemCard({ item, onRemove }) {
@@ -98,13 +110,20 @@ function CartItemCard({ item, onRemove }) {
     )}>
       {/* Header card */}
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <span className={cn('text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full whitespace-nowrap', meta.color)}>
-            {meta.label}
-          </span>
-          {cfg?.isFlashOrder && (
-            <span className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full whitespace-nowrap">
-              <Zap className="w-3 h-3" /> Flash
+        <div className="flex flex-col gap-1.5 min-w-0">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className={cn('text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full whitespace-nowrap', meta.color)}>
+              {meta.label}
+            </span>
+            {cfg?.isFlashOrder && (
+              <span className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full whitespace-nowrap">
+                <Zap className="w-3 h-3" /> Flash
+              </span>
+            )}
+          </div>
+          {cfg?.productName && (
+            <span className="text-sm font-semibold text-gray-800 truncate">
+              {cfg.productName}
             </span>
           )}
         </div>

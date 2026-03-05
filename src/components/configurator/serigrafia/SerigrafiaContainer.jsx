@@ -564,7 +564,8 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                 fileCheck,
                 autoOutline,
                 totalQuantity,
-                technique: price?.details?.technique || 'N/D'
+                technique: price?.details?.technique || 'N/D',
+                productName: product?.name || '',
             }}
             fileKey={fileKeys}
             cartItemId={cartItemId}

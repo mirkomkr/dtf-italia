@@ -17,7 +17,7 @@ Specifiche tecniche ottimizzate per tutti gli asset immagine del progetto Next.j
 > Tutte le immagini vanno posizionate in `/public/images/`.  
 > Next.js le servirà ottimizzate automaticamente dalla route `/_next/image`.
 
----
+## non ti ho chiesto una
 
 ## 🃏 Hero Images (Above-the-fold / LCP)
 

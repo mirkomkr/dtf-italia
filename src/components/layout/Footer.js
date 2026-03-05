@@ -134,7 +134,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-300 hover:text-white hover:underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
-              aria-label="Profilo LinkedIn di Mirko Passeri - Developer"
+              aria-label="Profilo LinkedIn di Mirko Passeri - Sviluppatore & Web Designer"
             >
               Mirko Passeri
             </a>

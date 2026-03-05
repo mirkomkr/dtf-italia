@@ -112,9 +112,10 @@ export default function ShippingSelector({
 
             {/* Address Info for Pickup */}
             {selectedOption === 'pickup' && (
-                <geolocation
-                    latitude="41.9028"
-                    longitude="12.4964"
+                <a
+                    href="https://www.google.com/maps/search/?api=1&query=Via+Margutta+Roma"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={cn(
                         "block text-center p-4 rounded-xl border text-sm animate-in fade-in slide-in-from-top-2 group relative overflow-hidden",
                         "transition-all duration-300 hover:shadow-md active:scale-[0.98] cursor-pointer",
@@ -143,14 +144,14 @@ export default function ShippingSelector({
                         </span>
                     </div>
 
-                    {/* Touch Ripple / Hover Effect Background */}
+                    {/* Hover Effect Background */}
                     <div className={cn(
                         "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500",
                         isRed 
                             ? "bg-gradient-to-r from-transparent via-red-100/20 to-transparent" 
                             : "bg-gradient-to-r from-transparent via-indigo-100/20 to-transparent"
                     )} />
-                </geolocation>
+                </a>
             )}
         </fieldset>
     );

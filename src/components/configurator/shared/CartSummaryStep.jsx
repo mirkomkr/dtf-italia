@@ -66,14 +66,7 @@ export default function CartSummaryStep({
       {hasFile ? (
         <div className="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700 font-medium">
           <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-green-600" />
-          <span>
-            File caricato e associato a questo ordine
-            {typeof fileKey === 'object' && (
-              <span className="ml-1 font-normal text-green-600">
-                ({Object.keys(fileKey).filter(k => fileKey[k]).map(k => k.replace('_', ' ')).join(' + ')})
-              </span>
-            )}
-          </span>
+          <span>File caricato e associato a questo ordine</span>
         </div>
       ) : (
         <div className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">

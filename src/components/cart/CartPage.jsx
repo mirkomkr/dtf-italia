@@ -9,10 +9,11 @@ import CartCheckoutForm from './CartCheckoutForm';
 
 // ─── Labels per tipo prodotto ──────────────────────────────────────────────
 const TYPE_LABELS = {
-  dtf:          { label: 'Stampa DTF',         color: 'bg-indigo-100 text-indigo-700',  border: 'border-indigo-200' },
-  serigrafia:   { label: 'Stampa Serigrafica', color: 'bg-red-100 text-red-700',        border: 'border-red-200'    },
-  sublimazione: { label: 'Sublimazione',       color: 'bg-purple-100 text-purple-700',  border: 'border-purple-200' },
-  calendari:    { label: 'Calendari',          color: 'bg-emerald-100 text-emerald-700',border: 'border-emerald-200'},
+  dtf:          { label: 'Stampa DTF',          color: 'bg-indigo-100 text-indigo-700',  border: 'border-indigo-200'  },
+  serigrafia:   { label: 'Stampa Serigrafica',  color: 'bg-red-100 text-red-700',        border: 'border-red-200'     },
+  sublimazione: { label: 'Sublimazione',        color: 'bg-purple-100 text-purple-700',  border: 'border-purple-200'  },
+  calendari:    { label: 'Calendari',           color: 'bg-emerald-100 text-emerald-700',border: 'border-emerald-200' },
+  pellicole:    { label: 'Pellicole Serigrafia',color: 'bg-sky-100 text-sky-700',        border: 'border-sky-200'     },
 };
 
 // ─── Etichette leggibili per i formati DTF ────────────────────────────────
@@ -289,7 +290,7 @@ export default function CartPage() {
       {items.length === 0 ? (
         <EmptyCart />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
           {/* ── Colonna sinistra: lista item ── */}
           <div className="space-y-4">

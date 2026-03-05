@@ -17,18 +17,19 @@ export const revalidate = 86400;
 export const metadata = {
   title: {
     absolute:
-      "DTF Italia - Stampa Professionale Roma | DTF, Serigrafia, Sublimazione",
+      "Service DTF, Serigrafia, Sublimazione, Calendari Personalizzati, Pellicole Serigrafiche | DTF Italia - I Professionisti della Stampa a Roma",
   },
   description:
-    "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole serigrafiche. Qualità garantita, spedizione 24h, ritiro gratuito. Preventivo online immediato.",
+    "Servizi di stampa professionale a Roma: Service DTF, serigrafia, sublimazione, calendari personalizzati, pellicole serigrafiche. Qualità garantita, spedizione 24h, ritiro gratuito. Preventivo online immediato.",
   keywords: [
     // Local Roma
     "stampa dtf roma",
     "service dtf roma",
     "serigrafia roma",
     "serigrafia magliette",
+    "stampa magliette personalizzate",
     "stampa sublimazione roma",
-    "stampa sublimazione tazze",
+    "stampa tazze personalizzate",
     "stampa sublimazione su tessuto",
     "stampa calendari personalizzati roma",
     "stampa calendari online",
@@ -38,12 +39,16 @@ export const metadata = {
     "service pellicole serigrafia",
     "service stampa professionale roma",
     "stampa magliette roma",
-    "transfer digitale roma",
+    "stampa digitale roma",
     "maglietta personalizzata",
     // Near Me
     "stampa dtf vicino a me",
+    "stampa tazza vicino a me",
+    "stampa magliette vicino a me",
+    "stampa calendari vicino a me",
     "serigrafia vicino a me",
     "stampa sublimazione vicino a me",
+    "pellicole serigrafiche vicino a me",
     "service stampa vicino a me",
     // Nazionale
     "stampa dtf italia",
@@ -61,9 +66,9 @@ export const metadata = {
     maxVideoPreview: -1,
   },
   openGraph: {
-    title: "DTF Italia - Stampa Professionale Roma",
+    title: "Stampa Professionale Roma | DTF Italia",
     description:
-      "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole. Qualità garantita, spedizione 24h.",
+      "I Professionisti della Stampa a Roma: Service DTF, serigrafia, sublimazione, calendari personalizzati, pellicole serigrafiche. Qualità garantita, spedizione 24h.",
     url: BASE_URL,
     siteName: "DTF Italia",
     locale: "it_IT",
@@ -73,7 +78,7 @@ export const metadata = {
         url: `${BASE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: "DTF Italia - Stampa Professionale Roma",
+        alt: "Stampa Professionale Roma | DTF Italia",
       },
     ],
   },
@@ -90,7 +95,7 @@ export default async function Home() {
     "@id": `${BASE_URL}/#organization`,
     name: "DTF Italia",
     description:
-      "Servizi di stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole",
+      "I Professionisti della Stampa a Roma: Service DTF, serigrafia, sublimazione, calendari personalizzati, pellicole serigrafiche",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Roma",
@@ -115,7 +120,7 @@ export default async function Home() {
           itemOffered: {
             "@type": "Service",
             name: "Stampa DTF Roma",
-            description: "Service professionale di stampa Direct-To-Film",
+            description: "Service professionale di stampa DTF",
             url: `${BASE_URL}/service-dtf`,
           },
         },
@@ -124,7 +129,7 @@ export default async function Home() {
           itemOffered: {
             "@type": "Service",
             name: "Stampa Serigrafica Roma",
-            description: "Serigrafia su magliette e tessuti",
+            description: "Serigrafia su magliette, shopper, felpe",
             url: `${BASE_URL}/stampa-serigrafica`,
           },
         },
@@ -133,7 +138,8 @@ export default async function Home() {
           itemOffered: {
             "@type": "Service",
             name: "Stampa Sublimazione Roma",
-            description: "Sublimazione su tazze e tessuti",
+            description:
+              "Sublimazione su tazze, calzini, abbigliamento sportivo",
             url: `${BASE_URL}/stampa-sublimazione`,
           },
         },
@@ -142,7 +148,8 @@ export default async function Home() {
           itemOffered: {
             "@type": "Service",
             name: "Stampa Calendari Roma",
-            description: "Calendari personalizzati per aziende",
+            description:
+              "Calendari personalizzati per eventi, aziende, associazioni e regali",
             url: `${BASE_URL}/stampa-calendari`,
           },
         },
@@ -213,7 +220,7 @@ export default async function Home() {
       <LandingSection
         id="dtf"
         title="Stampa DTF Roma"
-        description="Service professionale di stampa Direct-To-Film per terzi e professionisti della personalizzazione. Stampe nitide, colori vibranti, consegne rapide."
+        description="Service professionale di stampa DTF per terzi e professionisti della personalizzazione. Stampe nitide e colori vibranti con testine Epson i3200, consegne rapide."
         features={[
           "Spedizione 24h in tutta Italia",
           "Nessun minimo d'ordine",
@@ -230,11 +237,11 @@ export default async function Home() {
       <LandingSection
         id="serigrafia"
         title="Stampa Serigrafica Roma"
-        description="Stampa serigrafica professionale su tessuti, magliette e materiali promozionali. Ideale per grandi quantità con colori Pantone certificati."
+        description="Stampa serigrafica professionale su magliette, felpe, shopper e altri gadget. Ideale per grandi tirature."
         features={[
-          "Stampa su tessuti e gadget",
-          "Ideale per grandi quantità",
-          "Colori Pantone certificati",
+          "Stampa su magliette, felpe e gadget",
+          "Ideale per grandi tirature",
+          "Colori brillanti e duraturi",
           "Preventivo online immediato",
         ]}
         ctaText="Scopri Prodotti Serigrafia"
@@ -248,7 +255,7 @@ export default async function Home() {
       <LandingSection
         id="sublimazione"
         title="Stampa Sublimazione Roma"
-        description="Stampa sublimatica per tessuti tecnici, tazze e gadget personalizzati. Colori brillanti e duraturi, resistenti ai lavaggi."
+        description="Stampa sublimatica per tessuti tecnici, tazze e gadget personalizzati, idee regalo. Colori brillanti e duraturi, resistenti ai lavaggi."
         features={[
           "Colori brillanti e duraturi",
           "Ideale per tessuti tecnici",
@@ -265,10 +272,10 @@ export default async function Home() {
       <LandingSection
         id="calendari"
         title="Stampa Calendari Roma"
-        description="Calendari personalizzati per aziende e professionisti. Stampa offset di alta qualità con formati multipli disponibili."
+        description="Calendari personalizzati per aziende e professionisti. Multipli formati disponibili: Calendario da tavolo, da parete, tascabile, silhouette e da ufficio."
         features={[
           "Calendari aziendali personalizzati",
-          "Stampa offset professionale",
+          "Stampa professionale",
           "Formati multipli disponibili",
           "Consegna rapida",
         ]}
@@ -283,7 +290,7 @@ export default async function Home() {
       <LandingSection
         id="pellicole"
         title="Pellicole Serigrafia Roma"
-        description="Pellicole per serigrafia inkjet e laser. Qualità professionale per serigrafisti con alta opacità garantita."
+        description="Pellicole serigrafiche inkjet e laser. Qualità professionale per serigrafie con alta opacità garantita."
         features={[
           "Pellicole inkjet e laser",
           "Alta opacità garantita",

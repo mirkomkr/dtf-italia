@@ -1,6 +1,7 @@
-import { getWooCommerceProducts } from '@/lib/woocommerce';
-import ProductCard from '@/components/common/ProductCard';
-import Breadcrumb from '@/components/common/Breadcrumb';
+import { getWooCommerceProducts } from "@/lib/woocommerce";
+import ProductCard from "@/components/common/ProductCard";
+import Breadcrumb from "@/components/common/Breadcrumb";
+import { BREADCRUMB_ITEMS } from "@/lib/breadcrumb-config";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -9,13 +10,14 @@ const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
   title: "Catalogo Calendari Personalizzati Roma 2026 | DTF Italia",
-  description: "Scopri tutti i modelli di calendari personalizzati: da muro, da scrivania, silhouette. Stampa offset premium per aziende ed eventi.",
+  description:
+    "Scopri tutti i modelli di calendari personalizzati: da muro, da scrivania, silhouette. Stampa offset premium per aziende ed eventi.",
   keywords: [
     "calendari personalizzati roma",
     "calendari aziendali",
     "calendario da muro",
     "calendario da scrivania",
-    "stampa calendari 2026"
+    "stampa calendari 2026",
   ],
   authors: [{ name: "DTF Italia" }],
   robots: {
@@ -27,28 +29,29 @@ export const metadata = {
   },
   openGraph: {
     title: "Catalogo Calendari Personalizzati Roma 2026",
-    description: "Calendari personalizzati con stampa offset professionale. Ideali per promozione aziendale e merchandising.",
+    description:
+      "Calendari personalizzati con stampa offset professionale. Ideali per promozione aziendale e merchandising.",
     url: `${BASE_URL}/stampa-calendari/catalogo`,
     siteName: "DTF Italia",
     locale: "it_IT",
     type: "website",
   },
   alternates: {
-    canonical: `${BASE_URL}/stampa-calendari/catalogo`
-  }
+    canonical: `${BASE_URL}/stampa-calendari/catalogo`,
+  },
 };
 
 export default async function CalendariCatalogoPage() {
   const categorySlug = "calendari-personalizzati";
-  
+
   let products = [];
   try {
-    products = await getWooCommerceProducts({ 
+    products = await getWooCommerceProducts({
       category: categorySlug,
-      perPage: 50 
+      perPage: 50,
     });
   } catch (error) {
-    console.error('Error fetching calendari products:', error);
+    console.error("Error fetching calendari products:", error);
   }
 
   return (
@@ -61,8 +64,8 @@ export default async function CalendariCatalogoPage() {
               Catalogo Calendari Personalizzati 2026
             </h1>
             <p className="text-lg sm:text-xl text-amber-100 leading-relaxed">
-              Calendari personalizzati con stampa offset professionale. 
-              Ideali per promozione aziendale, regali corporate e merchandising.
+              Calendari personalizzati con stampa offset professionale. Ideali
+              per promozione aziendale, regali corporate e merchandising.
             </p>
           </div>
         </div>
@@ -70,18 +73,17 @@ export default async function CalendariCatalogoPage() {
 
       {/* Breadcrumb Navigation */}
       <div className="container mx-auto px-4 pt-6">
-        <Breadcrumb />
+        <Breadcrumb items={BREADCRUMB_ITEMS["/stampa-calendari/catalogo"]} />
       </div>
 
       {/* Products Grid */}
       <section id="prodotti-calendari" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          
           {products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((product, i) => (
-                <ProductCard 
-                  key={product.id} 
+                <ProductCard
+                  key={product.id}
                   product={product}
                   priority={i < 3} // LCP optimization
                   basePath="/stampa-calendari"
@@ -94,7 +96,8 @@ export default async function CalendariCatalogoPage() {
                 Nessun prodotto disponibile al momento.
               </p>
               <p className="text-gray-400 text-sm">
-                I prodotti verranno aggiunti a breve. Contattaci per un preventivo personalizzato.
+                I prodotti verranno aggiunti a breve. Contattaci per un
+                preventivo personalizzato.
               </p>
             </div>
           )}

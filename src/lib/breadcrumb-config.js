@@ -1,36 +1,66 @@
-export const BREADCRUMB_LABELS = {
-  // Landing Pages
-  '/stampa-dtf-roma': 'Stampa DTF Roma',
-  '/stampa-serigrafica': 'Stampa Serigrafica',
-  '/stampa-sublimazione': 'Stampa Sublimazione',
-  '/stampa-calendari-roma': 'Calendari Personalizzati',
-  '/pellicole-serigrafiche': 'Pellicole Serigrafiche',
-  '/chi-siamo': 'Chi Siamo',
-  
-  // Catalog Pages
-  '/stampa-serigrafica/catalogo': 'Catalogo Prodotti',
-  '/stampa-sublimazione/catalogo': 'Catalogo Sublimazione',
-  '/stampa-calendari/catalogo': 'Catalogo Calendari',
+/**
+ * breadcrumb-config.js
+ * Costanti e helper per la breadcrumb di DTF Italia.
+ *
+ * Ogni route ha i suoi items pre-costruiti.
+ * L'item finale (href: null) è la pagina corrente — NON link.
+ */
+
+const HOME = { label: "Home", href: "/" };
+
+// ─── Items per route statiche ──────────────────────────────────────────────
+export const BREADCRUMB_ITEMS = {
+  "/service-dtf": [HOME, { label: "DTF Service", href: null }],
+
+  "/stampa-serigrafica": [HOME, { label: "Stampa Serigrafica", href: null }],
+
+  "/stampa-serigrafica/catalogo": [
+    HOME,
+    { label: "Stampa Serigrafica", href: "/stampa-serigrafica" },
+    { label: "Catalogo Prodotti", href: null },
+  ],
+
+  "/stampa-sublimazione": [HOME, { label: "Stampa Sublimazione", href: null }],
+
+  "/stampa-sublimazione/catalogo": [
+    HOME,
+    { label: "Stampa Sublimazione", href: "/stampa-sublimazione" },
+    { label: "Catalogo Prodotti", href: null },
+  ],
+
+  "/stampa-calendari": [
+    HOME,
+    { label: "Calendari Personalizzati", href: null },
+  ],
+
+  "/stampa-calendari/catalogo": [
+    HOME,
+    { label: "Calendari Personalizzati", href: "/stampa-calendari" },
+    { label: "Catalogo Prodotti", href: null },
+  ],
+
+  "/pellicole-serigrafia": [
+    HOME,
+    { label: "Pellicole Serigrafiche", href: null },
+  ],
+
+  "/chi-siamo": [HOME, { label: "Chi Siamo", href: null }],
+
+  "/faq": [HOME, { label: "FAQ", href: null }],
+
+  "/carrello": [HOME, { label: "Carrello", href: null }],
 };
 
 /**
- * Get breadcrumb label for a given path
- * @param {string} path - URL path
- * @returns {string|null} - Custom label or null
+ * Helper per le route dinamiche (es. pagina prodotto [slug]).
+ * @param {string} parentLabel - Label della sezione (es. 'Stampa Serigrafica')
+ * @param {string} parentHref  - Path della sezione (es. '/stampa-serigrafica')
+ * @param {string} productName - Nome del prodotto (es. 'T-Shirt Nera')
  */
-export function getBreadcrumbLabel(path) {
-  return BREADCRUMB_LABELS[path] || null;
-}
-
-/**
- * Format URL segment to readable label
- * Converts 'stampa-serigrafica' to 'Stampa Serigrafica'
- * @param {string} segment - URL segment
- * @returns {string} - Formatted label
- */
-export function formatSegment(segment) {
-  return segment
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+export function buildProductBreadcrumb(parentLabel, parentHref, productName) {
+  return [
+    HOME,
+    { label: parentLabel, href: parentHref },
+    { label: productName, href: null },
+  ];
 }

@@ -1,6 +1,8 @@
-import { faqData, getAllFAQs } from '@/data/faqs';
-import FAQClient from './components/FAQClient';
-import { localBusinessSchema } from '@/lib/schemas/localBusiness';
+import { faqData, getAllFAQs } from "@/data/faqs";
+import FAQClient from "./components/FAQClient";
+import Breadcrumb from "@/components/common/Breadcrumb";
+import { BREADCRUMB_ITEMS } from "@/lib/breadcrumb-config";
+import { localBusinessSchema } from "@/lib/schemas/localBusiness";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -10,11 +12,14 @@ const BASE_URL = "https://www.dtfitalia.it";
 // Metadata SEO
 export const metadata = {
   title: "FAQ Stampa Professionale - Domande e Risposte",
-  description: "Risposte su stampa DTF, serigrafia, sublimazione. La guida completa per i tuoi dubbi su stampa e spedizioni a Roma e in Italia.",
-  keywords: "faq stampa dtf, domande serigrafia, sublimazione domande, calendari personalizzati faq, pellicole serigrafia",
+  description:
+    "Risposte su stampa DTF, serigrafia, sublimazione. La guida completa per i tuoi dubbi su stampa e spedizioni a Roma e in Italia.",
+  keywords:
+    "faq stampa dtf, domande serigrafia, sublimazione domande, calendari personalizzati faq, pellicole serigrafia",
   openGraph: {
     title: "FAQ Stampa Professionale - Domande e Risposte",
-    description: "Risposte complete su DTF, Serigrafia, Sublimazione, Calendari e Pellicole. Service professionale a Roma.",
+    description:
+      "Risposte complete su DTF, Serigrafia, Sublimazione, Calendari e Pellicole. Service professionale a Roma.",
     url: `${BASE_URL}/faq`,
     type: "website",
     images: [
@@ -22,13 +27,13 @@ export const metadata = {
         url: `${BASE_URL}/images/og-faq.jpg`,
         width: 1200,
         height: 630,
-        alt: "FAQ DTF Italia - Domande Frequenti"
-      }
-    ]
+        alt: "FAQ DTF Italia - Domande Frequenti",
+      },
+    ],
   },
   alternates: {
-    canonical: `${BASE_URL}/faq`
-  }
+    canonical: `${BASE_URL}/faq`,
+  },
 };
 
 export default function FAQPage() {
@@ -37,33 +42,14 @@ export default function FAQPage() {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": allFAQs.map(faq => ({
+    mainEntity: allFAQs.map((faq) => ({
       "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
+      name: faq.question,
+      acceptedAnswer: {
         "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  };
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": BASE_URL
+        text: faq.answer,
       },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "FAQ",
-        "item": `${BASE_URL}/faq`
-      }
-    ]
+    })),
   };
 
   return (
@@ -75,11 +61,9 @@ export default function FAQPage() {
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(localBusinessSchema),
+        }}
       />
 
       {/* Hero Section */}
@@ -89,13 +73,17 @@ export default function FAQPage() {
             Domande Frequenti
           </h1>
           <p className="text-xl text-gray-200 max-w-3xl mx-auto">
-            Tutto quello che devi sapere su stampa DTF, serigrafia, sublimazione, 
-            calendari personalizzati e pellicole serigrafiche. Service professionale a Roma.
+            Tutto quello che devi sapere su stampa DTF, serigrafia,
+            sublimazione, calendari personalizzati e pellicole serigrafiche.
+            Service professionale a Roma.
           </p>
         </div>
       </section>
 
       {/* FAQ Content */}
+      <div className="container mx-auto px-4 pt-4 pb-2">
+        <Breadcrumb items={BREADCRUMB_ITEMS["/faq"]} />
+      </div>
       <main className="bg-gray-50 py-16">
         <div className="container mx-auto px-4 max-w-5xl">
           <FAQClient faqData={faqData} />

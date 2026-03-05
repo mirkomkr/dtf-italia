@@ -64,7 +64,10 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           <Header />
-          <main id="main-content" className="relative flex-1 flex flex-col">
+          <main
+            id="main-content"
+            className="relative flex-1 flex flex-col pt-14"
+          >
             {children}
           </main>
           <Footer />

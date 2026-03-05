@@ -1,18 +1,23 @@
 // app/chi-siamo/page.js
 import AboutSection from "@/components/home/AboutSection";
-import { BASE_URL } from '@/lib/config';
+import Breadcrumb from "@/components/common/Breadcrumb";
+import { BREADCRUMB_ITEMS } from "@/lib/breadcrumb-config";
+import { BASE_URL } from "@/lib/config";
 
 // Metadata SEO
 export const metadata = {
   title: {
-    absolute: "Chi Siamo - DTF Italia | Stampa Professionale Roma"
+    absolute: "Chi Siamo - DTF Italia | Stampa Professionale Roma",
   },
-  description: "Scopri DTF Italia: esperienza, tecnologie all'avanguardia e servizio professionale per la stampa a Roma. Service per terzi, qualità garantita e spedizione 24h.",
-  keywords: "chi siamo dtf italia, stampa professionale roma, service stampa terzi, laboratorio stampa roma",
+  description:
+    "Scopri DTF Italia: esperienza, tecnologie all'avanguardia e servizio professionale per la stampa a Roma. Service per terzi, qualità garantita e spedizione 24h.",
+  keywords:
+    "chi siamo dtf italia, stampa professionale roma, service stampa terzi, laboratorio stampa roma",
   canonical: `${BASE_URL}/chi-siamo`,
   openGraph: {
     title: "Chi Siamo - DTF Italia",
-    description: "Scopri la nostra storia, i nostri valori e le tecnologie che utilizziamo per offrirti il miglior servizio di stampa a Roma.",
+    description:
+      "Scopri la nostra storia, i nostri valori e le tecnologie che utilizziamo per offrirti il miglior servizio di stampa a Roma.",
     url: `${BASE_URL}/chi-siamo`,
     siteName: "DTF Italia",
     locale: "it_IT",
@@ -26,51 +31,32 @@ export default function ChiSiamoPage() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${BASE_URL}/#organization`,
-    "name": "DTF Italia",
-    "url": BASE_URL,
-    "logo": `${BASE_URL}/logo.png`,
-    "description": "Stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole serigrafiche. Service per terzi con spedizione 24h.",
-    "address": {
+    name: "DTF Italia",
+    url: BASE_URL,
+    logo: `${BASE_URL}/logo.png`,
+    description:
+      "Stampa professionale a Roma: DTF, serigrafia, sublimazione, calendari e pellicole serigrafiche. Service per terzi con spedizione 24h.",
+    address: {
       "@type": "PostalAddress",
-      "addressLocality": "Roma",
-      "addressRegion": "RM",
-      "addressCountry": "IT"
+      addressLocality: "Roma",
+      addressRegion: "RM",
+      addressCountry: "IT",
     },
-    "areaServed": [
+    areaServed: [
       {
         "@type": "City",
-        "name": "Roma"
+        name: "Roma",
       },
       {
         "@type": "Country",
-        "name": "Italia"
-      }
+        name: "Italia",
+      },
     ],
-    "sameAs": [
+    sameAs: [
       // TODO: Aggiungere social media links quando disponibili
       // "https://www.facebook.com/dtfitalia",
       // "https://www.instagram.com/dtfitalia"
-    ]
-  };
-
-  // Breadcrumb Schema
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": BASE_URL
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Chi Siamo",
-        "item": `${BASE_URL}/chi-siamo`
-      }
-    ]
+    ],
   };
 
   return (
@@ -80,10 +66,6 @@ export default function ChiSiamoPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
 
       {/* Hero Section */}
       <section className="relative min-h-[40vh] flex items-center justify-center bg-gradient-to-br from-indigo-900 via-slate-900 to-black">
@@ -92,12 +74,16 @@ export default function ChiSiamoPage() {
             Chi Siamo
           </h1>
           <p className="text-xl sm:text-2xl text-gray-200 max-w-3xl mx-auto">
-            La tua stamperia di fiducia a Roma per servizi professionali e personalizzazione di qualità
+            La tua stamperia di fiducia a Roma per servizi professionali e
+            personalizzazione di qualità
           </p>
         </div>
       </section>
 
       {/* About Content */}
+      <div className="container mx-auto px-4 pt-4 pb-2">
+        <Breadcrumb items={BREADCRUMB_ITEMS["/chi-siamo"]} />
+      </div>
       <AboutSection />
 
       {/* CTA Section */}
@@ -107,7 +93,8 @@ export default function ChiSiamoPage() {
             Pronto a Iniziare il Tuo Progetto?
           </h2>
           <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-            Scopri i nostri servizi di stampa professionale a Roma e richiedi un preventivo gratuito.
+            Scopri i nostri servizi di stampa professionale a Roma e richiedi un
+            preventivo gratuito.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a

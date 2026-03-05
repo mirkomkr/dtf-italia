@@ -1,4 +1,6 @@
 import CartPage from "@/components/cart/CartPage";
+import Breadcrumb from "@/components/common/Breadcrumb";
+import { BREADCRUMB_ITEMS } from "@/lib/breadcrumb-config";
 
 export const metadata = {
   title: "Carrello",
@@ -7,5 +9,12 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <CartPage />;
+  return (
+    <>
+      <div className="container mx-auto px-4 pt-20 pb-2">
+        <Breadcrumb items={BREADCRUMB_ITEMS["/carrello"]} />
+      </div>
+      <CartPage />
+    </>
+  );
 }

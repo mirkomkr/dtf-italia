@@ -1,5 +1,7 @@
-import { getWooCommerceProducts } from '@/lib/woocommerce';
-import ProductCard from '@/components/common/ProductCard';
+import { getWooCommerceProducts } from "@/lib/woocommerce";
+import ProductCard from "@/components/common/ProductCard";
+import Breadcrumb from "@/components/common/Breadcrumb";
+import { BREADCRUMB_ITEMS } from "@/lib/breadcrumb-config";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -8,13 +10,14 @@ const BASE_URL = "https://www.dtfitalia.it";
 
 export const metadata = {
   title: "Catalogo Sublimazione Roma - Abbigliamento Sportivo | DTF Italia",
-  description: "Scopri tutti i prodotti disponibili per stampa sublimazione: magliette tecniche, tute sportive e abbigliamento personalizzato. Stampa fotografica HD su tessuti sintetici.",
+  description:
+    "Scopri tutti i prodotti disponibili per stampa sublimazione: magliette tecniche, tute sportive e abbigliamento personalizzato. Stampa fotografica HD su tessuti sintetici.",
   keywords: [
     "sublimazione roma",
     "stampa sublimazione",
     "abbigliamento sportivo personalizzato",
     "magliette tecniche",
-    "stampa fotografica tessuti"
+    "stampa fotografica tessuti",
   ],
   authors: [{ name: "DTF Italia" }],
   robots: {
@@ -26,28 +29,29 @@ export const metadata = {
   },
   openGraph: {
     title: "Catalogo Sublimazione Roma - Abbigliamento Sportivo",
-    description: "Stampa sublimazione professionale su abbigliamento sportivo. Colori vibranti, alta definizione, resistenza ai lavaggi.",
+    description:
+      "Stampa sublimazione professionale su abbigliamento sportivo. Colori vibranti, alta definizione, resistenza ai lavaggi.",
     url: `${BASE_URL}/stampa-sublimazione/catalogo`,
     siteName: "DTF Italia",
     locale: "it_IT",
     type: "website",
   },
   alternates: {
-    canonical: `${BASE_URL}/stampa-sublimazione/catalogo`
-  }
+    canonical: `${BASE_URL}/stampa-sublimazione/catalogo`,
+  },
 };
 
 export default async function SublimazioneCatalogoPage() {
   const categorySlug = "stampa-sublimazione";
-  
+
   let products = [];
   try {
-    products = await getWooCommerceProducts({ 
+    products = await getWooCommerceProducts({
       category: categorySlug,
-      perPage: 50 
+      perPage: 50,
     });
   } catch (error) {
-    console.error('Error fetching sublimazione products:', error);
+    console.error("Error fetching sublimazione products:", error);
   }
 
   return (
@@ -60,22 +64,27 @@ export default async function SublimazioneCatalogoPage() {
               Catalogo Sublimazione Roma
             </h1>
             <p className="text-lg sm:text-xl text-violet-100 leading-relaxed">
-              Stampa sublimazione professionale su abbigliamento sportivo e tessuti sintetici. 
-              Colori vibranti, alta definizione fotografica, resistenza ai lavaggi.
+              Stampa sublimazione professionale su abbigliamento sportivo e
+              tessuti sintetici. Colori vibranti, alta definizione fotografica,
+              resistenza ai lavaggi.
             </p>
           </div>
         </div>
       </section>
 
+      {/* Breadcrumb Navigation */}
+      <div className="container mx-auto px-4 pt-4 pb-2">
+        <Breadcrumb items={BREADCRUMB_ITEMS["/stampa-sublimazione/catalogo"]} />
+      </div>
+
       {/* Products Grid */}
       <section id="prodotti-sublimazione" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          
           {products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {products.map((product, i) => (
-                <ProductCard 
-                  key={product.id} 
+                <ProductCard
+                  key={product.id}
                   product={product}
                   priority={i < 4} // LCP optimization
                   basePath="/stampa-sublimazione"
@@ -88,7 +97,8 @@ export default async function SublimazioneCatalogoPage() {
                 Nessun prodotto disponibile al momento.
               </p>
               <p className="text-gray-400 text-sm">
-                I prodotti verranno aggiunti a breve. Contattaci per maggiori informazioni.
+                I prodotti verranno aggiunti a breve. Contattaci per maggiori
+                informazioni.
               </p>
             </div>
           )}

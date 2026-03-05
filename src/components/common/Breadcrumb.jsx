@@ -1,110 +1,132 @@
-'use client';
-
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getBreadcrumbLabel, formatSegment } from '@/lib/breadcrumb-config';
 
 /**
- * Breadcrumb SEO-optimized component
- * - WCAG 2.2 compliant (aria-label, aria-current, keyboard navigation)
- * - Schema.org BreadcrumbList with JSON-LD
- * - Dynamic route support with usePathname
- * 
- * @param {Object} props
- * @param {Object} props.customLabels - Override labels for specific paths
- * @param {string} props.className - Additional CSS classes
+ * Breadcrumb — Server Component (Next.js App Router 2026)
+ *
+ * API:
+ *  items = [
+ *    { label: 'Home',       href: '/' },       // primo item: sempre Home
+ *    { label: 'Serigrafia', href: '/stampa-serigrafica' },
+ *    { label: 'T-Shirt',    href: null },       // ultimo item: pagina corrente, NON link
+ *  ]
+ *
+ * Accessibilità:
+ *  - <nav aria-label="Breadcrumb"> + <ol> semanticamente corretti (WCAG 2.2)
+ *  - aria-current="page" sull'ultimo item
+ *  - Separatori ChevronRight con aria-hidden
+ *  - Home icon con testo visibile solo agli screen reader
+ *
+ * Mobile:
+ *  - Su xs/sm (< 640px): mostra solo Home + … + pagina corrente
+ *  - Su md+: percorso completo
+ *
+ * SEO:
+ *  - JSON-LD BreadcrumbList inline (riconosciuto da Google Rich Results)
+ *
+ * @param {{ label: string, href: string|null }[]} items
+ * @param {string} [className]
  */
-export default function Breadcrumb({ customLabels = {}, className }) {
-  const pathname = usePathname();
-  
-  // Skip breadcrumb on homepage
-  if (pathname === '/') return null;
-  
-  // Generate breadcrumb items from pathname
-  const pathSegments = pathname.split('/').filter(Boolean);
-  
-  const breadcrumbItems = [
-    { name: 'Home', path: '/', isHome: true }
-  ];
-  
-  let currentPath = '';
-  pathSegments.forEach((segment, index) => {
-    currentPath += `/${segment}`;
-    const isLast = index === pathSegments.length - 1;
-    
-    // Priority: customLabels > config > formatted segment
-    const label = customLabels[currentPath] || 
-                  getBreadcrumbLabel(currentPath) || 
-                  formatSegment(segment);
-    
-    breadcrumbItems.push({
-      name: label,
-      path: currentPath,
-      isLast
-    });
-  });
-  
+export default function Breadcrumb({ items = [], className }) {
+  if (!items.length) return null;
+
+  const isHome = (item) => item.href === '/';
+  const lastIndex = items.length - 1;
+
+  // ── JSON-LD ────────────────────────────────────────────────────────────────
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.label,
+      ...(item.href ? { item: `https://dtfitalia.it${item.href}` } : {}),
+    })),
+  };
+
   return (
     <>
-      {/* Visual Breadcrumb */}
-      <nav 
-        aria-label="Breadcrumb" 
-        className={cn("mb-6", className)}
+      {/* ── Visual Breadcrumb ──────────────────────────────────────────────── */}
+      <nav
+        aria-label="Breadcrumb"
+        className={cn('w-full', className)}
       >
-        <ol className="flex items-center flex-wrap gap-2 text-sm">
-          {breadcrumbItems.map((item, index) => (
-            <li key={item.path} className="flex items-center gap-2">
-              {index > 0 && (
-                <ChevronRight 
-                  className="w-4 h-4 text-gray-400" 
-                  aria-hidden="true" 
-                />
-              )}
-              
-              {item.isLast ? (
-                <span 
-                  className="text-gray-900 font-medium"
-                  aria-current="page"
-                >
-                  {item.name}
-                </span>
-              ) : (
-                <Link
-                  href={item.path}
-                  className={cn(
-                    "text-gray-600 hover:text-gray-900 transition-colors",
-                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded-sm px-1"
-                  )}
-                >
-                  {item.isHome ? (
-                    <Home className="w-4 h-4" aria-label="Home" />
-                  ) : (
-                    item.name
-                  )}
-                </Link>
-              )}
-            </li>
-          ))}
+        <ol className="flex items-center flex-wrap gap-1 text-sm text-gray-500">
+          {items.map((item, index) => {
+            const isCurrent = index === lastIndex;
+            const isMiddle = index > 0 && !isCurrent;
+            const showOnMobile = index === 0 || isCurrent; // solo Home + pagina attuale su mobile
+
+            return (
+              <li
+                key={item.href ?? `crumb-${index}`}
+                className={cn(
+                  'flex items-center gap-1',
+                  // Middle items nascosti su mobile
+                  isMiddle && 'hidden sm:flex'
+                )}
+              >
+                {/* Separatore */}
+                {index > 0 && (
+                  <ChevronRight
+                    className="w-3.5 h-3.5 text-gray-400 flex-shrink-0"
+                    aria-hidden="true"
+                  />
+                )}
+
+                {/* Ellissi mobile — appare prima dell'ultimo item se ci sono intermedi */}
+                {isCurrent && items.length > 2 && (
+                  <span
+                    className="sm:hidden flex items-center gap-1 text-gray-400"
+                    aria-hidden="true"
+                  >
+                    <span>…</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                  </span>
+                )}
+
+                {/* Item: pagina corrente (non cliccabile) */}
+                {isCurrent ? (
+                  <span
+                    className="font-semibold text-gray-900 truncate max-w-[180px] sm:max-w-none"
+                    aria-current="page"
+                  >
+                    {item.label}
+                  </span>
+                ) : (
+                  /* Item: link navigabile */
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      'flex items-center gap-1 transition-colors duration-150',
+                      'text-gray-500 hover:text-gray-900',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1 rounded'
+                    )}
+                  >
+                    {isHome(item) ? (
+                      <>
+                        <Home className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                        <span className="sr-only">Home</span>
+                      </>
+                    ) : (
+                      <span className="hover:underline underline-offset-2">
+                        {item.label}
+                      </span>
+                    )}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
         </ol>
       </nav>
-      
-      {/* JSON-LD Structured Data for SEO */}
+
+      {/* ── JSON-LD structured data ────────────────────────────────────────── */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BreadcrumbList',
-            'itemListElement': breadcrumbItems.map((item, index) => ({
-              '@type': 'ListItem',
-              'position': index + 1,
-              'name': item.name,
-              ...(item.isLast ? {} : { 'item': `https://dtfitalia.it${item.path}` })
-            }))
-          })
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
     </>
   );

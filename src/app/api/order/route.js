@@ -232,7 +232,11 @@ async function processSingleCartItem({
       },
       { key: "_billing_address_alt", value: customer?.billingAddress || "" },
       { key: "_billing_city_alt", value: customer?.billingCity || "" },
-      { key: "_billing_zip_alt", value: customer?.billingZip || "" },
+      { key: "_billing_zip_alt",     value: customer?.billingZip || "" },
+      // Chiavi critiche a livello ORDINE — accessibili via $order->get_meta() in PHP
+      { key: "_configurator_type",   value: type },
+      { key: "_file_uploaded_to_s3", value: hasFiles ? "yes" : "no" },
+      { key: "_cart_item_id",        value: cartItemId || "" },
     ],
     line_items: [
       {
@@ -295,14 +299,25 @@ async function processSingleCartItem({
         );
       }
 
-      // Aggiorna WC con path definitivi
+      // Aggiorna WC con path definitivi — tutti i lati/posizioni
       const updateMeta = [];
-      if (finalKeys.front)
-        updateMeta.push({ key: "_s3_file_key_front", value: finalKeys.front });
-      if (finalKeys.back)
-        updateMeta.push({ key: "_s3_file_key_back", value: finalKeys.back });
-      if (finalKeys.front)
-        updateMeta.push({ key: "_s3_file_key", value: finalKeys.front });
+
+      for (const [side, newKey] of Object.entries(finalKeys)) {
+        if (newKey) {
+          updateMeta.push({ key: `_s3_file_key_${side}`, value: newKey });
+        }
+      }
+
+      // Alias retrocompatibili per lo snippet PHP e ordini DTF legacy
+      const frontKey = finalKeys.front ?? finalKeys.center ?? null;
+      const backKey = finalKeys.back ?? finalKeys.classic ?? null;
+      if (frontKey) {
+        updateMeta.push({ key: "_s3_file_key_front", value: frontKey });
+        updateMeta.push({ key: "_s3_file_key", value: frontKey }); // legacy
+      }
+      if (backKey) {
+        updateMeta.push({ key: "_s3_file_key_back", value: backKey });
+      }
 
       await updateWooCommerceOrder(orderId, { meta_data: updateMeta });
     } catch (moveError) {

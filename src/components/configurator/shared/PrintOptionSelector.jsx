@@ -68,17 +68,17 @@ export default function PrintOptionSelector({
     const FRONT_POSITIONS = [
       { id: 'right', label: 'Lato Destro' },
       { id: 'heart', label: 'Lato Cuore' },
-      { id: 'center', label: 'Al Centro' },
+      { id: 'center', label: 'Fronte' },
       ...(showSleeves ? [
-          { id: 'sleeve_right', label: 'Manica Dx' },
-          { id: 'sleeve_left', label: 'Manica Sx' }
+          { id: 'sleeve_right', label: 'Manica Destra' },
+          { id: 'sleeve_left', label: 'Manica Sinistra' }
       ] : [])
     ];
 
     const BACK_POSITIONS = [
       { id: 'internal_label', label: 'Etichetta Interna' },
       { id: 'external_label', label: 'Etichetta Esterna' },
-      { id: 'classic', label: 'Retro Classico' },
+      { id: 'classic', label: 'Retro' },
     ];
 
     const renderPositionSelector = (positions, value, onChange) => {

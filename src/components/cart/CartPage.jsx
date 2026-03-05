@@ -32,12 +32,12 @@ const FORMAT_LABELS = {
 const POS_LABELS = {
   right:          'Lato Destro',
   heart:          'Lato Cuore',
-  center:         'Al Centro',
-  sleeve_right:   'Manica Dx',
-  sleeve_left:    'Manica Sx',
+  center:         'Fronte',
+  sleeve_right:   'Manica Destra',
+  sleeve_left:    'Manica Sinistra',
   internal_label: 'Etichetta Interna',
   external_label: 'Etichetta Esterna',
-  classic:        'Retro Classico',
+  classic:        'Retro',
 };
 
 // ─── Breakdown quantità serigrafia ─────────────────────────────────────────

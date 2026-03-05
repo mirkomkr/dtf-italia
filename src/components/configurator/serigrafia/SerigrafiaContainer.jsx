@@ -24,12 +24,12 @@ const FileUploader = dynamic(() => import('../shared/FileUploader'), {
 const POS_LABELS = {
   right:          'Lato Destro',
   heart:          'Lato Cuore',
-  center:         'Al Centro',
-  sleeve_right:   'Manica Dx',
-  sleeve_left:    'Manica Sx',
+  center:         'Fronte',
+  sleeve_right:   'Manica Destra',
+  sleeve_left:    'Manica Sinistra',
   internal_label: 'Etichetta Interna',
   external_label: 'Etichetta Esterna',
-  classic:        'Retro Classico',
+  classic:        'Retro',
 };
 
 export default function SerigrafiaContainer({ product, enableVariants = true }) {
@@ -110,6 +110,10 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
     if (slug.includes('shopper') || slug.includes('borse') || slug.includes('zaini')) return 'none';
     return 'clothing';
   }, [product]);
+
+  // Le posizioni di stampa sono significative solo per la maglieria.
+  // Per cappelli e borse, il posizionamento è fisso e non configurabile dall'utente.
+  const enablePositions = genderLayout === 'clothing';
 
   // Sync gender iniziale basato sul layout
   useEffect(() => {
@@ -297,9 +301,23 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
               updatePrice(quantities, n, frontPrint, backPrint, frontPosition, backPosition, fileCheck, autoOutline);
             }}
             frontPrint={frontPrint}
-            setFrontPrint={(val) => { setFrontPrint(val); updatePrice(quantities, singleQuantity, val, backPrint, frontPosition, backPosition, fileCheck, autoOutline); }}
+            setFrontPrint={(val) => {
+              setFrontPrint(val);
+              // Per cappelli/borse: auto-imposta posizione generica in base al lato
+              if (!enablePositions) {
+                setFrontPosition(val !== 'none' ? ['center'] : []);
+              }
+              updatePrice(quantities, singleQuantity, val, backPrint, frontPosition, backPosition, fileCheck, autoOutline);
+            }}
             backPrint={backPrint}
-            setBackPrint={(val) => { setBackPrint(val); updatePrice(quantities, singleQuantity, frontPrint, val, frontPosition, backPosition, fileCheck, autoOutline); }}
+            setBackPrint={(val) => {
+              setBackPrint(val);
+              // Per cappelli/borse: auto-imposta posizione generica in base al lato
+              if (!enablePositions) {
+                setBackPosition(val !== 'none' ? ['classic'] : []);
+              }
+              updatePrice(quantities, singleQuantity, frontPrint, val, frontPosition, backPosition, fileCheck, autoOutline);
+            }}
             
             frontPosition={frontPosition}
             setFrontPosition={setFrontPosition}
@@ -325,11 +343,13 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                   alert(`Quantit\u00e0 minima per "${orderType === 'grandi_ordini' ? 'Grandi Ordini' : 'Senza Minimo'}": ${limits.min} pezzi`);
                   return;
                 }
-                if (frontPrint !== 'none' && frontPosition.length === 0) {
+                // Le posizioni vanno validate solo per la maglieria.
+                // Per cappelli e borse la posizione è auto-impostata dalla selezione della stampa.
+                if (enablePositions && frontPrint !== 'none' && frontPosition.length === 0) {
                   alert("Seleziona almeno una posizione per la stampa frontale.");
                   return;
                 }
-                if (backPrint !== 'none' && backPosition.length === 0) {
+                if (enablePositions && backPrint !== 'none' && backPosition.length === 0) {
                   alert("Seleziona almeno una posizione per la stampa retro.");
                   return;
                 }
@@ -435,7 +455,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                 <div key={`front-${pos}`} className="space-y-4">
                   <div className="flex items-center gap-2 text-red-900 font-bold uppercase text-sm border-b pb-2 border-red-100">
                     <Shirt className="w-5 h-5" />
-                    <span>Stampa Fronte ({POS_LABELS[pos] || pos})</span>
+                    <span>{enablePositions ? (POS_LABELS[pos] || pos) : 'Stampa Fronte'}</span>
                   </div>
                   <FileUploader 
                     uploadMode="s3"
@@ -462,7 +482,7 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
                  <div key={`back-${pos}`} className="space-y-4">
                   <div className="flex items-center gap-2 text-red-900 font-bold uppercase text-sm border-b pb-2 border-red-100">
                     <RefreshCw className="w-5 h-5" />
-                    <span>Stampa Retro ({POS_LABELS[pos] || pos})</span>
+                    <span>{enablePositions ? (POS_LABELS[pos] || pos) : 'Stampa Retro'}</span>
                   </div>
                   <FileUploader 
                     uploadMode="s3"

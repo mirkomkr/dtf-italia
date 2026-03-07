@@ -62,32 +62,8 @@ const nextConfig = {
         permanent: true,
       },
       
-      // Anchor Fragment Redirects (for old internal links)
-      {
-        source: '/:path*#serigrafia',
-        destination: '/stampa-serigrafica',
-        permanent: true,
-      },
-      {
-        source: '/:path*#sublimazione',
-        destination: '/stampa-sublimazione',
-        permanent: true,
-      },
-      {
-        source: '/:path*#calendari',
-        destination: '/stampa-calendari',
-        permanent: true,
-      },
-      {
-        source: '/:path*#pellicole',
-        destination: '/pellicole-serigrafia',
-        permanent: true,
-      },
-      {
-        source: '/:path*#dtf',
-        destination: '/service-dtf',
-        permanent: true,
-      },
+      // Anchor fragment redirects rimossi: i fragment (#hash) non arrivano al server,
+      // vengono gestiti solo dal browser client-side → questi redirect non hanno mai funzionato.
       
       // Catalog Structure Refactor (2026-02-01)
       {

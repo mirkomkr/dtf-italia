@@ -56,17 +56,11 @@ export default function Breadcrumb({ items = [], className }) {
         <ol className="flex items-center flex-wrap gap-1 text-sm text-gray-500">
           {items.map((item, index) => {
             const isCurrent = index === lastIndex;
-            const isMiddle = index > 0 && !isCurrent;
-            const showOnMobile = index === 0 || isCurrent; // solo Home + pagina attuale su mobile
 
             return (
               <li
                 key={item.href ?? `crumb-${index}`}
-                className={cn(
-                  'flex items-center gap-1',
-                  // Middle items nascosti su mobile
-                  isMiddle && 'hidden sm:flex'
-                )}
+                className="flex items-center gap-1"
               >
                 {/* Separatore */}
                 {index > 0 && (
@@ -76,21 +70,10 @@ export default function Breadcrumb({ items = [], className }) {
                   />
                 )}
 
-                {/* Ellissi mobile — appare prima dell'ultimo item se ci sono intermedi */}
-                {isCurrent && items.length > 2 && (
-                  <span
-                    className="sm:hidden flex items-center gap-1 text-gray-400"
-                    aria-hidden="true"
-                  >
-                    <span>…</span>
-                    <ChevronRight className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                  </span>
-                )}
-
                 {/* Item: pagina corrente (non cliccabile) */}
                 {isCurrent ? (
                   <span
-                    className="font-semibold text-gray-900 truncate max-w-[180px] sm:max-w-none"
+                    className="font-semibold text-gray-900 truncate max-w-[160px] sm:max-w-none"
                     aria-current="page"
                   >
                     {item.label}

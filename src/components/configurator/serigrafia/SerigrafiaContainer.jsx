@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { Shirt, RefreshCw, Info } from 'lucide-react'; // Added Icons
+import { Shirt, RefreshCw, Info } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { calculatePrice } from '@/lib/pricing-engine';
 import { cn } from '@/lib/utils';
@@ -38,8 +38,6 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
   // --- Stato Navigazione ---
   const [currentStep, setCurrentStep] = useState(1);
-  // isUploadComplete non più necessario nel flusso 3-step
-  // fileKeys traccia quale file è stato caricato per ogni posizione selezionata
   const [fileKeys, setFileKeys] = useState({});
   const [files, setFiles] = useState({});
   // Generato una volta sola solo lato client (non durante SSR)
@@ -79,22 +77,6 @@ export default function SerigrafiaContainer({ product, enableVariants = true }) 
 
     let hasDark = false;
     let hasLight = false;
-
-    // Import constants inside check or assume available? They are not imported here.
-    // We need to import SHIRT_COLORS from constants. 
-    // Wait, SerigrafiaContainer does not import SHIRT_COLORS. 
-    // I need to update imports first? No, I can't in this block.
-    // I will assume I need to fetch color data. 
-    // Actually, `quantities` keys are color IDs. I should have color data available or import it.
-    // Let's assume I can't import easily here without another edit. 
-    // I'll skip the import for now and just check known IDs? 
-    // Better: I will add the import in a separate tool call if needed, but wait, 
-    // I can't see the top of the file in this context. 
-    // I'll try to rely on passed `product` if it has colors? No.
-    // I'll stick to hardcoded checks for now matching constants.js IDs if I can't import.
-    // dark: nero, blu_notte, blu_royal, verde, viola
-    // light: bianco, giallo
-    
     activeColors.forEach(cId => {
         if (['nero', 'blu_notte', 'blu_royal', 'verde', 'viola'].includes(cId)) hasDark = true;
         if (['bianco', 'giallo'].includes(cId)) hasLight = true;

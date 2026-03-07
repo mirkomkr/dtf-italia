@@ -2,9 +2,12 @@
 
 import { useCart } from '@/lib/cart-context';
 import { useRouter } from 'next/navigation';
-import { ShoppingCart, ArrowLeft, CheckCircle2, FileText } from 'lucide-react';
-import OrderSummary from './OrderSummary';
+import { ShoppingCart, ArrowLeft, CheckCircle2, FileText, Tag } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+function formatCurrency(amount) {
+  return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(amount ?? 0);
+}
 
 export default function CartSummaryStep({ 
   type,
@@ -54,13 +57,32 @@ export default function CartSummaryStep({
         </p>
       </div>
 
-      {/* Order Summary */}
-      <OrderSummary 
-        type={type} 
-        priceData={priceData} 
-        data={productData} 
-        brandColor={brandColor} 
-      />
+      {/* Riepilogo ordine inline */}
+      <div className={cn(
+        'rounded-2xl border p-4 space-y-3',
+        isRed ? 'border-red-100 bg-red-50/40' : 'border-indigo-100 bg-indigo-50/40'
+      )}>
+        <div className="flex items-center gap-2">
+          <Tag className={cn('w-4 h-4', isRed ? 'text-red-600' : 'text-indigo-600')} />
+          <span className={cn('text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-full',
+            isRed ? 'bg-red-100 text-red-700' : 'bg-indigo-100 text-indigo-700'
+          )}>
+            {type}
+          </span>
+        </div>
+        {priceData?.technique && (
+          <p className="text-sm text-gray-600">Tecnica: <strong>{priceData.technique}</strong></p>
+        )}
+        {priceData?.totalQuantity > 0 && (
+          <p className="text-sm text-gray-600">Quantità: <strong>{priceData.totalQuantity} pz</strong></p>
+        )}
+        <div className={cn('flex justify-between items-center pt-2 border-t font-bold text-base',
+          isRed ? 'border-red-200 text-red-700' : 'border-indigo-200 text-indigo-700'
+        )}>
+          <span>Totale</span>
+          <span>{formatCurrency(priceData?.totalPrice ?? priceData?.finalTotal)}</span>
+        </div>
+      </div>
 
       {/* Stato File Caricato */}
       {hasFile ? (

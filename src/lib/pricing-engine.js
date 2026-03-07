@@ -15,8 +15,8 @@ class SerigrafiaStrategy {
       fileCheck, 
       proCheck, 
       autoOutline,
-      frontPosition,  // NEW: Front print position
-      backPosition    // NEW: Back print position
+      frontPosition,
+      backPosition
     } = params;
     
     // Supportiamo entrambi i nomi (backward compatibility)

@@ -7,8 +7,8 @@ import { getWooCommerceProducts } from "@/lib/woocommerce";
 import { HowItWorks, Benefits, FAQ } from "@/components/home/Sections";
 import { Zap, ShieldCheck, Truck } from "lucide-react";
 
-// ISR: Revalidate every 1 hour (webhook handles on-demand revalidation)
-export const revalidate = 3600;
+// ISR: Revalidate every 24 hours (manual revalidation link handles updates)
+export const revalidate = 86400;
 
 const BASE_URL = "https://www.dtfitalia.it";
 

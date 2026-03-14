@@ -46,14 +46,14 @@ function verifySignature(request, rawBody) {
  * @returns {Array<string>} Array of cache tags to revalidate
  */
 function extractTags(payload) {
-  const tags = [];
+  const tags = ['products']; // Invalida sempre tutte le listing page
 
   // Add product-specific tag
   if (payload.slug) {
     tags.push(`product:${payload.slug}`);
   }
 
-  // Add category-specific tags
+  // Add category-specific tags (invalida le listing page per categoria)
   if (payload.categories && Array.isArray(payload.categories)) {
     payload.categories.forEach(category => {
       if (category.slug) {

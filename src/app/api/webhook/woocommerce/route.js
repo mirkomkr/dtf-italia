@@ -23,6 +23,11 @@ export const dynamic = 'force-dynamic';
  * @returns {boolean} True if signature is valid
  */
 function verifySignature(request, rawBody) {
+  // Always accept ping events, they are just for verifying the URL exists
+  if (request.headers.get('x-wc-webhook-event') === 'ping') {
+    return true;
+  }
+
   const signature = request.headers.get('x-wc-webhook-signature');
   const secret = process.env.WEBHOOK_SECRET || process.env.REVALIDATE_SECRET;
 

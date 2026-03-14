@@ -130,7 +130,7 @@ export default function Footer() {
           <p>
             Sviluppato con ❤️ da{" "}
             <a
-              href="https://mirkopasseri.it"
+              href="https://www.mirkopasseri.it"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-300 hover:text-white hover:underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"

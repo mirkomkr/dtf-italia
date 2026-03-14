@@ -214,12 +214,11 @@ export default async function SerigrafiaPage() {
 
       <HeroSerigrafia />
 
-      <div className="container mx-auto px-4 pt-4 pb-2">
+      <div id="prodotti-serigrafia" className="container mx-auto px-4 pt-4 pb-2 scroll-m-24">
         <Breadcrumb items={BREADCRUMB_ITEMS["/stampa-serigrafica"]} />
       </div>
 
       <main
-        id="prodotti-serigrafia"
         className="bg-gray-200"
         style={{ "--brand-color": "#dc2626" }}
       >

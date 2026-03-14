@@ -88,12 +88,12 @@ const nextConfig = {
     
     return [
       {
+        // Sicurezza e performance per tutte le routes
+        // NOTA: NON impostare Cache-Control qui — Next.js ISR
+        // gestisce la cache automaticamente tramite revalidate/revalidateTag.
+        // Impostare max-age manualmente bypassa il CDN di Vercel e rompe ISR.
         source: '/:path*',
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=86400, stale-while-revalidate=604800',
-          },
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on'
@@ -125,6 +125,7 @@ const nextConfig = {
         ],
       },
       {
+        // Asset statici Next.js: cache immutabile (il nome contiene hash)
         source: '/_next/static/:path*',
         headers: [
           {

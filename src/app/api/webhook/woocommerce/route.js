@@ -72,6 +72,15 @@ export async function POST(request) {
   const startTime = Date.now();
 
   try {
+    // 0. Handle Ping Event (sent by WooCommerce when creating/saving a webhook)
+    const wcEvent = request.headers.get('x-wc-webhook-event');
+    if (wcEvent === 'ping') {
+      console.log('[Webhook] Ping received and accepted', {
+        timestamp: new Date().toISOString()
+      });
+      return NextResponse.json({ success: true, message: 'Ping successful' });
+    }
+
     // 1. Read raw body for signature verification
     const rawBody = await request.text();
     

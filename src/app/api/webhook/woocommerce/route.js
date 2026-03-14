@@ -15,6 +15,9 @@ export const dynamic = 'force-dynamic';
  * @see https://woocommerce.github.io/woocommerce-rest-api-docs/#webhooks
  */
 
+// Variabile globale temporanea per il debug del webhook
+let lastError = null;
+
 /**
  * Verify WooCommerce webhook signature
  * 
@@ -23,15 +26,21 @@ export const dynamic = 'force-dynamic';
  * @returns {boolean} True if signature is valid
  */
 function verifySignature(request, rawBody) {
-  // Always accept ping events, they are just for verifying the URL exists
-  if (request.headers.get('x-wc-webhook-event') === 'ping') {
+  // Always accept ping events
+  const event = request.headers.get('x-wc-webhook-event');
+  if (event === 'ping') {
     return true;
   }
 
   const signature = request.headers.get('x-wc-webhook-signature');
   const secret = process.env.WEBHOOK_SECRET || process.env.REVALIDATE_SECRET;
 
-  if (!signature || !secret) {
+  if (!signature) {
+    lastError = { reason: 'Manca header x-wc-webhook-signature', event };
+    return false;
+  }
+  if (!secret) {
+    lastError = { reason: 'Manca secret nel server Vercel (.env)' };
     return false;
   }
 
@@ -41,7 +50,19 @@ function verifySignature(request, rawBody) {
     .update(rawBody)
     .digest('base64');
 
-  return signature === expectedSignature;
+  if (signature !== expectedSignature) {
+    lastError = { 
+      reason: 'Firma non corrispondente', 
+      ricevuta: signature, 
+      attesa: expectedSignature,
+      secretUsatoInVercel: secret.substring(0, 3) + '...', // Mostra solo l'inizio per sicurezza
+      bodyLength: rawBody.length,
+      event
+    };
+    return false;
+  }
+
+  return true;
 }
 
 /**
@@ -215,6 +236,7 @@ export async function GET() {
   return NextResponse.json({
     name: 'WooCommerce Webhook Handler',
     version: '1.0.0',
+    lastError: lastError, // ESPOSIZIONE TEMPORANEA PER DEBUG
     description: 'Automatically revalidates Next.js cache when WooCommerce products are updated',
     usage: {
       method: 'POST',

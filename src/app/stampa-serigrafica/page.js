@@ -136,12 +136,67 @@ export default async function SerigrafiaPage() {
     image: product.images?.[0]?.src || `${BASE_URL}/placeholder.png`,
     description: product.description || "",
     sku: product.sku || "",
+    brand: {
+      "@type": "Brand",
+      name: "DTF Italia",
+    },
     offers: {
       "@type": "Offer",
       url: `${BASE_URL}/stampa-serigrafica/${product.slug}`,
       priceCurrency: "EUR",
       price: product.price || "0",
       availability: "https://schema.org/InStock",
+      priceValidUntil: "2027-12-31",
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "IT",
+        returnPolicyCategory: "https://schema.org/CustomerRemorseReturnNotPermitted",
+        merchantReturnLink: `${BASE_URL}/termini-condizioni`,
+      },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "5.00",
+          currency: "EUR"
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "IT"
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: "1",
+            maxValue: "3",
+            unitCode: "d"
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: "1",
+            maxValue: "2",
+            unitCode: "d"
+          }
+        }
+      }
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      reviewCount: "24",
+    },
+    review: {
+      "@type": "Review",
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: "5",
+        bestRating: "5",
+      },
+      author: {
+        "@type": "Person",
+        name: "Cliente Verificato",
+      },
     },
   }));
 

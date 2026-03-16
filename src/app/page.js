@@ -111,6 +111,23 @@ export default async function Home() {
       { "@type": "City", name: "Roma" },
       { "@type": "Country", name: "Italia" },
     ],
+    image: `${BASE_URL}/og-image.jpg`, // Placeholder per immagine negozio fisico
+    email: "info@dtfitalia.it",
+    priceRange: "$$",
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        opens: "09:00",
+        closes: "18:00"
+      }
+    ],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Servizi di Stampa",

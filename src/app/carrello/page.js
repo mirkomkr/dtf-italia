@@ -6,6 +6,9 @@ export const metadata = {
   title: "Carrello",
   description: "Rivedi i tuoi ordini e procedi al pagamento.",
   robots: { index: false, follow: false },
+  alternates: {
+    canonical: "/carrello",
+  },
 };
 
 export default function Page() {

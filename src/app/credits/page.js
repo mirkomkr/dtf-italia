@@ -21,6 +21,9 @@ export const metadata = {
       },
     ],
   },
+  alternates: {
+    canonical: "/credits",
+  },
 };
 
 export default function CreditsPage() {

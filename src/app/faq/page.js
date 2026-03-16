@@ -32,7 +32,7 @@ export const metadata = {
     ],
   },
   alternates: {
-    canonical: `${BASE_URL}/faq`,
+    canonical: "/faq",
   },
 };
 

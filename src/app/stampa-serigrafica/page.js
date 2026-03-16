@@ -42,7 +42,7 @@ export const metadata = {
     ],
   },
   alternates: {
-    canonical: `${BASE_URL}/stampa-serigrafica`,
+    canonical: "/stampa-serigrafica",
   },
 };
 

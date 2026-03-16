@@ -37,7 +37,7 @@ export const metadata = {
     type: "website",
   },
   alternates: {
-    canonical: `${BASE_URL}/stampa-sublimazione/catalogo`,
+    canonical: "/stampa-sublimazione/catalogo",
   },
 };
 

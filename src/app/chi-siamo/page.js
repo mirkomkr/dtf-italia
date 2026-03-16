@@ -13,7 +13,9 @@ export const metadata = {
     "Scopri DTF Italia: esperienza, tecnologie all'avanguardia e servizio professionale per la stampa a Roma. Service per terzi, qualità garantita e spedizione 24h.",
   keywords:
     "chi siamo dtf italia, stampa professionale roma, service stampa terzi, laboratorio stampa roma",
-  canonical: `${BASE_URL}/chi-siamo`,
+  alternates: {
+    canonical: "/chi-siamo",
+  },
   openGraph: {
     title: "Chi Siamo - DTF Italia",
     description:

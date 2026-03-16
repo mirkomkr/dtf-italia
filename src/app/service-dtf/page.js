@@ -65,7 +65,7 @@ export const metadata = {
     ],
   },
   alternates: {
-    canonical: `${BASE_URL}/service-dtf`,
+    canonical: "/service-dtf",
   },
 };
 

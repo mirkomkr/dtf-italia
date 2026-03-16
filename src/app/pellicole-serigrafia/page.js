@@ -41,7 +41,7 @@ export const metadata = {
     ],
   },
   alternates: {
-    canonical: `${BASE_URL}/pellicole-serigrafia`,
+    canonical: "/pellicole-serigrafia",
   },
 };
 

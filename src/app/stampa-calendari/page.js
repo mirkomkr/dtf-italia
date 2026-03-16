@@ -41,7 +41,7 @@ export const metadata = {
     ],
   },
   alternates: {
-    canonical: `${BASE_URL}/stampa-calendari`,
+    canonical: "/stampa-calendari",
   },
 };
 

@@ -3,7 +3,7 @@ import {
   createWooCommerceOrder,
   updateWooCommerceOrder,
 } from "@/lib/woocommerce";
-import { IS_DEV_MODE } from "@/lib/config";
+import { IS_DEV_MODE, CHECKOUT_ENABLED } from "@/lib/config";
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
@@ -13,6 +13,21 @@ import {
 import { s3Client, S3_BUCKET_NAME } from "@/lib/s3-client";
 
 export async function POST(request) {
+  // ── CHECKOUT GATE ──────────────────────────────────────────────────────────
+  // Se CHECKOUT_ENABLED è false, blocca qualsiasi richiesta di ordine.
+  // Questo gate è server-side e non bypassabile dal browser.
+  if (!CHECKOUT_ENABLED) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Il servizio di ordinazione è temporaneamente disattivato. Riprova più tardi.",
+        code: "CHECKOUT_DISABLED",
+      },
+      { status: 503 },
+    );
+  }
+  // ── Fine gate ──────────────────────────────────────────────────────────────
+
   const bucket = S3_BUCKET_NAME || process.env.S3_BUCKET_NAME;
 
   try {

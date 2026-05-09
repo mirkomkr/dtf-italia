@@ -2,7 +2,7 @@
 
 import { useCart } from '@/lib/cart-context';
 import { formatCurrency } from '@/lib/pricing-engine';
-import { Trash2, ShoppingCart, ArrowLeft, Package, Zap, FileText } from 'lucide-react';
+import { Trash2, ShoppingCart, ArrowLeft, Package, Zap, FileText, Lock, FlaskConical } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import CartCheckoutForm from './CartCheckoutForm';
@@ -275,7 +275,7 @@ function PriceSummary({ items }) {
 }
 
 // ─── Main CartPage ─────────────────────────────────────────────────────────
-export default function CartPage() {
+export default function CartPage({ checkoutEnabled = false, isDevMode = false }) {
   const { cart, removeItem } = useCart();
   const items = cart.items;
   const SHIPPING_ESTIMATE = 7.50;
@@ -335,14 +335,59 @@ export default function CartPage() {
           <div className="lg:sticky lg:top-28 space-y-4">
             <PriceSummary items={items} />
 
-            {/* Form di checkout */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-              <h3 className="font-bold text-gray-900 text-base mb-5">Completa l'ordine</h3>
-              <CartCheckoutForm
-                shippingCost={SHIPPING_ESTIMATE}
-                subtotal={subtotal}
-              />
-            </div>
+            {/* ── Blocco checkout: gated da checkoutEnabled ── */}
+            {checkoutEnabled ? (
+              /* Form di checkout normale */
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <h3 className="font-bold text-gray-900 text-base mb-5">Completa l&apos;ordine</h3>
+                <CartCheckoutForm
+                  shippingCost={SHIPPING_ESTIMATE}
+                  subtotal={subtotal}
+                />
+              </div>
+            ) : (
+              /* CHECKOUT DISABILITATO — banner pubblico */
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 shadow-sm flex flex-col items-center text-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+                  <Lock className="w-6 h-6 text-amber-600" />
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900 text-base">Checkout temporaneamente disattivato</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Il servizio di ordinazione è in fase di configurazione. Torneremo presto online.
+                  </p>
+                </div>
+                <a
+                  href="mailto:info@dtfitalia.it"
+                  className="inline-block px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-xl hover:bg-amber-700 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                >
+                  Contattaci per un preventivo
+                </a>
+              </div>
+            )}
+
+            {/* ── DEV MODE: pulsante test visibile solo se isDevMode === true ── */}
+            {isDevMode && (
+              <div className="rounded-2xl border-2 border-dashed border-indigo-300 bg-indigo-50 p-5 flex flex-col gap-3">
+                <div className="flex items-center gap-2 text-indigo-700">
+                  <FlaskConical className="w-5 h-5 shrink-0" />
+                  <span className="font-black text-sm tracking-wide uppercase">Dev Mode — Test Checkout</span>
+                </div>
+                <p className="text-xs text-indigo-600">
+                  Questo pannello è visibile solo quando <code className="bg-indigo-100 px-1 rounded">IS_DEV_MODE = true</code> in <code className="bg-indigo-100 px-1 rounded">config.js</code>.
+                  Non appare mai in produzione.
+                </p>
+                {/* Form di checkout in modalità dev — sempre accessibile */}
+                <div className="rounded-xl border border-indigo-200 bg-white p-4">
+                  <CartCheckoutForm
+                    shippingCost={SHIPPING_ESTIMATE}
+                    subtotal={subtotal}
+                    isDevTest
+                  />
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       )}

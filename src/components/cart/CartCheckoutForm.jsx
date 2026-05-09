@@ -35,7 +35,7 @@ function validateField(name, value, formData) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-export default function CartCheckoutForm({ shippingCost, subtotal }) {
+export default function CartCheckoutForm({ shippingCost, subtotal, isDevTest = false }) {
   const { cart, clearCart } = useCart();
   const router = useRouter();
 
@@ -63,8 +63,10 @@ export default function CartCheckoutForm({ shippingCost, subtotal }) {
     setErrors(prev => ({ ...prev, [name]: err }));
   };
 
-  // ── Payment handler ─────────────────────────────────────────────────────────
+  // ── Payment handler ───────────────────────────────────────────────────
+  // In dev test mode: skipS3 è sempre true per evitare operazioni S3 reali
   const handlePayment = async (paymentMethod, skipS3 = false) => {
+    const effectiveSkipS3 = isDevTest ? true : skipS3;
     // 1. Validazione
     const newErrors = {};
     const fieldsToValidate = [
@@ -96,7 +98,7 @@ export default function CartCheckoutForm({ shippingCost, subtotal }) {
       const cartItems = cart.items.map(item => ({
         type:         item.type,
         cartItemId:   item.cartItemId,
-        fileKey:      skipS3 ? null : item.fileKey,
+        fileKey:      effectiveSkipS3 ? null : item.fileKey,
         productData:  item.config,
         pricing: {
           ...item.priceData,
@@ -106,7 +108,7 @@ export default function CartCheckoutForm({ shippingCost, subtotal }) {
       const grandTotal = subtotal + shippingCost;
 
       const payload = {
-        mode: 'cart',               // flag per la API → gestione multi-item
+        mode: 'cart',
         customer: formData,
         shipping: { option: shippingOption, cost: shippingCost },
         paymentMethod,
@@ -116,7 +118,7 @@ export default function CartCheckoutForm({ shippingCost, subtotal }) {
           shippingCost,
           grandTotal: Number(grandTotal.toFixed(2)),
         },
-        testOptions: { skipS3 },
+        testOptions: { skipS3: effectiveSkipS3 },
       };
 
       const response = await fetch('/api/order', {
@@ -196,6 +198,14 @@ export default function CartCheckoutForm({ shippingCost, subtotal }) {
         <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
           <span>{submitError}</span>
+        </div>
+      )}
+
+      {/* Dev test indicator */}
+      {isDevTest && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-indigo-50 border border-indigo-200 rounded-lg text-xs text-indigo-700 font-semibold">
+          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+          Modalità DEV — skipS3 attivo, nessuna operazione reale su S3
         </div>
       )}
 

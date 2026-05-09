@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 
@@ -17,6 +17,8 @@ const MenuIcon = ({ size = 24, className }) => (
     strokeLinecap="round"
     strokeLinejoin="round"
     className={className}
+    aria-hidden="true"
+    focusable="false"
   >
     <line x1="4" y1="12" x2="20" y2="12" />
     <line x1="4" y1="6" x2="20" y2="6" />
@@ -36,6 +38,8 @@ const XIcon = ({ size = 24, className }) => (
     strokeLinecap="round"
     strokeLinejoin="round"
     className={className}
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M18 6 6 18" />
     <path d="m6 6 18 18" />
@@ -77,6 +81,8 @@ function CartIcon({ onClick }) {
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const hamburgerRef = useRef(null);
+  const menuRef = useRef(null);
 
   // Blocca lo scroll del body quando il menu è aperto
   useEffect(() => {
@@ -85,6 +91,54 @@ export default function Header() {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
+
+  // Focus trap + Escape key nel menu mobile
+  useEffect(() => {
+    if (!isMobileMenuOpen || !menuRef.current) return;
+
+    const FOCUSABLE_SELECTORS =
+      'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])';
+
+    const trapFocus = (e) => {
+      const focusableEls = Array.from(
+        menuRef.current.querySelectorAll(FOCUSABLE_SELECTORS)
+      );
+      if (focusableEls.length === 0) return;
+      const first = focusableEls[0];
+      const last = focusableEls[focusableEls.length - 1];
+
+      if (e.key === 'Escape') {
+        closeMenu();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', trapFocus);
+    // Porta il focus al primo elemento focusabile del menu
+    const firstFocusable = menuRef.current.querySelector(FOCUSABLE_SELECTORS);
+    firstFocusable?.focus();
+
+    return () => document.removeEventListener('keydown', trapFocus);
+  }, [isMobileMenuOpen]);
+
+  const closeMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+    // Riporta il focus al trigger hamburger
+    requestAnimationFrame(() => hamburgerRef.current?.focus());
+  }, []);
 
   const schema = {
     "@context": "https://schema.org",
@@ -107,7 +161,7 @@ export default function Header() {
     { href: "/faq", label: "FAQ" },
   ];
 
-  const closeMenu = () => setIsMobileMenuOpen(false);
+  const openMenu = () => setIsMobileMenuOpen(true);
 
   return (
     <header
@@ -163,8 +217,9 @@ export default function Header() {
         <div className="flex md:hidden items-center gap-1 z-50 relative">
           <CartIcon onClick={closeMenu} />
           <button
+            ref={hamburgerRef}
             className="p-2 text-gray-300 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 rounded-md"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            onClick={() => isMobileMenuOpen ? closeMenu() : openMenu()}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
             aria-label={
@@ -181,6 +236,7 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div
             id="mobile-menu"
+            ref={menuRef}
             className="fixed inset-0 bg-gray-900 z-40 flex flex-col overflow-y-auto pt-20 pb-8 px-6 md:hidden"
             role="dialog"
             aria-modal="true"

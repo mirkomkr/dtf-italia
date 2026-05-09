@@ -84,11 +84,11 @@ export default function FAQPage() {
       <div className="container mx-auto px-4 pt-4 pb-2">
         <Breadcrumb items={BREADCRUMB_ITEMS["/faq"]} />
       </div>
-      <main className="bg-gray-50 py-16">
+      <section aria-label="Contenuto FAQ" className="bg-gray-900 py-16">
         <div className="container mx-auto px-4 max-w-5xl">
           <FAQClient faqData={faqData} />
         </div>
-      </main>
+      </section>
     </>
   );
 }

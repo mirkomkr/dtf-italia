@@ -62,6 +62,13 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className} bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col`}
       >
+        {/* Skip-to-content — visibile solo al focus da tastiera (WCAG 2.4.1) */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:font-bold focus:rounded-lg focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-indigo-600 focus:outline-none"
+        >
+          Vai al contenuto principale
+        </a>
         <Providers>
           <Header />
           <main

@@ -28,12 +28,12 @@ export default function Footer() {
           </div>
 
           <nav aria-label="Link Servizio">
-            <h4 className="text-white font-bold mb-4">Servizio</h4>
+            <h3 className="text-white font-bold mb-4 text-sm">Servizio</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   href="#"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   Ordina Ora
                 </Link>
@@ -41,7 +41,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="#"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   Listino Prezzi
                 </Link>
@@ -49,7 +49,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="#"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   Tempi di Spedizione
                 </Link>
@@ -58,12 +58,12 @@ export default function Footer() {
           </nav>
 
           <nav aria-label="Link Supporto">
-            <h4 className="text-white font-bold mb-4">Supporto</h4>
+            <h3 className="text-white font-bold mb-4 text-sm">Supporto</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   href="/chi-siamo"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   Chi Siamo
                 </Link>
@@ -71,7 +71,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="#"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   Contattaci
                 </Link>
@@ -79,7 +79,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="#"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   FAQ
                 </Link>
@@ -87,7 +87,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="#"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   Guida ai File
                 </Link>
@@ -96,12 +96,12 @@ export default function Footer() {
           </nav>
 
           <nav aria-label="Link Legali">
-            <h4 className="text-white font-bold mb-4">Legale</h4>
+            <h3 className="text-white font-bold mb-4 text-sm">Legale</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   href="#"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   Privacy Policy
                 </Link>
@@ -109,7 +109,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="#"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   Termini e Condizioni
                 </Link>
@@ -117,7 +117,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/credits"
-                  className="hover:text-white transition-all duration-200 focus-visible:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+                  className="text-gray-200 underline underline-offset-2 decoration-gray-600 hover:text-white hover:decoration-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
                 >
                   Credits Immagini
                 </Link>
@@ -133,8 +133,8 @@ export default function Footer() {
               href="https://www.mirkopasseri.it"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-300 hover:text-white hover:underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
-              aria-label="Portfolio di Mirko Passeri - Sviluppatore & Web Designer"
+              className="text-gray-100 underline underline-offset-2 decoration-gray-500 hover:text-white hover:decoration-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+              aria-label="Portfolio di Mirko Passeri - Sviluppatore & Web Designer (apre in nuova scheda)"
             >
               Mirko Passeri
             </a>

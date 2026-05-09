@@ -70,9 +70,15 @@ export default function ChiSiamoPage() {
       />
 
       {/* Hero Section */}
-      <section className="relative min-h-[40vh] flex items-center justify-center bg-gradient-to-br from-indigo-900 via-slate-900 to-black">
+      <section
+        className="relative min-h-[40vh] flex items-center justify-center bg-gradient-to-br from-indigo-900 via-slate-900 to-black"
+        aria-labelledby="chi-siamo-hero-heading"
+      >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight">
+          <h1
+            id="chi-siamo-hero-heading"
+            className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight"
+          >
             Chi Siamo
           </h1>
           <p className="text-xl sm:text-2xl text-gray-200 max-w-3xl mx-auto">
@@ -89,9 +95,15 @@ export default function ChiSiamoPage() {
       <AboutSection />
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-br from-indigo-900 via-slate-900 to-black">
+      <section
+        className="py-16 bg-gradient-to-br from-indigo-900 via-slate-900 to-black"
+        aria-labelledby="chi-siamo-cta-heading"
+      >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2
+            id="chi-siamo-cta-heading"
+            className="text-3xl md:text-4xl font-bold text-white mb-6"
+          >
             Pronto a Iniziare il Tuo Progetto?
           </h2>
           <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
@@ -101,13 +113,13 @@ export default function ChiSiamoPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/"
-              className="inline-block px-8 py-4 bg-white text-indigo-700 hover:bg-gray-100 active:bg-gray-200 rounded-xl font-bold text-lg transition-all shadow-lg shadow-indigo-600/25"
+              className="inline-block px-8 py-4 bg-white text-indigo-700 hover:bg-gray-100 active:bg-gray-200 rounded-xl font-bold text-lg transition-all shadow-lg shadow-indigo-600/25 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50"
             >
               Scopri i Servizi
             </a>
             <a
               href="/service-dtf"
-              className="inline-block px-8 py-4 bg-indigo-600 text-white hover:bg-indigo-700 active:bg-indigo-800 rounded-xl font-bold text-lg transition-all border-2 border-white/20"
+              className="inline-block px-8 py-4 bg-indigo-600 text-white hover:bg-indigo-700 active:bg-indigo-800 rounded-xl font-bold text-lg transition-all border-2 border-white/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white/50"
             >
               Configura Ordine DTF
             </a>

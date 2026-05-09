@@ -35,7 +35,7 @@ export default function HeroHome() {
       {/* Decorative Background Elements */}
       {/* Decorative blobs — fully hidden from AT */}
       <div 
-        className="absolute inset-0 opacity-20 pointer-events-none" 
+        className="absolute inset-0 opacity-20 pointer-events-none isolation-isolate" 
         aria-hidden="true"
         role="presentation"
         inert=""
@@ -90,14 +90,14 @@ export default function HeroHome() {
                 <a
                   key={i}
                   href={service.href}
-                  className="bg-white/15 backdrop-blur-sm border border-white/20 rounded-xl p-4 w-full h-20 hover:bg-white/25 hover:scale-105 transition-all group flex flex-col items-center justify-center gap-1"
+                  className="bg-gray-900/55 backdrop-blur-sm border border-white/20 rounded-xl p-4 w-full h-20 hover:bg-gray-800/70 hover:scale-105 transition-all group flex flex-col items-center justify-center gap-1"
                   aria-label={`Vai a ${service.name}`}
                 >
                   <Icon 
                     className={`text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r ${service.color}`}
                     aria-hidden="true"
                   />
-                  <div className="text-white font-bold text-base text-center drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]">{service.name}</div>
+                  <div className="text-white font-bold text-base text-center">{service.name}</div>
                 </a>
               );
             })}

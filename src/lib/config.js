@@ -25,7 +25,8 @@ export const CHECKOUT_ENABLED = false;
  *      Sono valutati solo server-side. Dopo ogni modifica: rebuild + redeploy.
  *
  *  Gate applicato in:
- *    - src/app/api/order/route.js          → blocco API (503 se CHECKOUT_ENABLED false)
+ *    - src/app/api/order/route.js          → blocco API ordini (503)
+ *    - src/app/api/upload/route.js         → blocco upload S3 (503)
  *    - src/components/cart/CartPage.jsx    → blocco UI (banner + form nascosto)
  *    - src/components/cart/CartCheckoutForm.jsx → skipS3 forzato se IS_DEV_MODE
  */

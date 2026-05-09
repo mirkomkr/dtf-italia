@@ -2,8 +2,20 @@ import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "@/lib/s3-client";
+import { CHECKOUT_ENABLED } from "@/lib/config";
 
 export async function POST(request) {
+  // ── CHECKOUT GATE ──────────────────────────────────────────────────────────
+  // Se il checkout è disabilitato, blocca anche l'upload S3.
+  // Impedisce accumulo di file orfani da utenti malintenzionati.
+  if (!CHECKOUT_ENABLED) {
+    return NextResponse.json(
+      { error: "Il servizio è temporaneamente disattivato.", code: "CHECKOUT_DISABLED" },
+      { status: 503 }
+    );
+  }
+  // ── Fine gate ──────────────────────────────────────────────────────────────
+
   try {
     const { filename, contentType, orderId, cartItemId, position } =
       await request.json();
